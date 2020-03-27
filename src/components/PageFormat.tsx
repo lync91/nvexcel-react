@@ -47,8 +47,6 @@ export class PageFormat extends Component<AppProps, AppStates> {
 			isSetFont: false
 		}
 	}
-	componentWillMount() {
-	}
 	_formatPage = async () => {
 		try {
 			await Excel.run(async context => {
@@ -131,16 +129,6 @@ export class PageFormat extends Component<AppProps, AppStates> {
 					<div className="ms-Grid-col ms-sm12 mt-8">
 						<Stack horizontal>
 							<PrimaryButton text="Định dạng" onClick={this._formatPage} allowDisabledFocus />
-						</Stack>
-					</div>
-				</div>
-				<Separator>Định dạng trạng in G8</Separator>
-				<div className="ms-Grid-row">
-					<div>
-						<Toggle label="Tự động nhận dạng vùng in" defaultChecked={this.state.autoInit} onText="Bật" offText="Tắt" />
-					</div>
-					<div>
-						<Stack>
 						</Stack>
 					</div>
 				</div>
