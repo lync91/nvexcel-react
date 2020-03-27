@@ -9,9 +9,13 @@ import history from './history';
 import CommandBarMain from "./components/CommandBarMain"
 import NavMenu from "./components/NavMenu";
 import { Panel, PanelType } from 'office-ui-fabric-react/lib/Panel';
+import { Spinner } from 'office-ui-fabric-react/lib/Spinner';
+import { Label } from 'office-ui-fabric-react/lib/Label';
+// import charConverter from "./reducers/charConverter";
 // import CharConvert from './CharConvert';
-const CharConvert = React.lazy(() => import('./components/CharConvert'))
-const PageFormat = React.lazy(() => import('./components/PageFormat'))
+const CharConvert = React.lazy(() => import('./components/CharConvert'));
+const PageFormat = React.lazy(() => import('./components/PageFormat'));
+const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
 // import PageFormat from "./PageFormat";
 export interface AppProps {
 }
@@ -49,18 +53,13 @@ export default class App extends React.Component<AppProps, AppState> {
       </Panel>
         <div>
           <CommandBarMain view={this.openPanel.bind(this)}></CommandBarMain>
-          <Suspense fallback="">
+          <Suspense fallback={sSpinner}>
             <section className="App-body">
               <Switch>
-                <Route exact path="/">
-                  <Home />
-                </Route>
-                <Route path="/charConvert">
-                  <CharConvert />
-                </Route>
-                <Route path="/pageFormat">
-                  <PageFormat />
-                </Route>
+                <Route exact path="/" component={Home}/>
+                <Route path="/charConvert" component={CharConvert} />
+                <Route path="/pageFormat" component={PageFormat} />
+                <Route path="/pageFormatG8" component={PageFormatG8} />
               </Switch>
             </section>
           </Suspense>
@@ -75,5 +74,14 @@ function Home() {
     <div>
       <h2>Home</h2>
     </div>
+  );
+}
+
+function sSpinner() {
+  return (
+    <div>
+        <Label>Spinner with label positioned to left</Label>
+        <Spinner label="Đang tải..." ariaLive="assertive" labelPosition="left" />
+      </div>
   );
 }

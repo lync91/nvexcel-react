@@ -36,7 +36,7 @@ const optKieuin: IDropdownOption[] = [
 	{ key: "portrait", text: "Dọc" },
 	{ key: "landscape", text: "Ngang" },
 ];
-export class PageFormat extends Component<AppProps, AppStates> {
+export class PageFormatG8 extends Component<AppProps, AppStates> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
@@ -148,4 +148,4 @@ export class PageFormat extends Component<AppProps, AppStates> {
 		);
 	}
 };
-export default PageFormat
+export default PageFormatG8

@@ -37,24 +37,13 @@ class NavMenu extends Component<AppProps, AppState> {
       <Nav
         onLinkClick={this._onLinkClick}
         selectedKey={this.state.selectedKey}
-        ariaLabel="Nav basic example"
-      //   styles={{
-      //     root: {
-      //       width: 208,
-      //       height: 350,
-      //       boxSizing: 'border-box',
-      //       border: '1px solid #eee',
-      //       overflowY: 'auto'
-      //     }
-      //   }}
+        ariaLabel="NavMenu"
         groups={[
           {
             links: [
               {
                 name: 'Dự toán',
                 url: '',
-                expandAriaLabel: 'Expand Home section',
-                collapseAriaLabel: 'Collapse Home section',
                 links: [
                   {
                     name: 'Activity',
@@ -93,6 +82,12 @@ class NavMenu extends Component<AppProps, AppState> {
                     target: '',
                   },
                   {
+                    name: 'Định dạng trang in G8',
+                    url: '',
+                    key: '/pageFormatG8',
+                    target: '',
+                  },
+                  {
                     name: 'Chuyển mã tiếng Việt',
                     url: '',
                     key: '/charConvert',
@@ -123,22 +118,5 @@ class NavMenu extends Component<AppProps, AppState> {
     );
   }
 };
-
-// function _onLinkClick(item?: INavLink) {
-//   if (item && item.name === 'News') {
-//     alert('News link clicked');
-//   }
-// }
-
-// const mapDispatchToProps = dispatch => {
-//   return {
-//     changeLocation: (location) => dispatch()
-//   }
-// }
-// const mapStateToProps = (state: any) => {
-//   return {
-//     selectedKey: state.navMenu.selectedKey
-//   }
-// }
 
 export default NavMenu
