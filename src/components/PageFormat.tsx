@@ -4,8 +4,8 @@ import { PrimaryButton } from 'office-ui-fabric-react';
 import { Separator } from 'office-ui-fabric-react/lib/Separator';
 import { Stack } from 'office-ui-fabric-react/lib/Stack';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import {getLastRow} from "../classes/Eutils";
-import { getPageType, getOrientationType } from "../classes/mapIndex"
+import { getLastRow, getLastCol } from "../api/Eutils";
+import { getPageType, getOrientationType } from "../api/mapIndex"
 
 export interface AppProps {
 }
@@ -57,13 +57,8 @@ export class PageFormat extends Component<AppProps, AppStates> {
 				ws.pageLayout.orientation = getOrientationType(this.state.orientation);
             const range = context.workbook.getSelectedRange();
             range.load('address')
-            const rangeB = ws.getRange('A1:ZZ5');
             const lastRow: Excel.Range = getLastRow(ws);
-				const lastCol = rangeB.findOrNullObject("*", {
-					completeMatch: true, // find will match the whole cell value
-					matchCase: false, // find will not match case
-					searchDirection: Excel.SearchDirection.backwards // find will start searching at the beginning of the range
-				})
+				const lastCol: Excel.Range = getLastCol(ws);
 				lastRow.load("address");
 				lastCol.load("address");
 				await context.sync();
