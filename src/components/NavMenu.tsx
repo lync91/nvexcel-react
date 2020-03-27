@@ -1,42 +1,42 @@
 import React, { Component } from 'react';
 import { Nav } from 'office-ui-fabric-react/lib/Nav';
-import { connect } from "react-redux";
 import history from '../history'
 
 export interface AppProps {
-  dismissPanel: () => boolean | void;
+  dismissPanel: () => void;
   selectedKey: string;
-  dispatch: any
 }
 
 export interface AppState {
-  selectedKey: string
+  selectedKey: string;
 }
 
 class NavMenu extends Component<AppProps, AppState> {
-  // constructor(props: any, context: any) {
-  //   super(props, context);
-  // }
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      selectedKey: '/home'
+    }
+  }
   componentWillMount () {
     console.log(history.location.pathname);
     // const lKey = history.location.pathname.toString().substr(1)
-    this.props.dispatch({type: 'CHANGE_LOCATION', selectedKey: history.location.pathname})
+    this.setState({selectedKey: history.location.pathname})
     
   }
-  _onLinkClick = async (ev?: React.MouseEvent<HTMLElement, MouseEvent>, item?: any) => {
-    console.log(item);
-    console.log(ev);
+  _onLinkClick = async (_ev?: React.MouseEvent<HTMLElement, MouseEvent>, item?: any) => {
     if (!item.links) {
       history.push(item.key);
-      this.props.dispatch({type: 'CHANGE_LOCATION', selectedKey: item.key})
       this.props.dismissPanel();
+      // this.props.dispatch({type: 'CHANGE_LOCATION', selectedKey: item.key})
+      // this.props.dismissPanel();
     }
   };
   render() {
     return (
       <Nav
         onLinkClick={this._onLinkClick}
-        selectedKey={this.props.selectedKey}
+        selectedKey={this.state.selectedKey}
         ariaLabel="Nav basic example"
       //   styles={{
       //     root: {
@@ -135,10 +135,10 @@ class NavMenu extends Component<AppProps, AppState> {
 //     changeLocation: (location) => dispatch()
 //   }
 // }
-const mapStateToProps = (state: any) => {
-  return {
-    selectedKey: state.navMenu.selectedKey
-  }
-}
+// const mapStateToProps = (state: any) => {
+//   return {
+//     selectedKey: state.navMenu.selectedKey
+//   }
+// }
 
-export default connect(mapStateToProps)(NavMenu)
+export default NavMenu
