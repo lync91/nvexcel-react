@@ -4,7 +4,7 @@ import { PrimaryButton } from 'office-ui-fabric-react';
 import { Separator } from 'office-ui-fabric-react/lib/Separator';
 import { Stack } from 'office-ui-fabric-react/lib/Stack';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { getLastRow, getLastCol } from "../api/Eutils";
+import { getLastRow, getLastCol, getLastColTest } from "../api/Eutils";
 import { getPageType, getOrientationType } from "../api/mapIndex"
 
 export interface AppProps {
@@ -54,6 +54,8 @@ export class PageFormat extends Component<AppProps, AppStates> {
 				ws.pageLayout.paperSize = getPageType(this.state.pageSize);
 				ws.pageLayout.orientation = getOrientationType(this.state.orientation);
 				const range = context.workbook.getSelectedRange();
+				const test = new getLastColTest(ws, context)
+				console.log(test);
 				range.load('address')
 				const lastRow: Excel.Range = getLastRow(ws);
 				const lastCol: Excel.Range = getLastCol(ws);
@@ -122,6 +124,7 @@ export class PageFormat extends Component<AppProps, AppStates> {
 						<Dropdown placeholder="Chọn kiểu in" label="Kiểu in" defaultSelectedKey={this.state.orientation} options={optKieuin} styles={dropdownStyles} onChanged={this._changOrientation} />
 						<Toggle className="mt-8" defaultChecked={this.state.autoInit} onText="Tự động nhận dạng vùng in" offText="Tự động nhận dạng vùng in" onChanged={this._isAutoInitChanged} />
 						<Toggle className="mt-8" defaultChecked={this.state.blackAndWhite} onText="In đen trắng" offText="In đen trắng" onChanged={this._isBlackAndWhite} />
+						<Toggle className="mt-8" defaultChecked={this.state.isSetFont} onText="Đặt font Times New Romans" offText="Đặt font Times New Romans" onChanged={this._isSetFontChanged} />
 						<Toggle className="mt-8" defaultChecked={this.state.isSetFont} onText="Đặt font Times New Romans" offText="Đặt font Times New Romans" onChanged={this._isSetFontChanged} />
 					</div>
 				</div>
