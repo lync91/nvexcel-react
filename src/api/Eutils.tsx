@@ -28,17 +28,30 @@ export interface addressTypes {
     row: number
 }
 
-export function addressParse(txt:string): addressTypes {
-    const data: addressTypes = {
-        text: '',
-        col: '',
-        row: 1
+// export function addressParse(txt:string): addressTypes {
+//     const data: addressTypes = {
+//         text: '',
+//         col: '',
+//         row: 1
+//     }
+//     data.text = txt.replace(/(([^!]+)?)!/g, '')
+//     console.log(data);
+    
+    
+//     return data;
+// }
+
+export class addressObj {
+    sheet!: string;
+    text!: string;
+    cell!: addressTypes;
+    cel2!: addressTypes
+    constructor(txt: string) {
+        this.text = txt.replace(/(([^!]+)?)!/g, '');
+        const t = this.text.split(":")
+        this.cell.text = t[0]
+        this.cel2.text = t[1] ? t[1] : ''
     }
-    const m: RegExpMatchArray | null = txt.match(/(?=!)[^\]]+/g)
-    console.log(m[1]);
-    
-    
-    return data;
 }
 
 export function getWsInfo(wsName: string | null = null) {
@@ -94,7 +107,9 @@ export class wsObject extends AsyncConstructor  {
                     await context.sync();
                     console.log(lastRow.address);
                     console.log(lastCol.address);
-                    addressParse(lastRow.address)
+                    const ad = new addressObj(lastCol.address);
+                    console.log(ad);
+                    
                     this.name = ws.name;
                     this.context = context;
                 })
