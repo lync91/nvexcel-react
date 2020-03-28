@@ -88,15 +88,6 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 	// _changOrientation = (option: IDropdownOption, _index?: number) => {
 	// 	this.setState({ orientation: option.key.toString() });
 	// }
-	_isAutoInitChanged = (checked: boolean) => {
-		this.setState({ autoInit: checked });
-	}
-	_isBlackAndWhite = (checked: boolean) => {
-		this.setState({ autoInit: checked });
-	}
-	_isSetFontChanged = (checked: boolean) => {
-		this.setState({ isSetFont: checked });
-	}
 	render() {
 		return (
 			<section className="ms-Grid">
@@ -112,7 +103,11 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 							<NvDefButton text="Bảng giá tháng" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng chiết tính" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng dự thầu" onClick={this._formatPage} isLoading={false} />
-							<Toggle className="mt-8" defaultChecked={this.state.isSetFont} onText="Ẩn cột vật tư trong bảng công trình" offText="Ẩn cột vật tư trong bảng công trình" onChanged={this._isSetFontChanged} />
+							<Toggle className="mt-8" 
+								defaultChecked={this.state.isSetFont} 
+								onText="Ẩn cột vật tư trong bảng công trình" 
+								offText="Ẩn cột vật tư trong bảng công trình" 
+								onChange={(_e, checked) => this.setState({isSetFont: checked || false})} />
 						</Stack>
 					</div>
 				</div>
