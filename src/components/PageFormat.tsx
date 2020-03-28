@@ -4,8 +4,8 @@ import { PrimaryButton } from 'office-ui-fabric-react';
 import { Separator } from 'office-ui-fabric-react/lib/Separator';
 import { Stack } from 'office-ui-fabric-react/lib/Stack';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
-import { getLastRow, getLastCol, wsObject } from "../api/Eutils";
-import { getPageType, getOrientationType } from "../api/mapIndex"
+import { wsObject } from "../api/Eutils";
+// import { getPageType, getOrientationType } from "../api/mapIndex"
 
 export interface AppProps {
 }
@@ -48,58 +48,17 @@ export class PageFormat extends Component<AppProps, AppStates> {
 		}
 	}
 	_formatPage = async () => {
-		const test = await new wsObject();
-		test.getValues('A1:A2')
-		console.log(test);
+		console.log(this.state);
 		
-		try {
-			await Excel.run(async context => {
-				const ws = context.workbook.worksheets.getActiveWorksheet();
-				ws.pageLayout.paperSize = getPageType(this.state.pageSize);
-				ws.pageLayout.orientation = getOrientationType(this.state.orientation);
-				const range = context.workbook.getSelectedRange();
-				range.load('address')
-				const lastRow: Excel.Range = getLastRow(ws);
-				const lastCol: Excel.Range = getLastCol(ws);
-				lastRow.load("address");
-				lastCol.load("address");
-				await context.sync();
-				console.log('lastRow', lastRow.address);
-				console.log('lastCol', lastCol.address);
-
-				if (this.state.autoInit) {
-					if (lastCol.address) {
-						const printArea = 'A:' + lastCol.address.slice(range.address.indexOf('!') + 1, lastCol.address.length);
-						ws.pageLayout.setPrintArea(printArea);
-					}
-				} else {
-					const printArea = range.address.slice(range.address.indexOf('!') + 1, range.address.length);
-					ws.pageLayout.setPrintArea(printArea);
-				}
-				if (this.state.orientation === "portrait") {
-					ws.pageLayout.topMargin = 40;
-					ws.pageLayout.bottomMargin = 40;
-					ws.pageLayout.leftMargin = 50;
-					ws.pageLayout.rightMargin = 20;
-				}
-				if (this.state.orientation === "landscape") {
-					ws.pageLayout.topMargin = 50;
-					ws.pageLayout.bottomMargin = 40;
-					ws.pageLayout.leftMargin = 40;
-					ws.pageLayout.rightMargin = 40;
-				}
-				ws.pageLayout.zoom = { horizontalFitToPages: 1 };
-				ws.pageLayout.centerHorizontally = true;
-				ws.pageLayout.centerVertically = false;
-				ws.pageLayout.blackAndWhite = this.state.blackAndWhite;
-				if (this.state.isSetFont) {
-					range.format.font.name = 'Times New Roman';
-				}
-			});
-		} catch (error) {
-			console.error(error);
-		}
-
+		const test = await new wsObject();
+		test.getValues('A1:A2');
+		test.setPrintAreabySelected();
+		test.setPaperType(this.state.pageSize);
+		test.setOrientation(this.state.orientation);
+		this.state.autoInit? test.autoSetPrintArea() : test.setPrintAreabySelected()
+		this.state.orientation === "portrait" ? test.setPageMargin(40, 40, 50, 40) : test.setPageMargin(50, 40, 40, 40)
+		if (this.state.isSetFont) test.setFont('Times New Roman');
+		if (this.state.blackAndWhite) test.setBlackAndWhite();
 	}
 	_changePageSize = (option: IDropdownOption, _index?: number) => {
 		this.setState({ pageSize: option.key.toString() });

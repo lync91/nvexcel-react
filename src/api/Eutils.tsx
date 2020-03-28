@@ -1,4 +1,5 @@
-import { AsyncConstructor } from 'async-constructor'
+import { AsyncConstructor } from 'async-constructor';
+import { getPageType, getOrientationType } from "./mapIndex";
 // export function hello() {
 //     console.log("hello");
 
@@ -25,7 +26,7 @@ export function getLastCol(ws: any): Excel.Range {
 export interface addressTypes {
     text: string;
     col: string;
-    row: number
+    row: string
 }
 
 // export function addressParse(txt:string): addressTypes {
@@ -36,21 +37,35 @@ export interface addressTypes {
 //     }
 //     data.text = txt.replace(/(([^!]+)?)!/g, '')
 //     console.log(data);
-    
-    
+
+
 //     return data;
 // }
 
 export class addressObj {
     sheet!: string;
     text!: string;
-    cell!: addressTypes;
-    cel2!: addressTypes
+    cell1: addressTypes = {
+        text: "",
+        col: "",
+        row: ""
+    };
+    cell2: addressTypes = {
+        text: "",
+        col: "",
+        row: ""
+    }
     constructor(txt: string) {
         this.text = txt.replace(/(([^!]+)?)!/g, '');
         const t = this.text.split(":")
-        this.cell.text = t[0]
-        this.cel2.text = t[1] ? t[1] : ''
+        this.cell1.text = t[0];
+        this.cell1.col = t[0].replace(/([0-9])+/g, "");
+        this.cell1.row = t[0].replace(/([A-Z]|[a-z])+/g, "");
+        if (t[1]) {
+            this.cell2.text = t[1];
+            this.cell2.col = t[1].replace(/([0-9])+/g, "");
+            this.cell2.row = t[1].replace(/([A-Z]|[a-z])+/g, "");
+        }
     }
 }
 
@@ -76,20 +91,21 @@ export function getWsInfo(wsName: string | null = null) {
     return promise
 }
 
-export interface getLastColTypes { 
-    wsName?: string | null; 
-    name?: string | null; 
+export interface getLastColTypes {
+    wsName?: string | null;
+    name?: string | null;
 }
-export class wsObject extends AsyncConstructor  {
+export class wsObject extends AsyncConstructor {
     ws: Excel.Worksheet | null = null;
     context: Excel.RequestContext | null = null;
-	static init() {
-		throw new Error("Method not implemented.");
-	}
+    static init() {
+        throw new Error("Method not implemented.");
+    }
     wsName: string | null = null;
     name!: string;
     lastCol!: addressTypes;
     lastRow!: addressTypes;
+    selectedRange!: string;
     constructor(wsName: string | null = null) {
         super(async () => {
             this.wsName = wsName;
@@ -99,19 +115,21 @@ export class wsObject extends AsyncConstructor  {
                     wsName ? ws = context.workbook.worksheets.getItem(wsName)
                         : ws = context.workbook.worksheets.getActiveWorksheet();
                     this.ws = ws;
+                    const rg = context.workbook.getSelectedRange();
+                    rg.load('address')
                     ws.load('name');
                     const lastRow: Excel.Range = getLastRow(ws);
                     const lastCol: Excel.Range = getLastCol(ws);
                     lastRow.load('address');
                     lastCol.load('address');
                     await context.sync();
-                    console.log(lastRow.address);
-                    console.log(lastCol.address);
-                    const ad = new addressObj(lastCol.address);
-                    console.log(ad);
-                    
+                    const lastcolAd = new addressObj(lastCol.address);
+                    const lastrowAd = new addressObj(lastCol.address);
+                    this.lastCol = lastcolAd.cell1;
+                    this.lastRow = lastrowAd.cell1;
                     this.name = ws.name;
                     this.context = context;
+                    this.selectedRange = rg.address;
                 })
             } catch (error) {
             }
@@ -130,5 +148,30 @@ export class wsObject extends AsyncConstructor  {
             })
         })
         return promise;
+    }
+    async setPrintAreabySelected() {
+        this.ws?.pageLayout.setPrintArea(this.selectedRange)
+    }
+    async autoSetPrintArea() {
+        this.ws?.pageLayout.setPrintArea("A:" + this.lastCol.col)
+    }
+    async setFont(fontName: string) {
+        const rg = this.ws?.getRange('A:ZZ')
+        rg!.format.font.name = fontName;
+    }
+    async setBlackAndWhite() {
+        this.ws!.pageLayout.blackAndWhite = true;
+    }
+    async setPageMargin(top: number, bottom: number, left: number, right: number) {
+        this.ws!.pageLayout.topMargin = top;
+        this.ws!.pageLayout.bottomMargin = bottom;
+        this.ws!.pageLayout.leftMargin = left;
+        this.ws!.pageLayout.rightMargin = right;
+    }
+    async setPaperType(paperType: string) {
+        this.ws!.pageLayout.paperSize = getPageType(paperType)
+    }
+    async setOrientation(ori: string) {
+        this.ws!.pageLayout.orientation = getOrientationType(ori)
     }
 }
