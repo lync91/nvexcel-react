@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
+import { init } from "./api/nvExcel";
 
 initializeIcons();
 
@@ -16,7 +17,8 @@ initializeIcons();
 
 // const Office = window.Office;
 
-Office.initialize = () => {
+Office.initialize = async () => {
+  await init();
   ReactDOM.render(<App />, document.getElementById('root'));
 };
 

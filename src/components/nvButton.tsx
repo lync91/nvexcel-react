@@ -15,9 +15,9 @@ export class NvDefButton extends Component<AppProps> {
     // }
     render() {
         return( 
-            <div><DefaultButton text={this.props.text} allowDisabledFocus>
+            <div><DefaultButton text={this.props.text} onClick={this.props.onClick} allowDisabledFocus>
                     <Spinner size={SpinnerSize.small} className={this.props.isLoading ? '' : 'hidden'} /> 
-                    <Icon iconName="CompassNW" className="fade-in" />;
+                    <Icon iconName="CompassNW" className="fade-in" />
                 </DefaultButton>
             </div>
         );

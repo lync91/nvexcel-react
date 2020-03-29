@@ -10,6 +10,7 @@ import './App.css';
 import CommandBarMain from "./components/CommandBarMain";
 import MenuPanel from "./components/MenuPanel";
 import { AppContext } from "./contexts/AppContext";
+// import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 const CharConvert = React.lazy(() => import('./components/CharConvert'));
 const PageFormat = React.lazy(() => import('./components/PageFormat'));
 const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
@@ -42,7 +43,7 @@ class App extends Component<{}, AppState> {
           <CommandBarMain view={this.openPanel.bind(this)}></CommandBarMain>
           <MenuPanel/>
           <Router history={history}>
-            <Suspense fallback=''>
+            <Suspense fallback="Đang tải">
                 <section className="App-body">
                   <Switch>
                     <Route exact path="/" component={Home}/>
@@ -66,5 +67,10 @@ function Home() {
     </div>
   );
 }
+// function SpinnerLoadinng() {
+//   return (
+//     <Spinner size={SpinnerSize.small} />
+//   )
+// }
 
 export default App;

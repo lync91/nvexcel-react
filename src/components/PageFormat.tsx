@@ -40,7 +40,7 @@ export class PageFormat extends Component<AppProps, AppStates> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
-			pageSize: 'a3',
+			pageSize: 'a4',
 			orientation: 'portrait',
 			autoInit: false,
 			blackAndWhite: true,
@@ -48,17 +48,16 @@ export class PageFormat extends Component<AppProps, AppStates> {
 		}
 	}
 	_formatPage = async () => {
-		console.log(this.state);
-		
-		const test = await new wsObject();
-		test.getValues('A1:A2');
-		test.setPrintAreabySelected();
-		test.setPaperType(this.state.pageSize);
-		test.setOrientation(this.state.orientation);
-		this.state.autoInit? test.autoSetPrintArea() : test.setPrintAreabySelected()
-		this.state.orientation === "portrait" ? test.setPageMargin(40, 40, 50, 40) : test.setPageMargin(50, 40, 40, 40)
-		if (this.state.isSetFont) test.setFont('Times New Roman');
-		if (this.state.blackAndWhite) test.setBlackAndWhite();
+		const ws = await new wsObject();
+		ws.getValues('A1:A2');
+		ws.setPrintAreabySelected();
+		ws.setPaperType(this.state.pageSize);
+		ws.setOrientation(this.state.orientation);
+		ws.setPageZoom(1)
+		this.state.autoInit? ws.autoSetPrintArea() : ws.setPrintAreabySelected()
+		this.state.orientation === "portrait" ? ws.setPageMargin(40, 40, 50, 40) : ws.setPageMargin(50, 40, 40, 40)
+		if (this.state.isSetFont) ws.setFont('Times New Roman');
+		if (this.state.blackAndWhite) ws.setBlackAndWhite();
 	}
 	_changePageSize = (option: IDropdownOption, _index?: number) => {
 		this.setState({ pageSize: option.key.toString() });

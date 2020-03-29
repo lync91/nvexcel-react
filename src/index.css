@@ -103,12 +103,12 @@ b {
     padding: 0px 8px;
   }
 .btn-container {
-    display: contents;
+    display: block;
 }
 
 .ms-Button {
     margin-bottom: 8px;
-    display: block;
+    /* display: block; */
 }
 .hidden {
     display: none;
