@@ -1,5 +1,6 @@
 import { AsyncConstructor } from 'async-constructor';
 import { getPageType, getOrientationType } from "./mapIndex";
+import { ws } from './nvExcel';
 export function getLastRow(ws: any): Excel.Range {
 	const rangeA = ws.getRange('A:ZZ');
 	const lastRow = rangeA.find("*", {
@@ -133,7 +134,7 @@ export class wsObject extends AsyncConstructor {
 		lastCol.load('address');
 		await this.context!.sync();
 		const lastcolAd = new addressObj(lastCol.address);
-		const lastrowAd = new addressObj(lastCol.address);
+		const lastrowAd = new addressObj(lastRow.address);
 		this.lastCol = lastcolAd.cell1;
 		this.lastRow = lastrowAd.cell1;
 		this.name = this.ws!.name;
@@ -176,8 +177,11 @@ export class wsObject extends AsyncConstructor {
 
 		}
 	}
-	async activate() {
+	activate() {
 		this.ws?.activate();
+	}
+	setSheetValues() {
+		const rg = this.ws?.getRange(`A1:${this.lastCol.text}`);
 	}
 	async getValues(address: string) {
 		const rg = this.ws?.getRange(address);
@@ -185,41 +189,70 @@ export class wsObject extends AsyncConstructor {
 		await this.context?.sync();
 		console.log(rg?.values);
 	}
-	async setPrintAreabySelected() {
+	setPrintAreabySelected() {
 		this.ws?.pageLayout.setPrintArea(this.selectedRange)
 	}
-	async autoSetPrintArea() {
+	autoSetPrintArea() {
 		this.ws?.pageLayout.setPrintArea("A:" + this.lastCol.col)
 	}
-	async setPrintArea(address: string) {
+	setPrintArea(address: string) {
 		this.ws?.pageLayout.setPrintArea(address)
 	}
-	async setFont(fontName: string) {
-		const rg = this.ws!.getRange('A:Z')
-		console.log(rg);
-		rg.format.font.name = fontName;
+	setFont(fontName: string, address: string | undefined = undefined) {
+		const addr = address? address : 'A:Z'
+		this.ws!.getRange('A:Z').format.font.name = fontName;
 	}
-	async setBlackAndWhite() {
+	setBlackAndWhite() {
 		this.ws!.pageLayout.blackAndWhite = true;
 	}
-	async setPageMargin(top: number, bottom: number, left: number, right: number) {
+	setPageMargin(top: number, bottom: number, left: number, right: number) {
 		this.ws!.pageLayout.topMargin = top;
 		this.ws!.pageLayout.bottomMargin = bottom;
 		this.ws!.pageLayout.leftMargin = left;
 		this.ws!.pageLayout.rightMargin = right;
 	}
-	async setPaperType(paperType: string) {
+	setPaperType(paperType: string) {
 		this.ws!.pageLayout.paperSize = getPageType(paperType)
 	}
-	async setOrientation(ori: string) {
+	setOrientation(ori: string) {
 		this.ws!.pageLayout.orientation = getOrientationType(ori)
 	}
-	async setCenter(hor: boolean = false, ver: boolean = false) {
+	setCenter(hor: boolean = false, ver: boolean = false) {
 		this.ws!.pageLayout.centerHorizontally = hor;
 		this.ws!.pageLayout.centerVertically = ver;
 	}
-	async setPageZoom(hoz: number = 0, ver: number = 0) {
+	setPageZoom(hoz: number = 0, ver: number = 0) {
 		if (hoz !== 0) this.ws!.pageLayout.zoom = { horizontalFitToPages: 1 };
 		if (ver !== 0) this.ws!.pageLayout.zoom = { verticalFitToPages: 1 };
 	}
+	colWidth(col: string, w: number){
+		this.ws!.getRange(`${col}1`).format.columnWidth = w;
+	}
+	autoColWidth(col: string){
+		this.ws!.getRange(`${col}:${col}`).format.autofitColumns();
+	}
+	autoRowsHeight(address: string){
+		this.ws!.getRange(address).format.autofitRows();
+	}
+	rowsHeight(address:string, h: number) {
+		this.ws!.getRange(address).format.rowHeight = h;
+	}
+	mergeCells(address: string) {
+		this.ws?.getRange(address).merge();
+	}
+	verCenter(address: string) {
+		this.ws!.getRange(address)!.format.verticalAlignment = 'Center'
+	}
+	unmergeCells(address: string) {
+		this.ws!.getRange(address).unmerge();
+	}
+	async moveRange(from: string, to: string) {
+		const rg = this.ws!.getRange(from);
+		rg.load('values');
+		await this.context?.sync();
+		console.log(rg.values);
+		this.ws!.getRange(to).values = rg.values;
+		
+	}
+	
 }

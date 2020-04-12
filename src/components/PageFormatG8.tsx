@@ -4,7 +4,10 @@ import { Stack } from 'office-ui-fabric-react/lib/Stack';
 import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
 import { ws } from "../api/nvExcel";
 import { NvDefButton } from "./nvButton";
-import { BANG_CONG_TRINH } from "../constants/named";
+import { 
+	BANG_CONG_TRINH,
+	BANG_TONG_HOP_VAT_TU 
+} from "../constants/named";
 
 export interface AppProps {
 }
@@ -35,19 +38,66 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 	_formatPage = async () => {
 		console.log(ws);
 		await ws?.currentWs(BANG_CONG_TRINH)
+		console.log(ws);
+		
 		
 	}
 	async _formatCongTrinh() {
 		await ws?.currentWs(BANG_CONG_TRINH)
+		await ws?.setFont('Times New Roman', `A1:Z${ws.lastRow.row}`);
+		
+		ws?.mergeCells('A1:Z1')
+		ws?.mergeCells('A2:Z2')
+		ws?.mergeCells('A3:Z3')
+		ws?.rowsHeight('A3', 0)
 		ws?.getValues('A1:A2');
 		ws?.setPrintArea('A:W');
-		ws?.setFont('Times New Roman');
 		ws?.setBlackAndWhite();
 		ws?.setPaperType('a4');
 		ws?.setOrientation('landscape');
 		ws?.setPageZoom(1);
 		ws?.setPageMargin(50, 40, 40, 40);
 		ws?.setCenter(true);
+	}
+	async _formatTongHopVatTu() {
+		await ws?.currentWs(BANG_TONG_HOP_VAT_TU)
+		ws?.setPrintArea('A:P');
+		ws?.setFont('Times New Roman');
+		ws?.setBlackAndWhite();
+		ws?.setPaperType('a4');
+		ws?.setOrientation('portrait');
+		ws?.setPageZoom(1);
+		ws?.setPageMargin(49, 40, 50, 40);
+		ws?.setCenter(true);
+		ws?.colWidth('B', 0);
+		ws?.colWidth('J', 0);
+		ws?.colWidth('E', 86)
+		ws?.colWidth('O', 86)
+		ws?.colWidth('P', 86)
+		ws?.rowsHeight(`A1:A${ws.lastRow.row}`, 18)
+		ws?.verCenter(`A4:P${ws.lastRow.row}`)
+		ws?.unmergeCells('A3:R3');
+		await ws?.moveRange('A3', 'U3');
+		await ws?.moveRange('A4:R4', 'A3:R3')
+	}
+	async _formatHaoPhiVatTu() {
+		await ws?.currentWs(BANG_TONG_HOP_VAT_TU)
+		ws?.setPrintArea('A:P');
+		ws?.setFont('Times New Roman');
+		ws?.setBlackAndWhite();
+		ws?.setPaperType('a4');
+		ws?.setOrientation('portrait');
+		ws?.setPageZoom(1);
+		ws?.setPageMargin(49, 40, 50, 40);
+		ws?.setCenter(true);
+		ws?.colWidth('B', 0);
+		ws?.colWidth('J', 0);
+		ws?.colWidth('E', 86)
+		ws?.colWidth('O', 86)
+		ws?.colWidth('P', 86)
+		ws?.rowsHeight(`A1:A${ws.lastRow.row}`, 18)
+		ws?.verCenter(`A4:P${ws.lastRow.row}`)
+		
 	}
 	render() {
 		return (
@@ -58,7 +108,7 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 						<Stack className="btn-container" horizontal>
 							<NvDefButton text="Bảng dự toán hạng mục công trình" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng công trình" onClick={this._formatCongTrinh} isLoading={false} />
-							<NvDefButton text="Bảng tổng hợp vật tư" onClick={this._formatPage} isLoading={false} />
+							<NvDefButton text="Bảng tổng hợp vật tư" onClick={this._formatTongHopVatTu} isLoading={false} />
 							<NvDefButton text="Bảng hao phí vật tư" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng giá tháng" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng chiết tính" onClick={this._formatPage} isLoading={false} />
