@@ -6,7 +6,8 @@ import { ws } from "../api/nvExcel";
 import { NvDefButton } from "./nvButton";
 import { 
 	BANG_CONG_TRINH,
-	BANG_TONG_HOP_VAT_TU 
+	BANG_TONG_HOP_VAT_TU,
+	BANG_HAO_PHI_VAT_TU
 } from "../constants/named";
 
 export interface AppProps {
@@ -74,14 +75,15 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		ws?.colWidth('E', 86)
 		ws?.colWidth('O', 86)
 		ws?.colWidth('P', 86)
-		ws?.rowsHeight(`A1:A${ws.lastRow.row}`, 18)
+		ws?.rowsHeight(`A1:A3`, 18)
+		ws?.autoRowsHeight(`A5:A${ws.lastRow.row}`)
 		ws?.verCenter(`A4:P${ws.lastRow.row}`)
 		ws?.unmergeCells('A3:R3');
 		await ws?.moveRange('A3', 'U3');
 		await ws?.moveRange('A4:R4', 'A3:R3')
 	}
 	async _formatHaoPhiVatTu() {
-		await ws?.currentWs(BANG_TONG_HOP_VAT_TU)
+		await ws?.currentWs(BANG_HAO_PHI_VAT_TU)
 		ws?.setPrintArea('A:P');
 		ws?.setFont('Times New Roman');
 		ws?.setBlackAndWhite();
@@ -97,7 +99,6 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		ws?.colWidth('P', 86)
 		ws?.rowsHeight(`A1:A${ws.lastRow.row}`, 18)
 		ws?.verCenter(`A4:P${ws.lastRow.row}`)
-		
 	}
 	render() {
 		return (
@@ -109,7 +110,7 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 							<NvDefButton text="Bảng dự toán hạng mục công trình" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng công trình" onClick={this._formatCongTrinh} isLoading={false} />
 							<NvDefButton text="Bảng tổng hợp vật tư" onClick={this._formatTongHopVatTu} isLoading={false} />
-							<NvDefButton text="Bảng hao phí vật tư" onClick={this._formatPage} isLoading={false} />
+							<NvDefButton text="Bảng hao phí vật tư" onClick={this._formatHaoPhiVatTu} isLoading={false} />
 							<NvDefButton text="Bảng giá tháng" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng chiết tính" onClick={this._formatPage} isLoading={false} />
 							<NvDefButton text="Bảng dự thầu" onClick={this._formatPage} isLoading={false} />
