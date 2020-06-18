@@ -7,7 +7,8 @@ import { NvDefButton } from "./nvButton";
 import { 
 	BANG_CONG_TRINH,
 	BANG_TONG_HOP_VAT_TU,
-	BANG_HAO_PHI_VAT_TU
+	BANG_HAO_PHI_VAT_TU,
+	HAO_PHI_VAT_TU_NAME
 } from "../constants/named";
 
 export interface AppProps {
@@ -46,12 +47,17 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 	async _formatCongTrinh() {
 		await ws?.currentWs(BANG_CONG_TRINH)
 		await ws?.setFont('Times New Roman', `A1:Z${ws.lastRow.row}`);
-		
-		ws?.mergeCells('A1:Z1')
-		ws?.mergeCells('A2:Z2')
-		ws?.mergeCells('A3:Z3')
-		ws?.rowsHeight('A3', 0)
-		ws?.getValues('A1:A2');
+		const vals = await ws?.getValues(`D1:D${ws.lastRow.row}`);
+		vals?.forEach((e, i) => {
+			if (e[0] === 'T*') {
+				ws!.ws!.getRange(`D${i+1}`).format.rowHeight = 0;
+			}
+		})
+		ws?.mergeCells('A1:Z1');
+		ws?.mergeCells('A2:Z2');
+		ws?.mergeCells('A3:Z3');
+		ws?.rowsHeight('A3', 0);
+		await ws?.getValues('A1:A2');
 		ws?.setPrintArea('A:W');
 		ws?.setBlackAndWhite();
 		ws?.setPaperType('a4');
@@ -62,28 +68,30 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 	}
 	async _formatTongHopVatTu() {
 		await ws?.currentWs(BANG_TONG_HOP_VAT_TU)
-		ws?.setPrintArea('A:P');
-		ws?.setFont('Times New Roman');
-		ws?.setBlackAndWhite();
-		ws?.setPaperType('a4');
-		ws?.setOrientation('portrait');
-		ws?.setPageZoom(1);
-		ws?.setPageMargin(49, 40, 50, 40);
-		ws?.setCenter(true);
-		ws?.colWidth('B', 0);
-		ws?.colWidth('J', 0);
-		ws?.colWidth('E', 86)
-		ws?.colWidth('O', 86)
-		ws?.colWidth('P', 86)
-		ws?.rowsHeight(`A1:A3`, 18)
-		ws?.autoRowsHeight(`A5:A${ws.lastRow.row}`)
-		ws?.verCenter(`A4:P${ws.lastRow.row}`)
-		ws?.unmergeCells('A3:R3');
-		await ws?.moveRange('A3', 'U3');
-		await ws?.moveRange('A4:R4', 'A3:R3')
+		// ws?.setPrintArea('A:P');
+		// ws?.setFont('Times New Roman');
+		// ws?.setBlackAndWhite();
+		// ws?.setPaperType('a4');
+		// ws?.setOrientation('portrait');
+		// ws?.setPageZoom(1);
+		// ws?.setPageMargin(49, 40, 50, 40);
+		// ws?.setCenter(true);
+		// ws?.colWidth('B', 0);
+		// ws?.colWidth('J', 0);
+		// ws?.colWidth('E', 86);
+		// ws?.colWidth('O', 86);
+		// ws?.colWidth('P', 86);
+		// ws?.rowsHeight(`A1:A3`, 18);
+		// ws?.autoRowsHeight(`A5:A${ws.lastRow.row}`);
+		// ws?.verCenter(`A4:P${ws.lastRow.row}`);
+		// ws?.unmergeCells('A3:R3');
+		const vals = await ws?.getValues(`A1:P${ws.lastRow.row}`);
+		await ws?.sheetSlice(vals, HAO_PHI_VAT_TU_NAME)
+		// await ws?.moveRange('A3', 'U3');
+		// await ws?.moveRange('A4:R4', 'A3:R3');
 	}
 	async _formatHaoPhiVatTu() {
-		await ws?.currentWs(BANG_HAO_PHI_VAT_TU)
+		await ws?.currentWs(BANG_HAO_PHI_VAT_TU);
 		ws?.setPrintArea('A:P');
 		ws?.setFont('Times New Roman');
 		ws?.setBlackAndWhite();

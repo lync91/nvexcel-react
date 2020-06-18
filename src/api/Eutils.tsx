@@ -1,6 +1,7 @@
 import { AsyncConstructor } from 'async-constructor';
 import { getPageType, getOrientationType } from "./mapIndex";
 import { ws } from './nvExcel';
+import { HAO_PHI_VAT_TU_NAME } from '../constants/named';
 export function getLastRow(ws: any): Excel.Range {
 	const rangeA = ws.getRange('A:ZZ');
 	const lastRow = rangeA.find("*", {
@@ -93,7 +94,7 @@ export interface getLastColTypes {
 	name?: string | null;
 }
 export class wsObject extends AsyncConstructor {
-	private ws: Excel.Worksheet | null = null;
+	ws: Excel.Worksheet | null = null;
 	private context: Excel.RequestContext | null = null;
 	wsName: string | null = null;
 	name!: string;
@@ -187,7 +188,17 @@ export class wsObject extends AsyncConstructor {
 		const rg = this.ws?.getRange(address);
 		rg?.load('values');
 		await this.context?.sync();
-		console.log(rg?.values);
+		return rg?.values;
+	}
+	async getFomulas(address: string) {
+		const rg = this.ws?.getRange(address);
+		rg?.load('formulasR1C1');
+		await this.context?.sync();
+		return rg?.formulasR1C1;
+	}
+	async addValues(address: string, values: any[][]) {
+		const rg = this.ws?.getRange(address);
+		rg!.values = values;
 	}
 	setPrintAreabySelected() {
 		this.ws?.pageLayout.setPrintArea(this.selectedRange)
@@ -250,9 +261,34 @@ export class wsObject extends AsyncConstructor {
 		const rg = this.ws!.getRange(from);
 		rg.load('values');
 		await this.context?.sync();
-		console.log(rg.values);
 		this.ws!.getRange(to).values = rg.values;
 		
 	}
+	async sheetSlice(values: any, tbName: string) {
+		let valuesMap: any[] = [];
+		await values.forEach((e: any[], i: number) => {
+			if (e[0] === HAO_PHI_VAT_TU_NAME) {
+				valuesMap.push(i)
+			}
+		});
+		valuesMap.forEach(async (e, i) => {
+			const sheets = this.context!.workbook.worksheets;
+			console.log(sheets);
+    		const sheet = sheets.add();
+		})
+		
+	}
+	async addSheet(name: string) {
+		try {
+			await Excel.run(async context => {
+				const sheets = context.workbook.worksheets;
+				const sheet = sheets.add(name);
+				sheet.load('name');
+			})
+		} catch (error) {
+		}
+		
+	}
+	async save() {}
 	
 }

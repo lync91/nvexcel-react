@@ -65,6 +65,12 @@ class NavMenu extends Component<AppProps, AppState> {
                   url: '',
                   key: '/charConvert',
                   target: '',
+                },
+                {
+                  name: 'Công cụ khác',
+                  url: '',
+                  key: '/otherTools',
+                  target: '',
                 }
               ],
               isExpanded: true
