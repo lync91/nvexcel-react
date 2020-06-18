@@ -14,7 +14,7 @@ import { AppContext } from "./contexts/AppContext";
 const CharConvert = React.lazy(() => import('./components/CharConvert'));
 const PageFormat = React.lazy(() => import('./components/PageFormat'));
 const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
-const OtherTools = React.lazy(() => import('./components/otherTools'));
+const TaoMauKhoiLuong = React.lazy(() => import('./components/TaoMauKhoiLuong'));
 
 export interface AppState {
   isOpen: boolean;
@@ -51,7 +51,7 @@ class App extends Component<{}, AppState> {
                     <Route path="/charConvert" component={CharConvert} />
                     <Route path="/PageFormat" component={PageFormat} />
                     <Route path="/PageFormatG8" component={PageFormatG8} />
-                    <Route path="/otherTools" component={OtherTools} />
+                    <Route path="/TaoMauKhoiLuong" component={TaoMauKhoiLuong} />
                   </Switch>
                 </section>
               </Suspense>

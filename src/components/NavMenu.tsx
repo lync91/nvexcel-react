@@ -40,7 +40,20 @@ class NavMenu extends Component<AppProps, AppState> {
               url: '',
               key: 'key3',
               isExpanded: true,
-              target: ''
+              links: [
+                {
+                  name: 'Tạo, sửa mẫu tổng hợp khối lượng',
+                  url: '',
+                  key: '/TaoMauKhoiLuong',
+                  target: '',
+                },
+                {
+                  name: 'MSN',
+                  url: '',
+                  key: 'key2',
+                  target: '',
+                }
+              ],
             },
             {
               name: 'Công cụ',
