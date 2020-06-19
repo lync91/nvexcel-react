@@ -27,19 +27,6 @@ export interface addressTypes {
 	row: string
 }
 
-// export function addressParse(txt:string): addressTypes {
-//     const data: addressTypes = {
-//         text: '',
-//         col: '',
-//         row: 1
-//     }
-//     data.text = txt.replace(/(([^!]+)?)!/g, '')
-//     console.log(data);
-
-
-//     return data;
-// }
-
 export class addressObj {
 	sheet!: string;
 	text!: string;
