@@ -10,6 +10,7 @@ import './App.css';
 import CommandBarMain from "./components/CommandBarMain";
 import MenuPanel from "./components/MenuPanel";
 import { AppContext } from "./contexts/AppContext";
+import socket from "./socket";
 // import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 const CharConvert = React.lazy(() => import('./components/CharConvert'));
 const PageFormat = React.lazy(() => import('./components/PageFormat'));
@@ -38,6 +39,7 @@ class App extends Component<{}, AppState> {
   openPanel () { this.setState({ isOpen: true })};
   dismissPanel () {this.setState({ isOpen: false })}
   render() {
+    socket.on('elog', (data: any) => console.log(data));
     return (
       <AppContext.Provider value={this.state}>
         <div className="App">

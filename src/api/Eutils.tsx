@@ -133,9 +133,9 @@ export class wsObject extends AsyncConstructor {
 		this.name = name;
 		this.getWorksheet(name).then(x => this.initWsInfo())
 	}
-	async getWorksheet(newWS: string| null = null) {
+	async getWorksheet(newWS: string | null = null) {
 		const promise = new Promise(async (resolve, rejects) => {
-			const name = newWS? newWS : this.wsName;
+			const name = newWS ? newWS : this.wsName;
 			this.ws = this.context!.workbook.worksheets.getItemOrNullObject(name!);
 			resolve()
 		})
@@ -197,7 +197,7 @@ export class wsObject extends AsyncConstructor {
 		this.ws?.pageLayout.setPrintArea(address)
 	}
 	setFont(fontName: string, address: string | undefined = undefined) {
-		const addr = address? address : 'A:Z'
+		const addr = address ? address : 'A:Z'
 		this.ws!.getRange('A:Z').format.font.name = fontName;
 	}
 	setBlackAndWhite() {
@@ -223,16 +223,16 @@ export class wsObject extends AsyncConstructor {
 		if (hoz !== 0) this.ws!.pageLayout.zoom = { horizontalFitToPages: 1 };
 		if (ver !== 0) this.ws!.pageLayout.zoom = { verticalFitToPages: 1 };
 	}
-	colWidth(col: string, w: number){
+	colWidth(col: string, w: number) {
 		this.ws!.getRange(`${col}1`).format.columnWidth = w;
 	}
-	autoColWidth(col: string){
+	autoColWidth(col: string) {
 		this.ws!.getRange(`${col}:${col}`).format.autofitColumns();
 	}
-	autoRowsHeight(address: string){
+	autoRowsHeight(address: string) {
 		this.ws!.getRange(address).format.autofitRows();
 	}
-	rowsHeight(address:string, h: number) {
+	rowsHeight(address: string, h: number) {
 		this.ws!.getRange(address).format.rowHeight = h;
 	}
 	mergeCells(address: string) {
@@ -240,6 +240,15 @@ export class wsObject extends AsyncConstructor {
 	}
 	verCenter(address: string) {
 		this.ws!.getRange(address)!.format.verticalAlignment = 'Center'
+	}
+	horCenter(address: string) {
+		this.ws!.getRange(address)!.format.horizontalAlignment = 'Center'
+	}
+	setBold(address: string) {
+		this.ws!.getRange(address)!.format.font.bold = true
+	}
+	setWrapText(address: string) {
+		this.ws!.getRange(address)!.format.wrapText = true
 	}
 	unmergeCells(address: string) {
 		this.ws!.getRange(address).unmerge();
@@ -249,7 +258,7 @@ export class wsObject extends AsyncConstructor {
 		rg.load('values');
 		await this.context?.sync();
 		this.ws!.getRange(to).values = rg.values;
-		
+
 	}
 	async sheetSlice(values: any, tbName: string) {
 		let valuesMap: any[] = [];
@@ -261,9 +270,9 @@ export class wsObject extends AsyncConstructor {
 		valuesMap.forEach(async (e, i) => {
 			const sheets = this.context!.workbook.worksheets;
 			console.log(sheets);
-    		const sheet = sheets.add();
+			const sheet = sheets.add();
 		})
-		
+
 	}
 	async addSheet(name: string) {
 		try {
@@ -274,8 +283,33 @@ export class wsObject extends AsyncConstructor {
 			})
 		} catch (error) {
 		}
-		
+
 	}
-	async save() {}
-	
+	async getSelectedValues() {
+		const rg = this.context?.workbook.getSelectedRange();
+		rg?.load('values');
+		await this.context?.sync();
+		return rg?.values;
+	}
+	async save() { }
+	async setCustomConditionalFormat(address: string, formula: string, color: string | null, bold: boolean, italic: boolean, border: boolean) {
+		const rg = this.ws?.getRange(address);
+		const conditionalFormat = rg?.conditionalFormats.add(Excel.ConditionalFormatType.custom);
+		conditionalFormat!.custom.rule.formula = formula;
+		if (color) conditionalFormat!.custom.format.font.color = color;
+		conditionalFormat!.custom.format.font.bold = bold;
+		conditionalFormat!.custom.format.font.italic = italic;
+		if (border) {
+			conditionalFormat!.custom.format.borders.getItem('EdgeBottom').style = 'Continuous';
+			conditionalFormat!.custom.format.borders.getItem('EdgeLeft').style = 'Continuous';
+			conditionalFormat!.custom.format.borders.getItem('EdgeRight').style = 'Continuous';
+			conditionalFormat!.custom.format.borders.getItem('EdgeTop').style = 'Continuous';
+		}
+
+	}
+	async createTable(address: string, name: string, values: string[][] | null) {
+		const expensesTable = this.ws!.tables.add(address, true /*hasHeaders*/);
+		expensesTable.name = name;
+		if (values) expensesTable.rows.add(undefined, values)
+	}
 }

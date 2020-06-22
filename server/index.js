@@ -8,7 +8,6 @@ var credentials = {key: privateKey, cert: certificate};
 var https = require('https').createServer(credentials, app);
 var io = require('socket.io')(https);
 var setupdb = require('./db/setup');
-
 app.get('/', (req, res) => {
     res.send('<h1>Hello world</h1>');
 });
@@ -22,9 +21,11 @@ io.on('connection', (socket) => {
     console.log('a user connected');
     socket.on('hello', (fn) => {
         console.log('Hello');
-        
         fn('hello')
     })
+    socket.on('elog', (data) => {
+        io.emit('elog', data);
+    }) 
   });
 
 https.listen(8080, () => {

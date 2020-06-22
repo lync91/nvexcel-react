@@ -6,7 +6,7 @@ module.exports = {
             knex.schema.createTableIfNotExists('mauKhoiLuong', (table) => {
                 table.increments();
                 table.string('tenBophan');
-                table.string('data');
+                table.json('data');
                 table.timestamps();
             }).then(() => {
                 console.log('OKKK');
