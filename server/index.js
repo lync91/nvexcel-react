@@ -37,6 +37,9 @@ io.on('connection', (socket) => {
         console.log('Hello');
         fn('hello')
     })
+    socket.on('elog', (data) => {
+        io.emit('elog', data)
+    })
     nvsocket(socket);
   });
 

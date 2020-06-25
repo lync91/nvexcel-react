@@ -123,6 +123,8 @@ export class wsObject extends AsyncConstructor {
 		await this.context!.sync();
 		const lastcolAd = new addressObj(lastCol.address);
 		const lastrowAd = new addressObj(lastRow.address);
+		console.log(this.ws!.name);
+		
 		this.lastCol = lastcolAd.cell1;
 		this.lastRow = lastrowAd.cell1;
 		this.name = this.ws!.name;
@@ -154,6 +156,18 @@ export class wsObject extends AsyncConstructor {
 		})
 		return promise
 	}
+
+	async checkWsExits(name: string) {
+		const promise = new Promise(async (resolve, rejects) => {
+			const ws = this.context!.workbook.worksheets.getItemOrNullObject(name);
+			ws.load('name')
+			await this.context!.sync();
+			resolve(ws.name)
+			this.name = ws.name;
+		})
+		return promise
+	}
+
 	async create() {
 		try {
 			await Excel.run(async context => {

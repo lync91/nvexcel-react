@@ -4,5 +4,8 @@ module.exports = function (socket) {
     socket.on('khoiluong/mau/add', (data, fn) => {
         mauKhoiLuongCtrl.add(data, (res) => fn(res));
     })
+    socket.on('khoiluong/mau/getLoaiCongTrinh', (fn) => {
+        mauKhoiLuongCtrl.getLoaiCongTrinh((err, res) => fn(res));
+    })
     
 }
