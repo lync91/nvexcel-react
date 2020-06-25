@@ -35,3 +35,42 @@
     transform: rotate(360deg);
   }
 }
+.p-b-5 {
+  padding-bottom: 5px;
+}
+
+#components-layout-demo-custom-trigger .trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+#components-layout-demo-custom-trigger .trigger:hover {
+  color: #1890ff;
+}
+
+#components-layout-demo-custom-trigger .logo {
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  margin: 16px;
+}
+
+.site-layout .site-layout-background {
+  background: #fff;
+}
+
+.header {
+  height: 40px;
+  background: #fff;
+  line-height: 40px;
+  padding-left: 4px !important;
+}
+
+.ant-form-horizontal .ant-form-item {
+  margin-bottom: 4px !important;
+}
+.ant-form-horizontal .ant-form-item-label {
+  padding-bottom: 4px !important;
+}
