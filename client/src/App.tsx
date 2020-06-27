@@ -19,15 +19,13 @@ import {
   MailOutlined,
   SettingOutlined
 } from '@ant-design/icons';
-// import CommandBarMain from "./components/CommandBarMain";
-// import MenuPanel from "./components/MenuPanel";
 import { AppContext } from "./contexts/AppContext";
 import socket from "./socket";
-// import { Spinner, SpinnerSize } from 'office-ui-fabric-react/lib/Spinner';
 const CharConvert = React.lazy(() => import('./components/CharConvert'));
 const PageFormat = React.lazy(() => import('./components/PageFormat'));
 const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
 const TaoMauKhoiLuong = React.lazy(() => import('./components/TaoMauKhoiLuong'));
+const TienLuong = React.lazy(() => import('./components/TienLuong'));
 
 export interface AppState {
   isOpen: boolean;
@@ -47,6 +45,8 @@ class App extends Component<{}, AppState> {
       isOpen: false,
       selectedKey: history.location.toString(),
       dismissPanel: (item: any) => {
+        console.log('this is context');
+        
         history.push(item.key)
         this.setState({ selectedKey: item.key })
         this.setState({ isOpen: false })
@@ -71,13 +71,8 @@ class App extends Component<{}, AppState> {
   }
   rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
   onOpenChange = (openKeys: string[]) => {
-    console.log(openKeys);
-    
-    console.log(this.state.openKeys);
-    
     const latestOpenKey = openKeys.find(key => this.state.openKeys.indexOf(key) === -1);
     console.log('latest', latestOpenKey);
-    
     if (this.rootSubmenuKeys.indexOf(latestOpenKey!) === -1) {
       this.setState({ openKeys: openKeys });
     } else {
@@ -87,8 +82,6 @@ class App extends Component<{}, AppState> {
     }
   };
   onSelect = (data: any) => {
-    console.log(data);
-    
     history.push(data.key);
     this.setState({selectedKeys: data.selectedKeys})
     this.setState({ collapsed: !this.state.collapsed })
@@ -126,18 +119,15 @@ class App extends Component<{}, AppState> {
                     </span>
                   }
                 >
-                  <Menu.ItemGroup key="tracuuThuVienMauKhoiLuong" title="Tra cứu thư viện">
-                    <Menu.Item key="tracuuMauKhoiLuong">Mẫu khối lượng</Menu.Item>
-                    <Menu.Item key="2">Mẫu thống kê thép bê tông</Menu.Item>
-                    <Menu.Item key="3">Mẫu thống kê thép thép hình</Menu.Item>
+                  <Menu.ItemGroup key="tracuuThuVienMauKhoiLuong" title="Thao tác">
+                    <Menu.Item key="/TienLuong">Bảng tiên lượng</Menu.Item>
+                    <Menu.Item key="2">Thống kê thép bê tông</Menu.Item>
+                    <Menu.Item key="3">Thống kê thép thép hình</Menu.Item>
                   </Menu.ItemGroup>
                   <Menu.ItemGroup key="g2" title="Quản lý thư viện">
-                    <Menu.Item key="/TaoMauKhoiLuong">Tạo mẫu khối lượng</Menu.Item>
-                    <Menu.Item key="5">Sửa mẫu khối lượng</Menu.Item>
-                    <Menu.Item key="6">Tạo mẫu thống kê thép bê tông</Menu.Item>
-                    <Menu.Item key="7">Sửa mẫu thống kê thép bê tông</Menu.Item>
-                    <Menu.Item key="8">Tạo mẫu thống kê thép hình</Menu.Item>
-                    <Menu.Item key="9">Sửa mẫu thống kê thép hình</Menu.Item>
+                    <Menu.Item key="/TaoMauKhoiLuong">Mẫu khối lượng</Menu.Item>
+                    <Menu.Item key="6">Mẫu thống kê thép bê tông</Menu.Item>
+                    <Menu.Item key="8">Mẫu thống kê thép hình</Menu.Item>
                   </Menu.ItemGroup>
                 </SubMenu>
                 <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Dự toán">
@@ -170,6 +160,7 @@ class App extends Component<{}, AppState> {
                         <Route path="/PageFormat" component={PageFormat} />
                         <Route path="/PageFormatG8" component={PageFormatG8} />
                         <Route path="/TaoMauKhoiLuong" component={TaoMauKhoiLuong} />
+                        <Route path="/TienLuong" component={TienLuong} />
                       </Switch>
                     </section>
                   </Suspense>

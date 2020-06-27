@@ -2,6 +2,8 @@ import { AsyncConstructor } from 'async-constructor';
 import { getPageType, getOrientationType } from "./mapIndex";
 import { ws } from './nvExcel';
 import { HAO_PHI_VAT_TU_NAME } from '../constants/named';
+import { sheetMap } from "../constants/map";
+
 export function getLastRow(ws: any): Excel.Range {
 	const rangeA = ws.getRange('A:ZZ');
 	const lastRow = rangeA.find("*", {
@@ -88,9 +90,12 @@ export class wsObject extends AsyncConstructor {
 	lastCol!: addressTypes;
 	lastRow!: addressTypes;
 	selectedRange!: string;
+	sheetMap: any
 	constructor(wsName: string | null = null) {
 		super(async () => {
 			this.wsName = wsName;
+			this.sheetMap = new sheetMap();
+			
 			await this.initContext()
 				.then(async x => {
 					if (wsName) {
@@ -124,11 +129,28 @@ export class wsObject extends AsyncConstructor {
 		const lastcolAd = new addressObj(lastCol.address);
 		const lastrowAd = new addressObj(lastRow.address);
 		console.log(this.ws!.name);
-		
+
 		this.lastCol = lastcolAd.cell1;
 		this.lastRow = lastrowAd.cell1;
 		this.name = this.ws!.name;
 		this.selectedRange = rg.address;
+	}
+	async regEvents() {
+		let sheets = this.context?.workbook.worksheets;
+		sheets?.onActivated.add(this.onActivate);
+		sheets?.onSelectionChanged.add(this.onSelectionChanged)
+		await this.context?.sync();
+		console.log("A handler has been registered for the OnActivate event.");
+	}
+	async onActivate(event: any) {
+		const name = await ws?.getActivedSheetName();
+		ws?.sheetMap.navigate(name)
+		
+		
+	}
+	async onSelectionChanged() {
+		await this.getActive();
+		console.log(this.name);
 	}
 	async currentWs(name: string) {
 		this.wsName = name;
@@ -166,6 +188,13 @@ export class wsObject extends AsyncConstructor {
 			this.name = ws.name;
 		})
 		return promise
+	}
+
+	async getActivedSheetName() {
+		const ws = this.context!.workbook.worksheets.getActiveWorksheet()
+		ws.load('name')
+		await this.context?.sync();
+		return ws.name
 	}
 
 	async create() {
