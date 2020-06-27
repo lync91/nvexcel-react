@@ -1,6 +1,5 @@
 var mongoose = require('mongoose');
-const { fn } = require('..');
-var MauKhoiLuong = mongoose.model('mauKhoiLuong');
+var MauKhoiLuong = mongoose.model('maukhoiluong');
 
 module.exports = {
     add: (data, fn) => {

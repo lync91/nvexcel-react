@@ -75,6 +75,11 @@ anymatch@~3.1.1:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
 
+arch@^2.1.1:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/arch/-/arch-2.1.2.tgz#0c52bbe7344bb4fa260c443d2cbad9c00ff2f0bf"
+  integrity sha512-NTBIIbAfkJeIletyABbVtdPgeKfDafR+1mZV/AyyfC1UkVkp9iUjV+wwmqtUgphHYajbI86jejBJp5e+jkGTiQ==
+
 arr-diff@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/arr-diff/-/arr-diff-4.0.0.tgz#d6461074febfec71e7e15235761a329a5dc7c520"
@@ -124,6 +129,11 @@ async-limiter@~1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/async-limiter/-/async-limiter-1.0.1.tgz#dd379e94f0db8310b08291f9d64c3209766617fd"
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
+
+async@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/async/-/async-3.2.0.tgz#b3a2685c5ebb641d3de02d161002c60fc9f85720"
+  integrity sha512-TR2mEZFVOj2pLStYxLht7TyfuRzaydfpxr3k9RpHIzMgw7A64dzsdqCxH1WJyQdoe8T10nDXd9wnEigmiuHIZw==
 
 atob@^2.1.2:
   version "2.1.2"
@@ -474,6 +484,31 @@ crypto-random-string@^2.0.0:
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-2.0.0.tgz#ef2a7a966ec11083388369baa02ebead229b30d5"
   integrity sha512-v1plID3y9r/lPhviJ1wrXpLeyUIGAZ2SHNYTEapm7/8A9nLPoyvVp3RK/EPFqn5kEznyWgYZNsRtYYIWbuG8KA==
 
+csv-file-to-json@^4.0.3:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/csv-file-to-json/-/csv-file-to-json-4.0.3.tgz#d187f8d874933ba7f9adee79f5230e03b0ca015c"
+  integrity sha512-TuTw2AbqH94FHX0TrpIhY+C+FZr8cnZOtIxZCSPMqZQ1eVaEyp/QLCei59OyAqfFr93YcuuU2K1OdKtPhr5S8Q==
+
+data-to-json@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/data-to-json/-/data-to-json-1.0.5.tgz#31b7f6b55247220c10decb247d987446280418b3"
+  integrity sha512-6/uRrXmVSup+M4ye/8f+omfZel8ppwBKkJWwzEAD4ddSzWdv3gkFSkxfR38uW7s3EXGGJHGNjjbJnelBZLkEsw==
+  dependencies:
+    csv-file-to-json "^4.0.3"
+    txt-file-to-json "^3.0.6"
+
+database-js-adodb@^1.1.3:
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/database-js-adodb/-/database-js-adodb-1.1.3.tgz#0d16939dd15d8fd55371eb72e55dbc9733d9be9e"
+  integrity sha512-ktD/06LAQr44FJCL/jgWZtor+Yjol+sukAXBoFHRFypisHHCLBSc8Xtm0e4XzucALpcpJi+9pfTfx3ku7Gsrhg==
+  dependencies:
+    node-adodb "^5.0.2"
+
+database-js2@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/database-js2/-/database-js2-1.4.2.tgz#4dc3901557335a487c3c1830d26717a6d62c8eaa"
+  integrity sha512-NWrBvJm/eZ4UcwLkaA5rpZaqJHVRN8isZr7RZ9j1ezgeVaTR+Ybhs6CAi9kd/9MTieOUz2GoQwfIzKMdg9Mq9A==
+
 debug@2.6.9, debug@^2.2.0, debug@^2.3.3:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -488,7 +523,7 @@ debug@3.1.0, debug@~3.1.0:
   dependencies:
     ms "2.0.0"
 
-debug@4.1.1, debug@~4.1.0:
+debug@4.1.1, debug@^4.1.1, debug@~4.1.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/debug/-/debug-4.1.1.tgz#3b72260255109c6b589cee050f1d516139664791"
   integrity sha512-pYAIzeRo8J6KPEaJ0VWOh5Pzkbw/RetuzehGM7QRRX5he4fPHx2rdKMB256ehJCkX+XRQm16eZLqLNS8RSZXZw==
@@ -1653,6 +1688,14 @@ negotiator@0.6.2:
   resolved "https://registry.yarnpkg.com/negotiator/-/negotiator-0.6.2.tgz#feacf7ccf525a77ae9634436a64883ffeca346fb"
   integrity sha512-hZXc7K2e+PgeI1eDBe/10Ard4ekbfrrqG8Ep+8Jmf4JID2bNg7NvCPOZN+kfF574pFQI7mum2AUqDidoKqcTOw==
 
+node-adodb@^5.0.2, node-adodb@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/node-adodb/-/node-adodb-5.0.3.tgz#bdf074a474a6b5374b407323efe8661b05e952b4"
+  integrity sha512-xQnoe7mx3b7B0QeW6visiQ2VxlX6rYaol20Ka5jZVKcetxOsXM4lsxfEZDmlOOoVJq/6BeoqPJHm3aZ4vjY+Bg==
+  dependencies:
+    arch "^2.1.1"
+    debug "^4.1.1"
+
 nodemon@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.4.tgz#55b09319eb488d6394aa9818148c0c2d1c04c416"
@@ -2054,6 +2097,11 @@ saslprep@^1.0.0:
   dependencies:
     sparse-bitfield "^3.0.3"
 
+sax@>=0.6.0:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/sax/-/sax-1.2.4.tgz#2816234e2378bddc4e5354fab5caa895df7100d9"
+  integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
+
 semver-diff@^3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/semver-diff/-/semver-diff-3.1.1.tgz#05f77ce59f325e00e2706afd67bb506ddb1ca32b"
@@ -2405,6 +2453,11 @@ touch@^3.1.0:
   dependencies:
     nopt "~1.0.10"
 
+txt-file-to-json@^3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/txt-file-to-json/-/txt-file-to-json-3.0.6.tgz#3694b3b3304e62c4b9f1ef25c1998659e936923a"
+  integrity sha512-DoMaLb7+UTPVRSO+lrKpI/v/md8ONdH1WMyG2V1A8vcwNH6NRkVUXy+kv2e42eSWQPnZ/e2mDTmPqyP+VFN/2A==
+
 type-fest@^0.8.1:
   version "0.8.1"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
@@ -2575,6 +2628,19 @@ xdg-basedir@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/xdg-basedir/-/xdg-basedir-4.0.0.tgz#4bc8d9984403696225ef83a1573cbbcb4e79db13"
   integrity sha512-PSNhEJDejZYV7h50BohL09Er9VaIefr2LMAf3OEmpCkjOi34eYyQYAXUTjEQtZJTKcF0E2UKTh+osDLsgNim9Q==
+
+xml2js@^0.4.23:
+  version "0.4.23"
+  resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.23.tgz#a0c69516752421eb2ac758ee4d4ccf58843eac66"
+  integrity sha512-ySPiMjM0+pLDftHgXY4By0uswI3SPKLDw/i3UXbnO8M/p28zqexCUoPmQFrYD+/1BzhGJSs2i1ERWKJAtiLrug==
+  dependencies:
+    sax ">=0.6.0"
+    xmlbuilder "~11.0.0"
+
+xmlbuilder@~11.0.0:
+  version "11.0.1"
+  resolved "https://registry.yarnpkg.com/xmlbuilder/-/xmlbuilder-11.0.1.tgz#be9bae1c8a046e76b31127726347d0ad7002beb3"
+  integrity sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==
 
 xmlhttprequest-ssl@~1.5.4:
   version "1.5.5"

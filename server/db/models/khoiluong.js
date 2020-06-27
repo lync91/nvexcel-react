@@ -10,4 +10,4 @@ mauKhoiLuongSchema.statics.add = (data, fn) => {
 }
 mauKhoiLuongSchema.statics.getLoaiCongTrinh = (fn) => {
 }
-mongoose.model("mauKhoiLuong", mauKhoiLuongSchema);
+mongoose.model("maukhoiluong", mauKhoiLuongSchema);
