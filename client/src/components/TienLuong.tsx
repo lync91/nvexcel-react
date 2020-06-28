@@ -1,15 +1,22 @@
-import React, { Component, useRef } from "react";
-import { Select, Form, Input, Button, Checkbox, Tabs, AutoComplete, message, Empty } from 'antd';
+import React, { Component } from "react";
+import { 
+	Select, 
+	Form, 
+	Input, 
+	Button, 
+	Tabs, 
+	AutoComplete, 
+	message, 
+	Empty, 
+	List, 
+	Skeleton, 
+	Avatar } from 'antd';
 import { FormInstance } from 'antd/lib/form';
-import { ws, init } from "../api/nvExcel";
+import { ws } from "../api/nvExcel";
 import { initBangTienLuong } from "../api/libKhoiLuong";
 import {
-	BANG_CONG_TRINH,
-	BANG_TONG_HOP_VAT_TU,
-	BANG_HAO_PHI_VAT_TU,
 	TIEN_LUONG_SHEET_NAME,
 } from "../constants/named";
-import { MAU_KHOI_LUONG, TONG_HOP_KHOI_LUONG_HEADER, KHOI_LUONG_DEFAULT_VALUES } from "../constants/values";
 import socket from "../socket";
 
 
@@ -27,8 +34,12 @@ export interface AppStates {
 	id: string | undefined;
 	loaiCongTrinh: string | undefined;
 	tenBophan: string | undefined;
-	data: string | undefined;
-	field: any
+	data: any[] | undefined;
+	field: any,
+	lstLoaiCongTrinh: any[],
+	initLoading: boolean,
+	loading: boolean,
+	list: any[]
 }
 
 export interface orientationOptions {
@@ -49,24 +60,32 @@ export class TienLuong extends Component<AppProps, AppStates> {
 			id: undefined,
 			loaiCongTrinh: undefined,
 			tenBophan: undefined,
-			data: undefined,
-			field: {}
+			field: {},
+			lstLoaiCongTrinh: [],
+			initLoading: true,
+			loading: false,
+			data: [],
+			list: [],
 		}
 	}
 
 	formRef = React.createRef<FormInstance>();
 
 	async prepair() {
-		ws?.checkWsExits(TIEN_LUONG_SHEET_NAME)
-			.then(name => {
-				console.log(name);
-				name ? this.setState({ wsExits: true }) : this.setState({ wsExits: false })
-			})
+		const name = await ws?.checkWsExits(TIEN_LUONG_SHEET_NAME)
+		// name ? this.setState({ wsExits: true }) : this.setState({ wsExits: false })
+		if (name) {
+			await ws?.currentWs(TIEN_LUONG_SHEET_NAME)
+			ws?.activate();
+			this.setState({ wsExits: true })
+		} else {
+			this.setState({ wsExits: false })
+		}
 	}
 
 	componentDidMount() {
 		this.prepair()
-		socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => console.log(data))
+		socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({lstLoaiCongTrinh: data}))
 	}
 	_taoBangmau = async () => {
 		await ws?.addSheet(TIEN_LUONG_SHEET_NAME);
@@ -77,6 +96,9 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		ws?.addValues('A6', [['HM']])
 		ws?.addValues('A7', [['#']])
 	}
+	_selectLoaiCongTrinh(value: string) {
+		
+	}
 	_onFinish = async (values: any) => {
 		console.log(values);
 		await ws?.getActive();
@@ -86,14 +108,13 @@ export class TienLuong extends Component<AppProps, AppStates> {
 			data: JSON.stringify(val),
 			loaiCongTrinh: values.loaiCongTrinh
 		}
-		socket.emit('khoiluong/mau/add', data, (res: any) => {
+		socket.emit('khoiluong/mau/add', data, () => {
 			this.formRef.current?.resetFields();
 			message.success('Đã lưu mẫu khối lượng thành công');
 		});
 	}
 
 	render() {
-		const { TextArea } = Input;
 		const { TabPane } = Tabs;
 		return (
 			<section>
@@ -117,7 +138,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 					</Empty>
 				</div>
 				<Tabs hidden={!this.state.wsExits} defaultActiveKey="1">
-					<TabPane tab="Tạo mới" key="1">
+					<TabPane tab="Menu" key="1">
 						<Form ref={this.formRef} onFinish={this._onFinish}>
 							<Form.Item label='Loại công trình' name='loaiCongTrinh'>
 								<AutoComplete />
@@ -132,15 +153,17 @@ export class TienLuong extends Component<AppProps, AppStates> {
 							</Form.Item>
 						</Form>
 					</TabPane>
-					<TabPane tab="Sửa mẫu" key="2">
+					<TabPane tab="Thư viện" key="2">
 						<Form ref={this.formRef} onFinish={this._onFinish}>
 							<Form.Item label='Loại công trình' name='loaiCongTrinh'>
 							<Select
 								showSearch
-								placeholder="Select a person"
+								options={this.state.lstLoaiCongTrinh}
+								placeholder="Chọn loại công trình"
 								optionFilterProp="children"
+								onSelect={(val: string) => this._selectLoaiCongTrinh(val)}
 								filterOption={(input, option) =>
-								option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+									option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 								}
 							>
 							</Select>
@@ -148,12 +171,30 @@ export class TienLuong extends Component<AppProps, AppStates> {
 							<Form.Item label='Tên bộ phận' name='tenBoPhan' >
 								<Input />
 							</Form.Item>
-							<Form.Item style={{ paddingTop: 4, paddingBottom: 4 }}>
-								<Button type="primary" htmlType="submit">
-									Lưu
-								</Button>
-							</Form.Item>
 						</Form>
+						<List
+							className="demo-loadmore-list"
+							loading={this.state.initLoading}
+							itemLayout="horizontal"
+							// loadMore={loadMore}
+							dataSource={this.state.list}
+							renderItem={item => (
+							<List.Item
+								actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
+							>
+								<Skeleton avatar title={false} loading={item.loading} active>
+								<List.Item.Meta
+									avatar={
+									<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
+									}
+									title={<a href="https://ant.design">{item.name.last}</a>}
+									description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+								/>
+								<div>content</div>
+								</Skeleton>
+							</List.Item>
+							)}
+						/>
 					</TabPane>
 				</Tabs>
 			</section>

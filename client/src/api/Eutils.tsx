@@ -4,24 +4,24 @@ import { ws } from './nvExcel';
 import { HAO_PHI_VAT_TU_NAME } from '../constants/named';
 import { sheetMap } from "../constants/map";
 
-export function getLastRow(ws: any): Excel.Range {
-	const rangeA = ws.getRange('A:ZZ');
-	const lastRow = rangeA.find("*", {
-		completeMatch: true, // find will match the whole cell value
-		matchCase: false, // find will not match case
-		searchDirection: Excel.SearchDirection.backwards // find will start searching at the beginning of the range
-	})
-	return lastRow
-}
-export function getLastCol(ws: any): Excel.Range {
-	const rangeA = ws.getRange('A1:ZZ4');
-	const lastCol = rangeA.find("*", {
-		completeMatch: true, // find will match the whole cell value
-		matchCase: false, // find will not match case
-		searchDirection: Excel.SearchDirection.backwards // find will start searching at the beginning of the range
-	})
-	return lastCol
-}
+// export function getLastRow(ws: any): Excel.Range {
+// 	const rangeA = ws.getRange('A:ZZ');
+// 	const lastRow = rangeA.find("*", {
+// 		completeMatch: true, // find will match the whole cell value
+// 		matchCase: false, // find will not match case
+// 		searchDirection: Excel.SearchDirection.backwards // find will start searching at the beginning of the range
+// 	})
+// 	return lastRow
+// }
+// export function getLastCol(ws: any): Excel.Range {
+// 	const rangeA = ws.getRange('A1:ZZ4');
+// 	const lastCol = rangeA.find("*", {
+// 		completeMatch: true, // find will match the whole cell value
+// 		matchCase: false, // find will not match case
+// 		searchDirection: Excel.SearchDirection.backwards // find will start searching at the beginning of the range
+// 	})
+// 	return lastCol
+// }
 
 export interface addressTypes {
 	text: string;
@@ -42,41 +42,43 @@ export class addressObj {
 		col: "",
 		row: ""
 	}
-	constructor(txt: string) {
-		this.text = txt.replace(/(([^!]+)?)!/g, '');
-		const t = this.text.split(":")
-		this.cell1.text = t[0];
-		this.cell1.col = t[0].replace(/([0-9])+/g, "");
-		this.cell1.row = t[0].replace(/([A-Z]|[a-z])+/g, "");
-		if (t[1]) {
-			this.cell2.text = t[1];
-			this.cell2.col = t[1].replace(/([0-9])+/g, "");
-			this.cell2.row = t[1].replace(/([A-Z]|[a-z])+/g, "");
+	constructor(txt: string | undefined) {
+		if (txt) {
+			this.text = txt.replace(/(([^!]+)?)!/g, '');
+			const t = this.text.split(":")
+			this.cell1.text = t[0];
+			this.cell1.col = t[0].replace(/([0-9])+/g, "");
+			this.cell1.row = t[0].replace(/([A-Z]|[a-z])+/g, "");
+			if (t[1]) {
+				this.cell2.text = t[1];
+				this.cell2.col = t[1].replace(/([0-9])+/g, "");
+				this.cell2.row = t[1].replace(/([A-Z]|[a-z])+/g, "");
+			}
 		}
 	}
 }
 
-export function getWsInfo(wsName: string | null = null) {
-	const promise = new Promise((resolve, rejects) => {
-		try {
-			Excel.run(async context => {
-				let ws: Excel.Worksheet = context.workbook.worksheets.getActiveWorksheet()
-				wsName ? ws = context.workbook.worksheets.getItem(wsName)
-					: ws = context.workbook.worksheets.getActiveWorksheet();
-				ws.load('name');
-				const lastCol = getLastCol(ws);
-				lastCol.load('address');
-				await context.sync();
-				resolve({
-					name: ws.name
-				})
-			})
-		} catch (error) {
-			rejects(error)
-		}
-	})
-	return promise
-}
+// export function getWsInfo(wsName: string | null = null) {
+// 	const promise = new Promise((resolve, rejects) => {
+// 		try {
+// 			Excel.run(async context => {
+// 				let ws: Excel.Worksheet = context.workbook.worksheets.getActiveWorksheet()
+// 				wsName ? ws = context.workbook.worksheets.getItem(wsName)
+// 					: ws = context.workbook.worksheets.getActiveWorksheet();
+// 				ws.load('name');
+// 				const lastCol = getLastCol(ws);
+// 				lastCol.load('address');
+// 				await context.sync();
+// 				resolve({
+// 					name: ws.name
+// 				})
+// 			})
+// 		} catch (error) {
+// 			rejects(error)
+// 		}
+// 	})
+// 	return promise
+// }
 
 export interface getLastColTypes {
 	wsName?: string | null;
@@ -95,17 +97,17 @@ export class wsObject extends AsyncConstructor {
 		super(async () => {
 			this.wsName = wsName;
 			this.sheetMap = new sheetMap();
-			
+
 			await this.initContext()
-				.then(async x => {
-					if (wsName) {
-						await this.isWsExits()
-							.then(name => !name ? this.create().then(x => this.initWsInfo()) :
-								this.getWorksheet().then(x => this.initWsInfo().then(x => this.getWorksheet())));
-					} else {
-						await this.getActive().then(x => this.initWsInfo());
-					}
-				})
+			// .then(async x => {
+			// 	if (wsName) {
+			// 		await this.isWsExits()
+			// 			.then(name => !name ? this.create().then(x => this.initWsInfo()) :
+			// 				this.getWorksheet().then(x => this.initWsInfo().then(x => this.getWorksheet())));
+			// 	} else {
+			// 		await this.getActive().then(x => this.initWsInfo());
+			// 	}
+			// })
 
 		})
 	}
@@ -118,39 +120,34 @@ export class wsObject extends AsyncConstructor {
 		}
 	}
 	async initWsInfo() {
-		const rg = this.context!.workbook.getSelectedRange();
-		rg.load('address')
-		this.ws!.load('name');
-		const lastRow: Excel.Range = getLastRow(this.ws);
-		const lastCol: Excel.Range = getLastCol(this.ws);
-		lastRow.load('address');
-		lastCol.load('address');
-		await this.context!.sync();
-		const lastcolAd = new addressObj(lastCol.address);
-		const lastrowAd = new addressObj(lastRow.address);
-		console.log(this.ws!.name);
-
+		const lastRow: string | undefined = await this.getLastRow();
+		const lastCol: string | undefined = await this.getLastCol();
+		const lastcolAd = new addressObj(lastCol);
+		const lastrowAd = new addressObj(lastRow);
 		this.lastCol = lastcolAd.cell1;
 		this.lastRow = lastrowAd.cell1;
-		this.name = this.ws!.name;
-		this.selectedRange = rg.address;
+		this.name = await ws.getActivedSheetName();
 	}
 	async regEvents() {
 		let sheets = this.context?.workbook.worksheets;
 		sheets?.onActivated.add(this.onActivate);
 		sheets?.onSelectionChanged.add(this.onSelectionChanged)
+		sheets?.onChanged.add(this.onSheetChanged)
 		await this.context?.sync();
 		console.log("A handler has been registered for the OnActivate event.");
 	}
 	async onActivate(event: any) {
 		const name = await ws?.getActivedSheetName();
 		ws?.sheetMap.navigate(name)
-		
-		
 	}
 	async onSelectionChanged() {
 		await this.getActive();
 		console.log(this.name);
+	}
+	async onSheetChanged(event: any) {
+		const name = await ws?.getActivedSheetName();
+		console.log(name);
+
 	}
 	async currentWs(name: string) {
 		this.wsName = name;
@@ -168,26 +165,18 @@ export class wsObject extends AsyncConstructor {
 	async getActive() {
 		this.ws = this.context!.workbook.worksheets.getActiveWorksheet()
 	}
-	async isWsExits() {
-		const promise = new Promise(async (resolve, rejects) => {
-			const ws = this.context!.workbook.worksheets.getItemOrNullObject(this.wsName!);
-			ws.load('name')
-			await this.context!.sync();
-			resolve(ws.name)
-			this.name = ws.name;
-		})
-		return promise
+	async isWsExits(name: string) {
+		const ws = this.context!.workbook.worksheets.getItemOrNullObject(this.wsName!);
+		ws.load('name')
+		await this.context!.sync();
+		console.log(ws.name);
 	}
 
 	async checkWsExits(name: string) {
-		const promise = new Promise(async (resolve, rejects) => {
-			const ws = this.context!.workbook.worksheets.getItemOrNullObject(name);
-			ws.load('name')
-			await this.context!.sync();
-			resolve(ws.name)
-			this.name = ws.name;
-		})
-		return promise
+		const ws = this.context!.workbook.worksheets.getItemOrNullObject(name);
+		ws.load('name')
+		await this.context!.sync();
+		return ws.name
 	}
 
 	async getActivedSheetName() {
@@ -213,6 +202,8 @@ export class wsObject extends AsyncConstructor {
 	}
 	setSheetValues() {
 		const rg = this.ws?.getRange(`A1:${this.lastCol.text}`);
+		rg?.load()
+		this.context?.sync();
 	}
 	async getValues(address: string) {
 		const rg = this.ws?.getRange(address);
@@ -240,8 +231,9 @@ export class wsObject extends AsyncConstructor {
 		this.ws?.pageLayout.setPrintArea(address)
 	}
 	setFont(fontName: string, address: string | undefined = undefined) {
-		const addr = address ? address : 'A:Z'
-		this.ws!.getRange('A:Z').format.font.name = fontName;
+		const addr = address ? address : 'A:Z';
+		this.ws!.getRange(addr).format.font.name = fontName;
+		this.context?.sync()
 	}
 	setBlackAndWhite() {
 		this.ws!.pageLayout.blackAndWhite = true;
@@ -312,21 +304,13 @@ export class wsObject extends AsyncConstructor {
 		});
 		valuesMap.forEach(async (e, i) => {
 			const sheets = this.context!.workbook.worksheets;
-			console.log(sheets);
-			const sheet = sheets.add();
+			sheets.add();
 		})
 
 	}
 	async addSheet(name: string) {
-		try {
-			await Excel.run(async context => {
-				const sheets = context.workbook.worksheets;
-				const sheet = sheets.add(name);
-				sheet.load('name');
-			})
-		} catch (error) {
-		}
-
+		this.context?.workbook.worksheets.add(name);
+		await this.context?.sync()
 	}
 	async getSelectedValues() {
 		const rg = this.context?.workbook.getSelectedRange();
@@ -358,5 +342,27 @@ export class wsObject extends AsyncConstructor {
 	async delete(name: string) {
 		this.context?.workbook.worksheets.getItemOrNullObject(name).delete();
 		this.context?.sync()
+	}
+	async getLastRow() {
+		const rangeA = this.ws?.getRange('A:ZZ');
+		const lastRow = rangeA?.find("*", {
+			completeMatch: true, // find will match the whole cell value
+			matchCase: false, // find will not match case
+			searchDirection: Excel.SearchDirection.backwards // find will start searching at the beginning of the range
+		})
+		lastRow?.load('address');
+		await this.context?.sync();
+		return lastRow?.address;
+	}
+	async getLastCol() {
+		const rangeA = this.ws?.getRange('A1:ZZ4');
+		const lastCol = rangeA?.find("*", {
+			completeMatch: true, // find will match the whole cell value
+			matchCase: false, // find will not match case
+			searchDirection: Excel.SearchDirection.backwards // find will start searching at the beginning of the range
+		})
+		lastCol?.load('address');
+		await this.context?.sync();
+		return lastCol?.address
 	}
 }

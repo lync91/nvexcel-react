@@ -1,4 +1,6 @@
 export const MAU_KHOI_LUONG  = [['BẢNG MẪU KHỐI LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
+export const TIEN_LUONG_TITLE  = [['BẢNG TIÊN LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
+
 export const TONG_HOP_KHOI_LUONG_HEADER = [['Ký hiệu', 'STT', 'Mã đơn giá', 'Tên công việc', 'Đơn vị', 'Hệ số', 'Số lượng', 'Diễn giải', 'Khối lượng 1 cấu kiện', 'Khối lượng'
 ]]
 export const KHOI_LUONG_DEFAULT_VALUES = [['', 

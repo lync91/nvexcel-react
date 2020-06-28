@@ -6,6 +6,10 @@ module.exports = {
         var mkl = new MauKhoiLuong(data);
         mkl.save().then((res) => fn(res))
     },
+    get: (id, fn) => {
+        MauKhoiLuong.findOne({_id: id})
+        .exec((err, res) => fn(err, res))
+    },
     getLoaiCongTrinh: (fn) => {
         MauKhoiLuong.aggregate([
             {$group: { _id: "$loaiCongTrinh"}},
@@ -25,5 +29,9 @@ module.exports = {
                 label: '$tenBoPhan'
             })
             .exec((err, res) => fn(err, res))
+    },
+    update: (data, fn) => {
+        MauKhoiLuong.findByIdAndUpdate({_id: data.id}, {data: data.data, tenBoPhan: data.tenBoPhan}, {new: true})
+        .exec((err, res) => fn(err, res))
     }
 }

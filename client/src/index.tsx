@@ -3,11 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import { initializeIcons } from "office-ui-fabric-react/lib/Icons";
-import { init, ws } from "./api/nvExcel";
-
-initializeIcons();
-
+// import { init, ws } from "./api/nvExcel";
 // ReactDOM.render(
 //   <React.StrictMode>
 //     <App />
@@ -16,14 +12,14 @@ initializeIcons();
 // );
 
 // const Office = window.Office;
-
 Office.initialize = async () => {
-  await init();
-  ws?.regEvents();
+  // await init();
+  // ws?.regEvents();
+  // console.log(ws);
   ReactDOM.render(<App />, document.getElementById('root'));
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+// ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

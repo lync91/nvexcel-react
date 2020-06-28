@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Select, Form, Input, Button, Checkbox } from 'antd';
+import { Select, Form, Button, Checkbox } from 'antd';
 import { ws } from "../api/nvExcel";
 // import { getPageType, getOrientationType } from "../api/mapIndex"
 
@@ -73,13 +73,13 @@ export class PageFormat extends Component<AppProps, AppStates> {
 						</Select>
 					</Form.Item>
 					<Form.Item label="Các tùy chọn khác">
-						<Checkbox checked={this.state.autoInit} onChange={e => this.setState({autoInit: !this.state.autoInit})}>Tự động nhận dạng vùng in</Checkbox>
+						<Checkbox checked={this.state.autoInit} onChange={() => this.setState({autoInit: !this.state.autoInit})}>Tự động nhận dạng vùng in</Checkbox>
 						</Form.Item>
 						<Form.Item>
-						<Checkbox checked={this.state.blackAndWhite} onChange={e => this.setState({blackAndWhite: !this.state.blackAndWhite})}>In đen trắng</Checkbox>
+						<Checkbox checked={this.state.blackAndWhite} onChange={() => this.setState({blackAndWhite: !this.state.blackAndWhite})}>In đen trắng</Checkbox>
 						</Form.Item>
 						<Form.Item>
-						<Checkbox checked={this.state.isSetFont} onChange={e => this.setState({isSetFont: !this.state.isSetFont})}>Đặt font chữ là Times New Roman</Checkbox>
+						<Checkbox checked={this.state.isSetFont} onChange={() => this.setState({isSetFont: !this.state.isSetFont})}>Đặt font chữ là Times New Roman</Checkbox>
 					</Form.Item>
 					<Form.Item>
 						<Button type="primary" onClick={this._formatPage}>Định dạng</Button>
