@@ -355,4 +355,8 @@ export class wsObject extends AsyncConstructor {
 		expensesTable.name = name;
 		if (values) expensesTable.rows.add(undefined, values)
 	}
+	async delete(name: string) {
+		this.context?.workbook.worksheets.getItemOrNullObject(name).delete();
+		this.context?.sync()
+	}
 }

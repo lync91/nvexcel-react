@@ -7,11 +7,12 @@ import {
 	BANG_CONG_TRINH,
 	BANG_TONG_HOP_VAT_TU,
 	BANG_HAO_PHI_VAT_TU,
-	MAU_KHOI_LUONG_NAME
+	MAU_KHOI_LUONG_NAME,
+	MAU_KHOI_LUONG_TABLE_NAME
 } from "../constants/named";
 import { MAU_KHOI_LUONG, TONG_HOP_KHOI_LUONG_HEADER, KHOI_LUONG_DEFAULT_VALUES } from "../constants/values";
 import socket from "../socket";
-import { MauKhoiLuongContext } from "../contexts/MauKhoiLuongContext";
+import MauKhoiLuongContext from "../contexts/MauKhoiLuongContext";
 
 const state = {
 	test: () => {
@@ -108,27 +109,21 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 		});
 	}
 	_selectLoaiCongTrinh(value: string) {
-		console.log(value);
-		console.log(this);
-		
 		socket.emit('khoiluong/mau/getlistMauKhoiLuong', value, (data: any) => {
-			console.log(data);
-			
-			// if(data) {
-			// 	this.setState({ lstMauKhoiLuong: data })
-			// }
+			if(data) {
+				this.setState({ lstMauKhoiLuong: data })
+			}
 		})
 	}
-	_selectMauKhoiLuong(value: any) {
-		console.log(value);
-		
+	async _selectMauKhoiLuong(value: any, options: any) {
+		ws?.delete(MAU_KHOI_LUONG_NAME)
 	}
 
 	render() {
 		const { TextArea } = Input;
 		const { TabPane } = Tabs;
 		return (
-			<MauKhoiLuongContext.Provider value={state}>
+			<MauKhoiLuongContext.Provider value={{}}>
 				<MauKhoiLuongContext.Consumer>
 					{(context) => 
 						<section>
@@ -175,7 +170,7 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 											options={this.state.lstLoaiCongTrinh}
 											placeholder="Chọn loại công trình"
 											optionFilterProp="children"
-											onSelect={context.test}
+											onSelect={(val: string, ops) => this._selectLoaiCongTrinh(val)}
 											filterOption={(input, option) =>
 												option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 											}
@@ -185,10 +180,10 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 									<Form.Item label='Tên bộ phận' name='tenBoPhan' >
 										<Select
 											showSearch
-											options={this.state.lstLoaiCongTrinh}
+											options={this.state.lstMauKhoiLuong}
 											placeholder="Chọn mẫu khối lượng"
 											optionFilterProp="children"
-											onSelect={this._selectMauKhoiLuong}
+											onSelect={(val, ops) => this._selectMauKhoiLuong(val, ops)}
 											filterOption={(input, option) =>
 												option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
 											}

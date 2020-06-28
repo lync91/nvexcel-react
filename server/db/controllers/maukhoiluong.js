@@ -22,7 +22,7 @@ module.exports = {
             .match({loaiCongTrinh: lct})
             .project({
                 value: '$_id',
-                label: '$tenBoPhan',
+                label: '$tenBoPhan'
             })
             .exec((err, res) => fn(err, res))
     }
