@@ -11,14 +11,11 @@ import './App.css';
 import { Layout, Menu, Button } from 'antd';
 import {
   MenuUnfoldOutlined,
-  MenuFoldOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  UploadOutlined,
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined
 } from '@ant-design/icons';
+import { init, ws } from "./api/nvExcel";
 import { AppContext } from "./contexts/AppContext";
 import socket from "./socket";
 const CharConvert = React.lazy(() => import('./components/CharConvert'));
@@ -58,6 +55,12 @@ class App extends Component<{}, AppState> {
       selectedKeys: ['']
     };
   };
+  async componentDidMount() {
+    console.log('es');
+    
+    await init();
+    ws?.regEvents();
+  }
   openPanel() { this.setState({ isOpen: true }) };
   dismissPanel() { this.setState({ isOpen: false }) };
   toggle = () => {
