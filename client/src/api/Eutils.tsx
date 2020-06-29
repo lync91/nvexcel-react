@@ -85,8 +85,8 @@ export interface getLastColTypes {
 	name?: string | null;
 }
 export class wsObject extends AsyncConstructor {
-	ws: Excel.Worksheet | null = null;
-	private context: Excel.RequestContext | null = null;
+	ws: Excel.Worksheet | any = null;
+	private context: Excel.RequestContext | any = null;
 	wsName: string | null = null;
 	name!: string;
 	lastCol!: addressTypes;
@@ -97,43 +97,35 @@ export class wsObject extends AsyncConstructor {
 		super(async () => {
 			this.wsName = wsName;
 			this.sheetMap = new sheetMap();
-
-			await this.initContext()
-			// .then(async x => {
-			// 	if (wsName) {
-			// 		await this.isWsExits()
-			// 			.then(name => !name ? this.create().then(x => this.initWsInfo()) :
-			// 				this.getWorksheet().then(x => this.initWsInfo().then(x => this.getWorksheet())));
-			// 	} else {
-			// 		await this.getActive().then(x => this.initWsInfo());
-			// 	}
-			// })
+			await this.initContext().then((context) => {
+				this.context = context
+			})
+			this.getActive();
 
 		})
 	}
-	async initContext() {
-		try {
+	initContext() {
+		const promise = new Promise(async (res, rej) => {
 			await Excel.run(async context => {
-				this.context = context
+				res(context);
 			})
-		} catch (error) {
-		}
+		})
+		return promise
 	}
-	async initWsInfo() {
-		const lastRow: string | undefined = await this.getLastRow();
-		const lastCol: string | undefined = await this.getLastCol();
-		const lastcolAd = new addressObj(lastCol);
-		const lastrowAd = new addressObj(lastRow);
-		this.lastCol = lastcolAd.cell1;
-		this.lastRow = lastrowAd.cell1;
-		this.name = await ws.getActivedSheetName();
-	}
+	// async initWsInfo() {
+	// 	const lastRow: string | undefined = await this.getLastRow();
+	// 	const lastCol: string | undefined = await this.getLastCol();
+	// 	const lastcolAd = new addressObj(lastCol);
+	// 	const lastrowAd = new addressObj(lastRow);
+	// 	this.lastCol = lastcolAd.cell1;
+	// 	this.lastRow = lastrowAd.cell1;
+	// 	this.name = await ws.getActivedSheetName();
+	// }
 	async regEvents() {
 		let sheets = this.context?.workbook.worksheets;
 		sheets?.onActivated.add(this.onActivate);
 		sheets?.onSelectionChanged.add(this.onSelectionChanged)
-		sheets?.onChanged.add(this.onSheetChanged)
-		await this.context?.sync();
+		sheets?.onChanged.add(this.onSheetChanged);
 		console.log("A handler has been registered for the OnActivate event.");
 	}
 	async onActivate(event: any) {
@@ -142,41 +134,41 @@ export class wsObject extends AsyncConstructor {
 	}
 	async onSelectionChanged() {
 		await this.getActive();
-		console.log(this.name);
 	}
 	async onSheetChanged(event: any) {
 		const name = await ws?.getActivedSheetName();
 		console.log(name);
-
 	}
 	async currentWs(name: string) {
 		this.wsName = name;
 		this.name = name;
-		this.getWorksheet(name).then(x => this.initWsInfo())
+		// await this.getWorksheet(name).then(ws => this.ws = ws)
+		this.ws = this.context!.workbook.worksheets.getItemOrNullObject(name!)
 	}
-	async getWorksheet(newWS: string | null = null) {
-		const promise = new Promise(async (resolve, rejects) => {
-			const name = newWS ? newWS : this.wsName;
-			this.ws = this.context!.workbook.worksheets.getItemOrNullObject(name!);
-			resolve()
-		})
-		return promise
-	}
+	// async getWorksheet(newWS: string | null = null) {
+	// 	const promise = new Promise(async (resolve, rejects) => {
+	// 		const name = newWS ? newWS : this.wsName;
+	// 		const ws = this.context!.workbook.worksheets.getItemOrNullObject(name!);
+	// 		await this.context.sync();
+	// 		resolve(ws)
+	// 	})
+	// 	return promise
+	// }
 	async getActive() {
-		this.ws = this.context!.workbook.worksheets.getActiveWorksheet()
+		this.ws = this.context!.workbook.worksheets.getActiveWorksheet();
 	}
-	async isWsExits(name: string) {
-		const ws = this.context!.workbook.worksheets.getItemOrNullObject(this.wsName!);
-		ws.load('name')
-		await this.context!.sync();
-		console.log(ws.name);
-	}
+	// async isWsExits(name: string) {
+	// 	const ws = this.context!.workbook.worksheets.getItemOrNullObject(this.wsName!);
+	// 	ws.load('name')
+	// 	await this.context!.sync();
+	// 	console.log(ws.name);
+	// }
 
 	async checkWsExits(name: string) {
 		const ws = this.context!.workbook.worksheets.getItemOrNullObject(name);
 		ws.load('name')
 		await this.context!.sync();
-		return ws.name
+		return name === ws.name? true : false
 	}
 
 	async getActivedSheetName() {
@@ -197,14 +189,13 @@ export class wsObject extends AsyncConstructor {
 
 		}
 	}
-	activate() {
+	async activate() {
 		this.ws?.activate();
+		await this.context.sync()
 	}
-	setSheetValues() {
-		const rg = this.ws?.getRange(`A1:${this.lastCol.text}`);
-		rg?.load()
-		this.context?.sync();
-	}
+	// async setSheetValues() {
+	// 	this.ws?.getRange(`A1:${this.lastCol.text}`);
+	// }
 	async getValues(address: string) {
 		const rg = this.ws?.getRange(address);
 		rg?.load('values');
@@ -230,10 +221,9 @@ export class wsObject extends AsyncConstructor {
 	setPrintArea(address: string) {
 		this.ws?.pageLayout.setPrintArea(address)
 	}
-	setFont(fontName: string, address: string | undefined = undefined) {
+	async setFont(fontName: string, address: string | undefined = undefined) {
 		const addr = address ? address : 'A:Z';
 		this.ws!.getRange(addr).format.font.name = fontName;
-		this.context?.sync()
 	}
 	setBlackAndWhite() {
 		this.ws!.pageLayout.blackAndWhite = true;
@@ -310,7 +300,6 @@ export class wsObject extends AsyncConstructor {
 	}
 	async addSheet(name: string) {
 		this.context?.workbook.worksheets.add(name);
-		await this.context?.sync()
 	}
 	async getSelectedValues() {
 		const rg = this.context?.workbook.getSelectedRange();
@@ -341,7 +330,7 @@ export class wsObject extends AsyncConstructor {
 	}
 	async delete(name: string) {
 		this.context?.workbook.worksheets.getItemOrNullObject(name).delete();
-		this.context?.sync()
+		await this.context?.sync();
 	}
 	async getLastRow() {
 		const rangeA = this.ws?.getRange('A:ZZ');
@@ -364,5 +353,8 @@ export class wsObject extends AsyncConstructor {
 		lastCol?.load('address');
 		await this.context?.sync();
 		return lastCol?.address
+	}
+	async clearValues(address: string) {
+		this.ws?.getRange(address).clear('Contents')
 	}
 }

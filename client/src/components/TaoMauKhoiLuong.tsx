@@ -10,7 +10,6 @@ import {
 import socket from "../socket";
 import MauKhoiLuongContext from "../contexts/MauKhoiLuongContext";
 
-
 export interface AppProps {
 	formRef: any
 }
@@ -64,10 +63,11 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 	formRef = React.createRef<FormInstance>();
 
 	async prepair() {
-		const name = await ws?.checkWsExits(MAU_KHOI_LUONG_NAME)
-		name ? this.setState({ wsExits: true }) : this.setState({ wsExits: false })
-		console.log(name);
+		const name = await ws?.checkWsExits(MAU_KHOI_LUONG_NAME);
+		name ? this.setState({ wsExits: true }) : this.setState({ wsExits: false });
 		if (name) {
+			console.log(name);
+			
 			await ws?.currentWs(MAU_KHOI_LUONG_NAME)
 			ws?.activate()
 		}
@@ -89,7 +89,7 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 	_onFinish = async (values: any) => {
 		console.log(values);
 		await ws?.getActive();
-		await ws.initWsInfo();
+		// await ws.initWsInfo();
 		console.log(ws.lastRow);
 
 		const val = await ws?.getFomulas(`A7:J${ws?.lastRow.row}`);
@@ -120,22 +120,18 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 		})
 	}
 	async _selectMauKhoiLuong(value: string) {
-		await ws?.delete(MAU_KHOI_LUONG_NAME)
-		await ws?.addSheet(MAU_KHOI_LUONG_NAME);
-		await ws?.currentWs(MAU_KHOI_LUONG_NAME);
-		await ws?.activate();
-		initBangKhoiLuong();
-		this.setState({ wsExits: true })
-		ws?.addValues('A6', [['HM']])
-		ws?.addValues('A7', [['#']])
+		// await ws?.currentWs(MAU_KHOI_LUONG_NAME);
+		const lastRow = await ws.getLastRow()
+		console.log(lastRow);
+		await ws.clearValues(`A6:J${ws}`);
 		socket.emit('khoiluong/mau/get', value, (mkl: any) => {
 			if (mkl) {
 				const data: any[][] = JSON.parse(mkl.data)
-				console.log(data);
-				var addr = `A7:J${data.length + 6}`
-				console.log(addr);
+				var addr = `A7:J${data.length + 6}`;
+				ws?.addValues('A6', [['HM']])
+				ws?.addValues('A7', [['#']])
 				ws?.addValues(addr, data)
-				// this.setState({tenBophan: mkl.tenBoPhan})
+				this.setState({tenBophan: mkl.tenBoPhan})
 				this.formRef.current?.setFieldsValue({ tenBoPhan: mkl.tenBoPhan })
 			}
 		})

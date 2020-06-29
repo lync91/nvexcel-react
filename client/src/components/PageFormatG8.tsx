@@ -48,11 +48,11 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		await ws?.currentWs(BANG_CONG_TRINH)
 		await ws?.setFont('Times New Roman', `A1:Z${ws.lastRow.row}`);
 		const vals = await ws?.getValues(`D1:D${ws.lastRow.row}`);
-		vals?.forEach((e, i) => {
-			if (e[0] === 'T*') {
-				ws!.ws!.getRange(`D${i+1}`).format.rowHeight = 0;
-			}
-		})
+		// vals?.forEach((e, i) => {
+		// 	if (e[0] === 'T*') {
+		// 		ws!.ws!.getRange(`D${i+1}`).format.rowHeight = 0;
+		// 	}
+		// })
 		ws?.mergeCells('A1:Z1');
 		ws?.mergeCells('A2:Z2');
 		ws?.mergeCells('A3:Z3');
