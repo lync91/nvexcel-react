@@ -24,23 +24,23 @@ import { sheetMap } from "../constants/map";
 // }
 
 export interface addressTypes {
-	text: string;
-	col: string;
-	row: string
+	text: string | null;
+	col: string | null;
+	row: string | null
 }
 
 export class addressObj {
 	sheet!: string;
 	text!: string;
 	cell1: addressTypes = {
-		text: "",
-		col: "",
-		row: ""
+		text: null,
+		col: null,
+		row: null
 	};
 	cell2: addressTypes = {
-		text: "",
-		col: "",
-		row: ""
+		text: null,
+		col: null,
+		row: null
 	}
 	constructor(txt: string | undefined) {
 		if (txt) {
@@ -341,7 +341,7 @@ export class wsObject extends AsyncConstructor {
 		})
 		lastRow?.load('address');
 		await this.context?.sync();
-		return lastRow?.address;
+		return new addressObj(lastRow?.address);
 	}
 	async getLastCol() {
 		const rangeA = this.ws?.getRange('A1:ZZ4');
@@ -352,9 +352,11 @@ export class wsObject extends AsyncConstructor {
 		})
 		lastCol?.load('address');
 		await this.context?.sync();
-		return lastCol?.address
+		return new addressObj(lastCol?.address);
 	}
 	async clearValues(address: string) {
+		console.log('cleear ws', address);
+		
 		this.ws?.getRange(address).clear('Contents')
 	}
 }

@@ -67,7 +67,6 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 		name ? this.setState({ wsExits: true }) : this.setState({ wsExits: false });
 		if (name) {
 			console.log(name);
-			
 			await ws?.currentWs(MAU_KHOI_LUONG_NAME)
 			ws?.activate()
 		}
@@ -122,8 +121,10 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 	async _selectMauKhoiLuong(value: string) {
 		// await ws?.currentWs(MAU_KHOI_LUONG_NAME);
 		const lastRow = await ws.getLastRow()
-		console.log(lastRow);
-		await ws.clearValues(`A6:J${ws}`);
+		const ad = `A6:J${lastRow.cell1.row}`
+		console.log(ad);
+		
+		ws.clearValues(`A6:J${lastRow.cell1.row}`);
 		socket.emit('khoiluong/mau/get', value, (mkl: any) => {
 			if (mkl) {
 				const data: any[][] = JSON.parse(mkl.data)
