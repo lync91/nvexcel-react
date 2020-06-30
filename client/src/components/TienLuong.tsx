@@ -39,7 +39,8 @@ export interface AppStates {
 	lstLoaiCongTrinh: any[],
 	initLoading: boolean,
 	loading: boolean,
-	list: any[]
+	list: any[],
+	lstMauKhoiLuong: any[];
 }
 
 export interface orientationOptions {
@@ -66,6 +67,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 			loading: false,
 			data: [],
 			list: [],
+			lstMauKhoiLuong: [],
 		}
 	}
 
@@ -97,7 +99,12 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		ws?.addValues('A7', [['#']])
 	}
 	_selectLoaiCongTrinh(value: string) {
-		
+		console.log(value);
+		socket.emit('khoiluong/mau/getlistMauKhoiLuong', value, (data: any) => {
+			if (data) {
+				this.setState({ lstMauKhoiLuong: data, initLoading: false })
+			}
+		})
 	}
 	_onFinish = async (values: any) => {
 		console.log(values);
@@ -168,33 +175,32 @@ export class TienLuong extends Component<AppProps, AppStates> {
 							>
 							</Select>
 							</Form.Item>
-							<Form.Item label='Tên bộ phận' name='tenBoPhan' >
+							{/* <Form.Item label='Tên bộ phận' name='tenBoPhan' >
 								<Input />
-							</Form.Item>
+							</Form.Item> */}
 						</Form>
 						<List
 							className="demo-loadmore-list"
+							size="small"
 							loading={this.state.initLoading}
 							itemLayout="horizontal"
-							// loadMore={loadMore}
-							dataSource={this.state.list}
+							bordered={true}
+							dataSource={this.state.lstMauKhoiLuong}
 							renderItem={item => (
 							<List.Item
 								actions={[<a key="list-loadmore-edit">edit</a>, <a key="list-loadmore-more">more</a>]}
 							>
 								<Skeleton avatar title={false} loading={item.loading} active>
 								<List.Item.Meta
-									avatar={
-									<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />
-									}
-									title={<a href="https://ant.design">{item.name.last}</a>}
-									description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+									title={item.label}
 								/>
-								<div>content</div>
 								</Skeleton>
 							</List.Item>
 							)}
 						/>
+					</TabPane>
+					<TabPane tab="Tra định mức" key="3">
+						
 					</TabPane>
 				</Tabs>
 			</section>

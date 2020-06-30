@@ -3,6 +3,7 @@ import { getPageType, getOrientationType } from "./mapIndex";
 import { ws } from './nvExcel';
 import { HAO_PHI_VAT_TU_NAME } from '../constants/named';
 import { sheetMap } from "../constants/map";
+import { sheetChanged } from "./wsEvents"
 
 // export function getLastRow(ws: any): Excel.Range {
 // 	const rangeA = ws.getRange('A:ZZ');
@@ -26,7 +27,7 @@ import { sheetMap } from "../constants/map";
 export interface addressTypes {
 	text: string | null;
 	col: string | null;
-	row: string | null
+	row: number | null
 }
 
 export class addressObj {
@@ -48,11 +49,11 @@ export class addressObj {
 			const t = this.text.split(":")
 			this.cell1.text = t[0];
 			this.cell1.col = t[0].replace(/([0-9])+/g, "");
-			this.cell1.row = t[0].replace(/([A-Z]|[a-z])+/g, "");
+			this.cell1.row = parseInt(t[0].replace(/([A-Z]|[a-z])+/g, ""));
 			if (t[1]) {
 				this.cell2.text = t[1];
 				this.cell2.col = t[1].replace(/([0-9])+/g, "");
-				this.cell2.row = t[1].replace(/([A-Z]|[a-z])+/g, "");
+				this.cell2.row = parseInt(t[1].replace(/([A-Z]|[a-z])+/g, ""));
 			}
 		}
 	}
@@ -106,9 +107,14 @@ export class wsObject extends AsyncConstructor {
 	}
 	initContext() {
 		const promise = new Promise(async (res, rej) => {
-			await Excel.run(async context => {
-				res(context);
-			})
+			try {
+				await Excel.run(async context => {
+					res(context);
+				})
+			} catch (error) {
+				console.log(error);
+				
+			}
 		})
 		return promise
 	}
@@ -136,8 +142,7 @@ export class wsObject extends AsyncConstructor {
 		await this.getActive();
 	}
 	async onSheetChanged(event: any) {
-		const name = await ws?.getActivedSheetName();
-		console.log(name);
+		sheetChanged(event)
 	}
 	async currentWs(name: string) {
 		this.wsName = name;
@@ -168,7 +173,7 @@ export class wsObject extends AsyncConstructor {
 		const ws = this.context!.workbook.worksheets.getItemOrNullObject(name);
 		ws.load('name')
 		await this.context!.sync();
-		return name === ws.name? true : false
+		return name === ws.name ? true : false
 	}
 
 	async getActivedSheetName() {
@@ -211,6 +216,7 @@ export class wsObject extends AsyncConstructor {
 	async addValues(address: string, values: any[][]) {
 		const rg = this.ws?.getRange(address);
 		rg!.values = values;
+		await this.context.sync()
 	}
 	setPrintAreabySelected() {
 		this.ws?.pageLayout.setPrintArea(this.selectedRange)
@@ -355,8 +361,11 @@ export class wsObject extends AsyncConstructor {
 		return new addressObj(lastCol?.address);
 	}
 	async clearValues(address: string) {
-		console.log('cleear ws', address);
-		
-		this.ws?.getRange(address).clear('Contents')
+		try {
+			this.ws?.getRange(address).clear('Contents');
+		} catch (error) {
+			console.log(error);
+
+		}
 	}
 }

@@ -80,7 +80,7 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 		await ws?.addSheet(MAU_KHOI_LUONG_NAME);
 		await ws?.currentWs(MAU_KHOI_LUONG_NAME);
 		await ws?.activate();
-		initBangKhoiLuong();
+		await initBangKhoiLuong();
 		this.setState({ wsExits: true })
 		ws?.addValues('A6', [['HM']])
 		ws?.addValues('A7', [['#']])
@@ -88,10 +88,8 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 	_onFinish = async (values: any) => {
 		console.log(values);
 		await ws?.getActive();
-		// await ws.initWsInfo();
-		console.log(ws.lastRow);
-
-		const val = await ws?.getFomulas(`A7:J${ws?.lastRow.row}`);
+		const lastRow = await ws.getLastRow();
+		const val = await ws?.getFomulas(`A7:J${lastRow.cell1.row}`);
 		const data = {
 			tenBoPhan: values.tenBoPhan,
 			data: JSON.stringify(val),
@@ -102,28 +100,28 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 			socket.emit('khoiluong/mau/add', data, () => {
 				this.formRef.current?.resetFields();
 				message.success('Đã lưu mẫu khối lượng thành công');
+				ws.clearValues(`A7:J${lastRow.cell1.row}`)
 			});
 		} else {
 			data.id = values.id
 			socket.emit('khoiluong/mau/update', data, () => {
 				this.formRef.current?.resetFields();
 				message.success('Đã lưu mẫu khối lượng thành công');
+				ws.clearValues(`A7:J${lastRow.cell1.row}`)
 			});
 		}
 	}
 	_selectLoaiCongTrinh(value: string) {
 		socket.emit('khoiluong/mau/getlistMauKhoiLuong', value, (data: any) => {
 			if (data) {
+				console.log(data);
 				this.setState({ lstMauKhoiLuong: data })
 			}
 		})
 	}
 	async _selectMauKhoiLuong(value: string) {
 		// await ws?.currentWs(MAU_KHOI_LUONG_NAME);
-		const lastRow = await ws.getLastRow()
-		const ad = `A6:J${lastRow.cell1.row}`
-		console.log(ad);
-		
+		const lastRow = await ws.getLastRow();
 		ws.clearValues(`A6:J${lastRow.cell1.row}`);
 		socket.emit('khoiluong/mau/get', value, (mkl: any) => {
 			if (mkl) {
@@ -215,7 +213,7 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 											<Checkbox onChange={(e) => this.setState({ isRename: e.target.checked })}>Sửa tên mẫu khối lượng</Checkbox>
 										</Form.Item>
 										<Form.Item name="tenBoPhan">
-											<Input disabled={!this.state.isRename} placeholder="Tên bộ phận" value={this.state.tenBophan} />
+											<Input disabled={!this.state.isRename} placeholder="Tên bộ phận" checked={this.state.isRename} />
 										</Form.Item>
 										<Form.Item style={{ paddingTop: 4, paddingBottom: 4 }}>
 											<Button type="primary" htmlType="submit">

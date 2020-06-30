@@ -1,10 +1,12 @@
 import { ws } from "./nvExcel";
-import { MAU_KHOI_LUONG, TONG_HOP_KHOI_LUONG_HEADER, KHOI_LUONG_DEFAULT_VALUES, TIEN_LUONG_TITLE } from "../constants/values";
+import { MAU_KHOI_LUONG, TONG_HOP_KHOI_LUONG_HEADER, KHOI_LUONG_DEFAULT_VALUES, TIEN_LUONG_TITLE, AUTO_STT_FOMULA } from "../constants/values";
 import { MAU_KHOI_LUONG_TABLE_NAME, TIEN_LUONG_TABLE_NAME } from "../constants/named";
 export async function initBangKhoiLuong(values: any[][] | undefined = undefined) {
 	await ws?.addValues('A1:A3', MAU_KHOI_LUONG);
 	await ws?.addValues('A5:J5', TONG_HOP_KHOI_LUONG_HEADER);
 	// values? await ws?.createTable('A5:J5', MAU_KHOI_LUONG_TABLE_NAME, values) : await ws?.createTable('A5:J5', MAU_KHOI_LUONG_TABLE_NAME, KHOI_LUONG_DEFAULT_VALUES);
+	
+	ws?.addValues('A6:J6', KHOI_LUONG_DEFAULT_VALUES)
 	ws?.setCustomConditionalFormat('A:J', '=IF(OR(INDIRECT("RC[0]",0)="Ký hiệu", INDIRECT("RC[-1]",0)="Ký hiệu", INDIRECT("RC[-2]",0)="Ký hiệu", INDIRECT("RC[-3]",0)="Ký hiệu", INDIRECT("RC[-4]",0)="Ký hiệu", INDIRECT("RC[-5]",0)="Ký hiệu", INDIRECT("RC[-6]",0)="Ký hiệu", INDIRECT("RC[-7]",0)="Ký hiệu", INDIRECT("RC[-8]",0)="Ký hiệu", INDIRECT("RC[-9]",0)="Ký hiệu"),TRUE)', null, true, false, true)
 	ws?.setCustomConditionalFormat('A:J', '=IF(OR(INDIRECT("RC[0]",0)="HM", INDIRECT("RC[-1]",0)="HM", INDIRECT("RC[-2]",0)="HM", INDIRECT("RC[-3]",0)="HM", INDIRECT("RC[-4]",0)="HM", INDIRECT("RC[-5]",0)="HM", INDIRECT("RC[-6]",0)="HM", INDIRECT("RC[-7]",0)="HM", INDIRECT("RC[-8]",0)="HM", INDIRECT("RC[-9]",0)="HM"),TRUE)', null, true, false, true)
 	ws?.setCustomConditionalFormat('A:J', '=IF(OR(INDIRECT("RC[0]",0)="#", INDIRECT("RC[-1]",0)="#", INDIRECT("RC[-2]",0)="#", INDIRECT("RC[-3]",0)="#", INDIRECT("RC[-4]",0)="#", INDIRECT("RC[-5]",0)="#", INDIRECT("RC[-6]",0)="#", INDIRECT("RC[-7]",0)="#", INDIRECT("RC[-8]",0)="#", INDIRECT("RC[-9]",0)="#"),TRUE)', null, true, false, true)
