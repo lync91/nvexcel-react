@@ -43,10 +43,10 @@ var adodb = require('database-js-adodb');
 app.get('/napdongia', (req, res) => {
     (async () => {
         let connection, tbDinhMuc;
-        const DGDb = 'DM_KS_TT10.2019'
-
+        const DGDb = 'HCM_DM_LD_TBCN_TT10.2019_GCMKVI'
+        const KV = 'HoChiMinh';
         connection = adodb.open({
-            Database: `./temp/${DGDb}.mdb`
+            Database: `./temp/${KV}/${DGDb}.mdb`
         });
         try {
             tbDinhMuc = await connection.query("SELECT * FROM tbDinhMuc'");
@@ -63,8 +63,54 @@ app.get('/napdongia', (req, res) => {
             }
             async.waterfall([
                 (cb) => {
+                    DinhMuc.deleteMany({
+                        DM: DGDb,
+                        KV: KV
+                    })
+                    .exec((err, res) =>{
+                        cb(null)
+                    })
+                },
+                (cb) => {
+                    DonGia.deleteMany({
+                        DM: DGDb,
+                        KV: KV
+                    })
+                    .exec((err, res) =>{
+                        cb(null)
+                    })
+                },
+                (cb) => {
+                    GiaCaMay.deleteMany({
+                        DM: DGDb,
+                        KV: KV
+                    })
+                    .exec((err, res) =>{
+                        cb(null)
+                    })
+                },
+                (cb) => {
+                    PhuLucVua.deleteMany({
+                        DM: DGDb,
+                        KV: KV
+                    })
+                    .exec((err, res) =>{
+                        cb(null)
+                    })
+                },
+                (cb) => {
+                    TuDienVatTu.deleteMany({
+                        DM: DGDb,
+                        KV: KV
+                    })
+                    .exec((err, res) =>{
+                        cb(null)
+                    })
+                },
+                (cb) => {
                     _tbDinhMuc = tbDinhMuc.map(e => {
                         e.DM = DGDb
+                        e.KV = KV
                         e.HPVT = e.HPVT.replace(',', '.')
                         return e
                     })
@@ -75,6 +121,7 @@ app.get('/napdongia', (req, res) => {
                 (data, cb) => {
                     _tbDongia = tbDonGia.map(e => {
                         e.DM = DGDb
+                        e.KV = KV
                         e.VLC = e.VLC.replace(',', '.')
                         e.VLP = e.VLP.replace(',', '.')
                         e.NC = e.NC.replace(',', '.')
@@ -88,22 +135,23 @@ app.get('/napdongia', (req, res) => {
                 (data, cb) => {
                     _tbGiaCaMay = tbGiaCaMay.map(e => {
                         e.DM = DGDb
-                        e.SC = e.SC.replace(',', '.')
-                        e.DMKH = e.DMKH.replace(',', '.')
-                        e.HSTH = e.HSTH.replace(',', '.')
-                        e.DMSC = e.DMSC.replace(',', '.')
-                        e.DMCP = e.DMCP.replace(',', '.')
+                        e.KV = KV
+                        if (e.SC) e.SC = e.SC.replace(',', '.')
+                        if (e.DMKH) e.DMKH = e.DMKH.replace(',', '.')
+                        if (e.HSTH) e.HSTH = e.HSTH.replace(',', '.')
+                        if (e.DMSC) e.DMSC = e.DMSC.replace(',', '.')
+                        if (e.DMCP) e.DMCP = e.DMCP.replace(',', '.')
                         // e.DMTH = e.DMTH.replace(',', '.')
-                        e.HSNL = e.HSNL.replace(',', '.')
-                        e.CPKH = e.CPKH.replace(',', '.')
-                        e.CPSC = e.CPSC.replace(',', '.')
-                        e.CPK = e.CPK.replace(',', '.')
-                        e.CPNL = e.CPNL.replace(',', '.')
-                        e.CPTL = e.CPTL.replace(',', '.')
+                        if (e.HSNL) e.HSNL = e.HSNL.replace(',', '.')
+                        if (e.CPKH) e.CPKH = e.CPKH.replace(',', '.')
+                        if (e.CPSC) e.CPSC = e.CPSC.replace(',', '.')
+                        if (e.CPK) e.CPK = e.CPK.replace(',', '.')
+                        if (e.CPNL) e.CPNL = e.CPNL.replace(',', '.')
+                        if (e.CPTL) e.CPTL = e.CPTL.replace(',', '.')
                         // e.CPTL = e.CPTL.replace(',', '.')
-                        e.GCM = e.GCM.replace(',', '.')
-                        e.NGG = e.NGG.replace(',', '.')
-                        e.NGDC = e.NGDC.replace(',', '.')
+                        if (e.GCM) e.GCM = e.GCM.replace(',', '.')
+                        if (e.NGG) e.NGG = e.NGG.replace(',', '.')
+                        if (e.NGDC) e.NGDC = e.NGDC.replace(',', '.')
                         return e
                     })
                     // console.log(_tbDongia);
@@ -115,6 +163,7 @@ app.get('/napdongia', (req, res) => {
                 (data, cb) => {
                     _tbPhuLucVua = tbPhuLucVua.map(e => {
                         e.DM = DGDb
+                        e.KV = KV
                         e.HPXM = e.HPXM.replace(',', '.')
                         e.HPC = e.HPC.replace(',', '.')
                         e.HPD = e.HPD.replace(',', '.')
@@ -132,6 +181,7 @@ app.get('/napdongia', (req, res) => {
                 (data, cb) => {
                     _tbTuDienVatTu = tbTuDienVatTu.map(e => {
                         e.DM = DGDb
+                        e.KV = KV
                         e.GG = e.GG.replace(',', '.')
                         e.HSBH = e.HSBH.replace(',', '.')
                         e.TLG = e.TLG.replace(',', '.')

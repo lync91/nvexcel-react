@@ -1,0 +1,1 @@
+export const WORKSHEET_SELECTION_CHANGED = 'WSonSelectionChanged'

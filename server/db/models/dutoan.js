@@ -7,7 +7,8 @@ var dinhmucSchema = new Schema({
     LVT: String,
     GC: String,
     MDM: String,
-    DM: String
+    DM: String,
+    KV: String
 });
 mongoose.model("dinhmuc", dinhmucSchema);
 var dongiaSchema = new Schema({
@@ -21,7 +22,8 @@ var dongiaSchema = new Schema({
     MHDM: String,
     PLV: String,
     TK: String,
-    DM: String
+    DM: String,
+    KV: String
 });
 mongoose.model("dongia", dongiaSchema);
 
@@ -47,7 +49,8 @@ var giacamaySchema = new Schema({
     NGDC: Number,
     LTDKM: String,
     CTNL: String,
-    DM: String
+    DM: String,
+    KV: String
 });
 mongoose.model("giacamay", giacamaySchema);
 
@@ -71,7 +74,8 @@ var phulucvuaSchema = new Schema({
     HP3: Number,
     MA4: String,
     HP4: Number,
-    DM: String
+    DM: String,
+    KV: String
 });
 mongoose.model("phulucvua", phulucvuaSchema);
 
@@ -83,6 +87,7 @@ var tudienvattuSchema = new Schema({
     LVT: String,
     TLG: Number,
     HSBH: Number,
-    DM: String
+    DM: String,
+    KV: String
 });
 mongoose.model("tudienvattu", tudienvattuSchema);

@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+import { init, ws } from "./api/nvExcel";
 import * as serviceWorker from './serviceWorker';
 // import { init, ws } from "./api/nvExcel";
 // ReactDOM.render(
@@ -13,8 +14,9 @@ import * as serviceWorker from './serviceWorker';
 
 // const Office = window.Office;
 Office.initialize = async () => {
-  // await init();
-  // ws?.regEvents();
+  await init();
+  ws.regEvents();
+  // await ws?.regEvents();
   // console.log(ws);
   ReactDOM.render(<App />, document.getElementById('root'));
 };

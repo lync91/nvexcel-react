@@ -56,10 +56,7 @@ class App extends Component<{}, AppState> {
     };
   };
   async componentDidMount() {
-    console.log('es');
     
-    await init();
-    ws?.regEvents();
   }
   openPanel() { this.setState({ isOpen: true }) };
   dismissPanel() { this.setState({ isOpen: false }) };

@@ -10,7 +10,7 @@ module.exports = {
             {
                 $lookup: {
                     from: 'dinhmucs',
-                    let: { mh: "$MHDM", dm: "$DM" },
+                    let: { mh: "$MHDM", dm: "$DM", kv: "$KV" },
                     pipeline: [
                         {
                             $match:
@@ -19,7 +19,8 @@ module.exports = {
                                 {
                                     $and: [
                                         { $eq: ["$MHDM", "$$mh"] },
-                                        { $eq: ["$DM", "$$dm"] }
+                                        { $eq: ["$DM", "$$dm"] },
+                                        { $eq: ["$KV", "$$kv"] }
                                     ]
                                 }
                             }
@@ -36,7 +37,8 @@ module.exports = {
                                             {
                                                 $and: [
                                                     { $eq: ["$MSVT", "$$msvt"] },
-                                                    { $eq: ["$DM", "$$dm"] }
+                                                    { $eq: ["$DM", "$$dm"] },
+                                                    { $eq: ["$KV", "$$kv"] }
                                                 ]
                                             }
                                         }
@@ -58,18 +60,47 @@ module.exports = {
                         //         DM: { $push: "$$ROOT" }
                         //     }
                         // }
-                        { $sort: { MSVT: 1 }},
+                        { $sort: { MSVT: 1 } },
                         {
                             $project: {
                                 MSVT: 1,
                                 TVT: "$TTVT.TVT",
                                 DVT: "$TTVT.DVT",
                                 HPVT: 1,
-                                LDM: { $substr: [ "$MSVT", 0, 1 ] }
+                                LDM: { $substr: ["$MSVT", 0, 1] }
                             }
                         }
                     ],
                     as: 'dinhmuc'
+                }
+            }
+        ])
+            .exec((err, res) => fn(err, res))
+    },
+    search: (kv, dm, text, fn) => {
+
+    },
+    getkv: (fn) => {
+        DonGia.aggregate([
+            { $group: { _id: "$KV" } },
+            {
+                $project: {
+                    _id: -1,
+                    value: '$_id',
+                    label: '$_id'
+                }
+            }
+        ]).exec((err, res) => fn(err, res))
+    },
+    getdm: (kv, fn) => {
+        DonGia.aggregate([
+            { $match: { KV: kv } },
+            { $group: { _id: "$DM" } },
+            {
+                $project: {
+                    _id: -1,
+                    value: '$_id',
+                    label: '$_id'
                 }
             }
         ])
