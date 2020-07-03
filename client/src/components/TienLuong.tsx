@@ -25,8 +25,9 @@ import socket from "../socket";
 
 const formRef = React.createRef<FormInstance>();
 
-ee.on(`${WORKSHEET_SELECTION_CHANGED}_${TIEN_LUONG_SHEET_NAME}`, (address) => {
-	
+ee.on(`${WORKSHEET_SELECTION_CHANGED}_${ws?.projectInfo[TIEN_LUONG_SHEET_NAME]}`, async (address) => {
+	const value = await ws.getValues(address)
+	formRef.current?.setFieldsValue({search: value})
 })
 
 export interface AppProps {
@@ -100,10 +101,12 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		this.prepair()
 		socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }));
 		socket.emit('dutoan/dongia/getkv', (data: any) => this.setState({ lstKV: data }))
+		
 	}
 	_taoBangmau = async () => {
 		await ws?.addSheet(TIEN_LUONG_SHEET_NAME);
-		await ws?.currentWs(TIEN_LUONG_SHEET_NAME);
+		const id =  await ws?.currentWs(TIEN_LUONG_SHEET_NAME);
+		ws.updateProjectInfo(TIEN_LUONG_SHEET_NAME, id);
 		await ws?.activate();
 		initBangTienLuong();
 		this.setState({ wsExits: true })
@@ -235,7 +238,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 										<List.Item.Meta
 											title={item.label}
 										/>
-										<Button type="primary" shape="circle" size="small" icon={<PlusOutlined />} />
+										<Button type="primary" shape="circle" size="small" onClick={e => this._mcvClick(item.value)} icon={<PlusOutlined />} />
 									</Skeleton>
 								</List.Item>
 							)}
