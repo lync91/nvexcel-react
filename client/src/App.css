@@ -74,3 +74,7 @@
 .ant-form-horizontal .ant-form-item-label {
   padding-bottom: 4px !important;
 }
+
+.ant-table-cell {
+  padding: 3px 5px !important;
+}

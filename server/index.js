@@ -43,7 +43,7 @@ var adodb = require('database-js-adodb');
 app.get('/napdongia', (req, res) => {
     (async () => {
         let connection, tbDinhMuc;
-        const DGDb = 'HCM_DM_LD_TBCN_TT10.2019_GCMKVI'
+        const DGDb = 'HCM_DM_XD+LD+SC_TT10.2019_GCMKVI'
         const KV = 'HoChiMinh';
         connection = adodb.open({
             Database: `./temp/${KV}/${DGDb}.mdb`
@@ -111,25 +111,25 @@ app.get('/napdongia', (req, res) => {
                     _tbDinhMuc = tbDinhMuc.map(e => {
                         e.DM = DGDb
                         e.KV = KV
-                        e.HPVT = e.HPVT.replace(',', '.')
+                        if (e.HPVT) e.HPVT = parseFloat(e.HPVT.replace(',', '.')) ? parseFloat(e.HPVT.replace(',', '.')) : 0
                         return e
                     })
                     DinhMuc.insertMany(_tbDinhMuc, (err, docs) => {
-                        cb(null, {tbDinhMuc: docs.length})
+                        err ? cb(err) : cb(null, {tbDinhMuc: docs ? docs.length : 0})
                     })
                 },
                 (data, cb) => {
                     _tbDongia = tbDonGia.map(e => {
                         e.DM = DGDb
                         e.KV = KV
-                        e.VLC = e.VLC.replace(',', '.')
-                        e.VLP = e.VLP.replace(',', '.')
-                        e.NC = e.NC.replace(',', '.')
-                        e.MTC = e.MTC.replace(',', '.')
+                        if (e.VLC) e.VLC = e.VLC.replace(',', '.')
+                        if (e.VLP) e.VLP = e.VLP.replace(',', '.')
+                        if (e.NC) e.NC = e.NC.replace(',', '.')
+                        if (e.MTC) e.MTC = e.MTC.replace(',', '.')
                         return e
                     })
                     DonGia.insertMany(_tbDongia, (err, docs) => {
-                        cb(null, {...data, ...{tbDonGia: docs.length}})
+                        cb(null, {...data, ...{tbDonGia: docs ? docs.length : 0}})
                     })
                 },
                 (data, cb) => {
@@ -157,38 +157,38 @@ app.get('/napdongia', (req, res) => {
                     // console.log(_tbDongia);
                     
                     GiaCaMay.insertMany(_tbGiaCaMay, (err, docs) => {
-                        cb(err, {...data, ...{tbGiaCaMay: docs.length}})
+                        cb(err, {...data, ...{tbGiaCaMay: docs ? docs.length : 0}})
                     })
                 },
                 (data, cb) => {
                     _tbPhuLucVua = tbPhuLucVua.map(e => {
                         e.DM = DGDb
                         e.KV = KV
-                        e.HPXM = e.HPXM.replace(',', '.')
-                        e.HPC = e.HPC.replace(',', '.')
-                        e.HPD = e.HPD.replace(',', '.')
-                        e.HPV = e.HPV.replace(',', '.')
-                        e.HP1 = e.HP2.replace(',', '.')
-                        e.HP2 = e.HP2.replace(',', '.')
-                        e.HP3 = e.HP3.replace(',', '.')
-                        e.HP4 = e.HP4.replace(',', '.')
+                        if (e.HPXM) e.HPXM = e.HPXM.replace(',', '.')
+                        if (e.HPC) e.HPC = e.HPC.replace(',', '.')
+                        if (e.HPD) e.HPD = e.HPD.replace(',', '.')
+                        if (e.HPV) e.HPV = e.HPV.replace(',', '.')
+                        if (e.HP1) e.HP1 = e.HP2.replace(',', '.')
+                        if (e.HP2) e.HP2 = e.HP2.replace(',', '.')
+                        if (e.HP3) e.HP3 = e.HP3.replace(',', '.')
+                        if (e.HP4) e.HP4 = e.HP4.replace(',', '.')
                         return e
                     })
                     PhuLucVua.insertMany(_tbPhuLucVua, (err, docs) => {
-                        cb(err, {...data, ...{tbPhuLucVua: docs.length}})
+                        cb(err, {...data, ...{tbPhuLucVua: docs ? docs.length : 0}})
                     })
                 },
                 (data, cb) => {
                     _tbTuDienVatTu = tbTuDienVatTu.map(e => {
                         e.DM = DGDb
                         e.KV = KV
-                        e.GG = e.GG.replace(',', '.')
-                        e.HSBH = e.HSBH.replace(',', '.')
-                        e.TLG = e.TLG.replace(',', '.')
+                        if (e.GG) e.GG = e.GG.replace(',', '.')
+                        if (e.HSBH) e.HSBH = e.HSBH.replace(',', '.')
+                        if (e.TLG) e.TLG = e.TLG.replace(',', '.')
                         return e
                     })
                     TuDienVatTu.insertMany(_tbTuDienVatTu, (err, docs) => {
-                        cb(err, {...data, ...{tbTuDienVatTu: docs.length}})
+                        cb(err, {...data, ...{tbTuDienVatTu: docs ? docs.length : 0}})
                     })
                 }
             ], (err, data) => {
@@ -214,7 +214,8 @@ app.get('/napdongia', (req, res) => {
     })();
 });
 
-var DutoanCtrl = require('./db/controllers/dutoan')
+var DutoanCtrl = require('./db/controllers/dutoan');
+const { parseNumbers } = require('xml2js/lib/processors');
 
 app.get('/tradinhmuc/:dm', (req, res)=> {
     DutoanCtrl.get(req.params.dm, (err, data) => {
@@ -224,6 +225,15 @@ app.get('/tradinhmuc/:dm', (req, res)=> {
             res.send(err)
         }
         
+    })
+})
+app.get('/search', (req, res) => {
+    DutoanCtrl.search('', '', '', (err, data) => {
+        if (!err) {
+            res.send(data)
+        } else {
+            res.send(err)
+        }
     })
 })
 

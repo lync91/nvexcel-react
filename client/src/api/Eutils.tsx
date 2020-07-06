@@ -338,7 +338,7 @@ export class wsObject extends AsyncConstructor {
 		customProperty.load("key, value")
 		await this.context.sync();
 	}
-	async updateProjectInfo(key: string, value: string) {
+	async updateProjectInfo(key: string, value: any) {
 		this.projectInfo[key] = value;
 		var docProperties = this.context.workbook.properties.custom;
 		docProperties.add('ProjectInfo', JSON.stringify(this.projectInfo));

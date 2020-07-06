@@ -11,3 +11,6 @@ export const TIEN_LUONG_SHEET_NAME = 'Tiên Lượng'
 export const MAU_KHOI_LUONG_TABLE_NAME = 'MAU_KHOI_LUONG'
 export const TIEN_LUONG_TABLE_NAME = 'TIEN_LUONG'
 
+// OTHER
+export const KHU_VUC_NAME = 'KHU_VUC'
+export const DON_GIA_NAME = 'DON_GIA'

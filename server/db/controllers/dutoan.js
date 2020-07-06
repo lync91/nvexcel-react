@@ -78,7 +78,63 @@ module.exports = {
             .exec((err, res) => fn(err, res))
     },
     search: (kv, dm, text, fn) => {
-
+        var txt = `"${text.replace(/\s/g, "\" \"")}"`
+        // var _txt = `"${txt.replace(/\s/g, "\" \"")}"`
+        // console.log(_txt);
+        // console.log("\"bê\" \"tông\" \"móng\"");
+        console.log(kv);
+        console.log(dm);
+        var _dm = dm.map(e => {
+            return {DM: e}
+        })
+        console.log(dm[0]);
+        
+        DonGia
+        .aggregate()
+        // .find({
+        //     DM: {$in: dm},
+        //     KV: kv,
+        //     // $text: { $search:  txt }
+        // })
+        // .aggregate([
+        //     // {
+        //     //     $addFields: { arrTCV: { $split: ['$TCV', '\s']}}
+        //     // },
+        //     // { $match: { KV: kv } },
+        //     // { $match: {DM: {$in: dm}} },
+        //     {
+        //         $match: {
+        //             KV: kv,
+        //             $text: { $search:  txt },
+        //         }
+        //     },
+        //     // { $match: {DM: {$in: dm}} },
+        //     // { $match: { KV: kv } },
+        // ])
+        // .match({DM: {$in: dm}})
+        // .match({
+        //     // DM: {$in: dm},
+        //     // KV: kv,
+        //     $text: { $search:  txt }
+        // })
+        // .match({
+        //     $text: { $search:  txt },
+        // })
+        // .project({MHDG:1, TCV: 1, DVT: 1, KV: 1, DM: 1})
+        .match({
+            $and: [
+                {DM: {$in: dm}},
+                
+            ]
+        })
+        .project({TCV: 1, _DM: "$DM"})
+        .match({$text: { $search:  txt }})
+        .limit(50)
+        .exec((err, res) => {
+            console.log(err);
+            
+            fn(err, res)
+        })
     },
     getkv: (fn) => {
         DonGia.aggregate([
