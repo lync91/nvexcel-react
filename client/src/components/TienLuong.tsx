@@ -120,20 +120,6 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 	_onFinish = async (values: any) => {
 		console.log('OK');
-		
-		// console.log(values);
-		// await ws?.getActive();
-		// const val = await ws?.getFomulas(`A7:J${ws?.lastRow.row}`);
-		// const data = {
-		// 	tenBoPhan: values.tenBoPhan,
-		// 	data: JSON.stringify(val),
-		// 	loaiCongTrinh: values.loaiCongTrinh
-		// }
-		// socket.emit('khoiluong/mau/add', data, () => {
-		// 	formRef.current?.resetFields();
-		// 	message.success('Đã lưu mẫu khối lượng thành công');
-		// });
-		// await ws.setPropeties();
 		ws.getPropeties()
 	}
 
