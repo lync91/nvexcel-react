@@ -11,7 +11,7 @@ import {
 	List,
 	Skeleton,
 	Avatar,
-
+	Table
 } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
 import { FormInstance } from 'antd/lib/form';
@@ -19,15 +19,16 @@ import { ws, ee } from "../api/nvExcel";
 import { initBangTienLuong } from "../api/libKhoiLuong";
 import {
 	TIEN_LUONG_SHEET_NAME,
+	KHU_VUC_NAME,
+	DON_GIA_NAME
 } from "../constants/named";
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import socket from "../socket";
+import { values } from "office-ui-fabric-react";
 
 const formRef = React.createRef<FormInstance>();
 
-ee.on(`${WORKSHEET_SELECTION_CHANGED}_${TIEN_LUONG_SHEET_NAME}`, (address) => {
-	
-})
+
 
 export interface AppProps {
 	formRef: any
@@ -50,7 +51,10 @@ export interface AppStates {
 	list: any[],
 	lstMauKhoiLuong: any[];
 	lstKV: any[];
-	lstDM: any[]
+	lstDM: any[];
+	khuVuc: string;
+	donGia: any[];
+	congTac: any[];
 }
 
 export interface orientationOptions {
@@ -79,14 +83,26 @@ export class TienLuong extends Component<AppProps, AppStates> {
 			list: [],
 			lstMauKhoiLuong: [],
 			lstKV: [],
-			lstDM: []
+			lstDM: [],
+			khuVuc: 'HoChiMinh',
+			donGia: [],
+			congTac: []
 		}
-		
+
 	}
 
 	async prepair() {
+		ee.removeAllListeners();
+		ee.on(`${WORKSHEET_SELECTION_CHANGED}_${ws?.projectInfo[TIEN_LUONG_SHEET_NAME]}`, async (address) => {
+			console.log(address);
+			const value = await ws.getValues(address)
+			formRef.current?.setFieldsValue({ search: value })
+			socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, value[0][0], (data: any[])=> {
+				console.log(data);
+				this.setState({congTac: data})
+			})
+		})
 		const name = await ws?.checkWsExits(TIEN_LUONG_SHEET_NAME)
-		// name ? this.setState({ wsExits: true }) : this.setState({ wsExits: false })
 		if (name) {
 			await ws?.currentWs(TIEN_LUONG_SHEET_NAME)
 			ws?.activate();
@@ -100,10 +116,20 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		this.prepair()
 		socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }));
 		socket.emit('dutoan/dongia/getkv', (data: any) => this.setState({ lstKV: data }))
+		if (ws?.projectInfo[KHU_VUC_NAME]) {
+			this.getDonGiaKhuVuc(ws.projectInfo[KHU_VUC_NAME]);
+			this.setState({ khuVuc: ws.projectInfo[KHU_VUC_NAME] })
+		} else {
+			this.getDonGiaKhuVuc(this.state.khuVuc);
+		}
+		if (ws?.projectInfo[DON_GIA_NAME]) {
+			this.setState({ donGia: ws.projectInfo[DON_GIA_NAME] })
+		}
 	}
 	_taoBangmau = async () => {
 		await ws?.addSheet(TIEN_LUONG_SHEET_NAME);
-		await ws?.currentWs(TIEN_LUONG_SHEET_NAME);
+		const id = await ws?.currentWs(TIEN_LUONG_SHEET_NAME);
+		ws.updateProjectInfo(TIEN_LUONG_SHEET_NAME, id);
 		await ws?.activate();
 		initBangTienLuong();
 		this.setState({ wsExits: true })
@@ -112,7 +138,10 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 	_selectLoaiCongTrinh(value: string) {
 		console.log(value);
-		socket.emit('khoiluong/mau/getlistMauKhoiLuong', value, (data: any) => {
+		this.getMauKhoiLuong(value);
+	}
+	getMauKhoiLuong(kv: string) {
+		socket.emit('khoiluong/mau/getlistMauKhoiLuong', kv, (data: any) => {
 			if (data) {
 				this.setState({ lstMauKhoiLuong: data, initLoading: false })
 			}
@@ -120,7 +149,27 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 	_onFinish = async (values: any) => {
 		console.log('OK');
+
+		// console.log(values);
+		// await ws?.getActive();
+		// const val = await ws?.getFomulas(`A7:J${ws?.lastRow.row}`);
+		// const data = {
+		// 	tenBoPhan: values.tenBoPhan,
+		// 	data: JSON.stringify(val),
+		// 	loaiCongTrinh: values.loaiCongTrinh
+		// }
+		// socket.emit('khoiluong/mau/add', data, () => {
+		// 	formRef.current?.resetFields();
+		// 	message.success('Đã lưu mẫu khối lượng thành công');
+		// });
+		// await ws.setPropeties();
 		ws.getPropeties()
+	}
+
+	_searchDonGia(text: string) {
+		socket.emit('dutoan/dongia/search', (data: any[]) => {
+
+		})
 	}
 
 	async _mcvClick(value: any) {
@@ -141,17 +190,53 @@ export class TienLuong extends Component<AppProps, AppStates> {
 
 	}
 	async _selectKhuvuc(value: any) {
-		socket.emit('dutoan/dongia/getdm', value, (data: any) => this.setState({ lstDM: data }))
+		await ws.updateProjectInfo(KHU_VUC_NAME, value)
+		ws.getProjectInfo();
+		this.getDonGiaKhuVuc(value)
+	}
+
+	getDonGiaKhuVuc(kv: string) {
+		socket.emit('dutoan/dongia/getdm', kv, async (data: any) => {
+			this.setState({ lstDM: data });
+			formRef.current?.setFieldsValue({ khuVuc: ws?.projectInfo[DON_GIA_NAME] ? ws?.projectInfo[DON_GIA_NAME] : this.state.donGia })
+		})
 	}
 
 	async _selectDinhMuc(value: any) {
-		console.log(value);
+		const values: any = formRef.current?.getFieldsValue();
+		ws.updateProjectInfo(DON_GIA_NAME, values.donGia);
+		console.log('OK');
 
+	}
+
+	_frmTraDinhMucChange(values: any) {
+		console.log(values);
+		if (values.donGia) ws.updateProjectInfo(DON_GIA_NAME, values.donGia);
 	}
 
 	render() {
 		const { TabPane } = Tabs;
-		const {Search} = Input
+		const { Search } = Input
+		const columns: any[] = [
+			{
+				title: 'Mã hiệu',
+				dataIndex: 'MHDG',
+				key: 'MHDG',
+				render: (text: any) => <a>{text}</a>,
+			  },
+			  {
+				title: 'Tên công tác',
+				dataIndex: 'TCV',
+				key: 'TCV',
+				render: (text: any) => <a>{text}</a>,
+			  },
+			  {
+				title: 'Đơn vị',
+				dataIndex: 'DVT',
+				key: 'DVT',
+				render: (text: any) => <a>{text}</a>,
+			  },
+		]
 		return (
 			<section>
 				<div hidden={this.state.wsExits} style={{ margin: 'auto' }}>
@@ -221,15 +306,15 @@ export class TienLuong extends Component<AppProps, AppStates> {
 										<List.Item.Meta
 											title={item.label}
 										/>
-										<Button type="primary" shape="circle" size="small" icon={<PlusOutlined />} />
+										<Button type="primary" shape="circle" size="small" onClick={e => this._mcvClick(item.value)} icon={<PlusOutlined />} />
 									</Skeleton>
 								</List.Item>
 							)}
 						/>
 					</TabPane>
 					<TabPane tab="Tra định mức" key="3">
-						<Form ref={formRef} onFinish={this._onFinish}>
-							<Form.Item label='Khu vực' name='khuVuc'>
+						<Form ref={formRef} onFinish={this._onFinish} onValuesChange={values => this._frmTraDinhMucChange(values)}>
+							<Form.Item label='Khu vực' name='khuVuc' initialValue={this.state.khuVuc}>
 								<Select
 									showSearch
 									options={this.state.lstKV}
@@ -242,7 +327,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 								>
 								</Select>
 							</Form.Item>
-							<Form.Item label='Đơn giá' name='donGia' >
+							<Form.Item label='Đơn giá' name='donGia' initialValue={this.state.donGia}>
 								<Select
 									showSearch
 									mode="multiple"
@@ -260,6 +345,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 								<Search placeholder="Tìm kiếm mã hiệu, công tác" onSearch={value => console.log(value)} enterButton />
 							</Form.Item>
 						</Form>
+						<Table columns={columns} dataSource={this.state.congTac} />
 					</TabPane>
 				</Tabs>
 			</section>

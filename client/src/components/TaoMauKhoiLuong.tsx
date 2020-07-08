@@ -86,7 +86,6 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 		ws?.addValues('A7', [['#']])
 	}
 	_onFinish = async (values: any) => {
-		console.log(values);
 		await ws?.getActive();
 		const lastRow = await ws.getLastRow();
 		const val = await ws?.getFomulas(`A7:J${lastRow.cell1.row}`);

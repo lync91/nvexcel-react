@@ -55,6 +55,7 @@ export class wsObject extends AsyncConstructor {
 	lastRow!: addressTypes;
 	selectedRange!: string;
 	sheetMap: any;
+	projectInfo: any = {};
 	constructor(wsName: string | null = null) {
 		super(async () => {
 			this.name = wsName;
@@ -65,10 +66,9 @@ export class wsObject extends AsyncConstructor {
 				})
 			} catch (error) {
 				console.log(error);
-
 			}
+			this.getProjectInfo();
 			this.getActive();
-
 		})
 	}
 	initContext() {
@@ -79,7 +79,6 @@ export class wsObject extends AsyncConstructor {
 				})
 			} catch (error) {
 				console.log(error);
-
 			}
 		})
 		return promise
@@ -97,19 +96,22 @@ export class wsObject extends AsyncConstructor {
 		ws?.sheetMap.navigate(name)
 	}
 	async onSelectionChanged(event: any) {
-		// console.log(event);
 		console.log(event);
-
-		ee.emit(`${WORKSHEET_SELECTION_CHANGED}_${ws.name}`, event.address);
-
+		const address = new addressObj(event.address)
+		if ((address.cell1.col === 'D' || address.cell1.col === 'C') && address.cell1.row! > 6) {
+			ee.emit(`${WORKSHEET_SELECTION_CHANGED}_${event.worksheetId}`, event.address);
+		}
+		
 	}
 	async onSheetChanged(event: any) {
 		sheetChanged(event)
 	}
 	async currentWs(name: string) {
 		this.name = name;
-		// await this.getWorksheet(name).then(ws => this.ws = ws)
 		this.ws = this.context!.workbook.worksheets.getItemOrNullObject(name!)
+		this.ws.load('id');
+		await this.context.sync()
+		return this.ws.id;
 	}
 	async getActive() {
 		this.ws = this.context!.workbook.worksheets.getActiveWorksheet();
@@ -335,7 +337,22 @@ export class wsObject extends AsyncConstructor {
 		const customProperty = docProperties.getItemOrNullObject(TIEN_LUONG_SHEET_NAME)
 		customProperty.load("key, value")
 		await this.context.sync();
-		console.log(customProperty);
-		
+	}
+	async updateProjectInfo(key: string, value: any) {
+		this.projectInfo[key] = value;
+		var docProperties = this.context.workbook.properties.custom;
+		docProperties.add('ProjectInfo', JSON.stringify(this.projectInfo));
+		return this.context.sync();
+	}
+	async getProjectInfo() {
+		var docProperties = this.context.workbook.properties.custom;
+		const customProperty = docProperties.getItemOrNullObject('ProjectInfo')
+		customProperty.load("key, value")
+		await this.context.sync();
+		if (customProperty.value) {
+			this.projectInfo = JSON.parse(customProperty.value)
+			console.log(this.projectInfo);
+			
+		}
 	}
 }

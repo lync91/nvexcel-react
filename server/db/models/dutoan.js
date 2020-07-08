@@ -25,6 +25,7 @@ var dongiaSchema = new Schema({
     DM: String,
     KV: String
 });
+dongiaSchema.index({TCV: "text", KV: "text", DM: "text"})
 mongoose.model("dongia", dongiaSchema);
 
 var giacamaySchema = new Schema({

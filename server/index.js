@@ -111,25 +111,25 @@ app.get('/napdongia', (req, res) => {
                     _tbDinhMuc = tbDinhMuc.map(e => {
                         e.DM = DGDb
                         e.KV = KV
-                        e.HPVT = e.HPVT.replace(',', '.')
+                        if (e.HPVT) e.HPVT = parseFloat(e.HPVT.replace(',', '.')) ? parseFloat(e.HPVT.replace(',', '.')) : 0
                         return e
                     })
                     DinhMuc.insertMany(_tbDinhMuc, (err, docs) => {
-                        cb(err, {tbDinhMuc: docs.length})
+                        err ? cb(err) : cb(null, {tbDinhMuc: docs ? docs.length : 0})
                     })
                 },
                 (data, cb) => {
                     _tbDongia = tbDonGia.map(e => {
                         e.DM = DGDb
                         e.KV = KV
-                        e.VLC = e.VLC.replace(',', '.')
-                        e.VLP = e.VLP.replace(',', '.')
-                        e.NC = e.NC.replace(',', '.')
-                        e.MTC = e.MTC.replace(',', '.')
+                        if (e.VLC) e.VLC = e.VLC.replace(',', '.')
+                        if (e.VLP) e.VLP = e.VLP.replace(',', '.')
+                        if (e.NC) e.NC = e.NC.replace(',', '.')
+                        if (e.MTC) e.MTC = e.MTC.replace(',', '.')
                         return e
                     })
                     DonGia.insertMany(_tbDongia, (err, docs) => {
-                        cb(err, {...data, ...{tbDonGia: docs.length}})
+                        cb(err, {...data, ...{tbDonGia: docs ? docs.length : 0}})
                     })
                 },
                 (data, cb) => {
@@ -157,7 +157,7 @@ app.get('/napdongia', (req, res) => {
                     // console.log(_tbDongia);
                     
                     GiaCaMay.insertMany(_tbGiaCaMay, (err, docs) => {
-                        cb(err, {...data, ...{tbGiaCaMay: docs.length}})
+                        cb(err, {...data, ...{tbGiaCaMay: docs ? docs.length : 0}})
                     })
                 },
                 // (data, cb) => {
@@ -184,13 +184,13 @@ app.get('/napdongia', (req, res) => {
                     _tbTuDienVatTu = tbTuDienVatTu.map(e => {
                         e.DM = DGDb
                         e.KV = KV
-                        e.GG = e.GG.replace(',', '.')
-                        e.HSBH = e.HSBH.replace(',', '.')
-                        e.TLG = e.TLG.replace(',', '.')
+                        if (e.GG) e.GG = e.GG.replace(',', '.')
+                        if (e.HSBH) e.HSBH = e.HSBH.replace(',', '.')
+                        if (e.TLG) e.TLG = e.TLG.replace(',', '.')
                         return e
                     })
                     TuDienVatTu.insertMany(_tbTuDienVatTu, (err, docs) => {
-                        cb(err, {...data, ...{tbTuDienVatTu: docs.length}})
+                        cb(err, {...data, ...{tbTuDienVatTu: docs ? docs.length : 0}})
                     })
                 }
             ], (err, data) => {
@@ -216,7 +216,8 @@ app.get('/napdongia', (req, res) => {
     })();
 });
 
-var DutoanCtrl = require('./db/controllers/dutoan')
+var DutoanCtrl = require('./db/controllers/dutoan');
+const { parseNumbers } = require('xml2js/lib/processors');
 
 app.get('/tradinhmuc/:dm', (req, res)=> {
     DutoanCtrl.get(req.params.dm, (err, data) => {
@@ -226,6 +227,15 @@ app.get('/tradinhmuc/:dm', (req, res)=> {
             res.send(err)
         }
         
+    })
+})
+app.get('/search', (req, res) => {
+    DutoanCtrl.search('', '', '', (err, data) => {
+        if (!err) {
+            res.send(data)
+        } else {
+            res.send(err)
+        }
     })
 })
 
