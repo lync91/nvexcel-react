@@ -18,10 +18,10 @@ const { parseNumbers } = require('xml2js/lib/processors');
 
 (async () => {
   let connection, tbDinhMuc;
-  const DGDb = 'DM_KS_TT10.2019'
-  
+  const DGDb = 'HoChiMinh2016_XD+LD+SC+2018BS'
+  const KV = 'HoChiMinh';
   connection = adodb.open({
-      Database: `./temp/${DGDb}.mdb`
+      Database: `./temp/${KV}/${DGDb}.mdb`
   });
   try {
       tbDinhMuc = await connection.query("SELECT * FROM tbDinhMuc'");
@@ -29,17 +29,159 @@ const { parseNumbers } = require('xml2js/lib/processors');
       tbGiaCaMay = await connection.query("SELECT * FROM tbGiaCaMay'");
       tbPhuLucVua = await connection.query("SELECT * FROM tbPhuLucVua'");
       tbTuDienVatTu = await connection.query("SELECT * FROM tbTuDienVatTu'");
-      _tbDinhMuc = tbDinhMuc.map(e => {
-        var str = `${e.HPVT}`
-        e.DM = DGDb
-        e.HPVT = str.replace(',', '.')
-        return e
+      var source = {
+          tbDinhMuc: tbDinhMuc.length,
+          tbDonGia: tbDonGia.length,
+          tbGiaCaMay: tbGiaCaMay.length,
+          tbPhuLucVua: tbPhuLucVua.length,
+          tbTuDienVatTu: tbTuDienVatTu.length
+      }
+      async.waterfall([
+          (cb) => {
+              DinhMuc.deleteMany({
+                  DM: DGDb,
+                  KV: KV
+              })
+              .exec((err, res) =>{
+                  cb(null)
+              })
+          },
+          (cb) => {
+              DonGia.deleteMany({
+                  DM: DGDb,
+                  KV: KV
+              })
+              .exec((err, res) =>{
+                  cb(null)
+              })
+          },
+          (cb) => {
+              GiaCaMay.deleteMany({
+                  DM: DGDb,
+                  KV: KV
+              })
+              .exec((err, res) =>{
+                  cb(null)
+              })
+          },
+          (cb) => {
+              PhuLucVua.deleteMany({
+                  DM: DGDb,
+                  KV: KV
+              })
+              .exec((err, res) =>{
+                  cb(null)
+              })
+          },
+          (cb) => {
+              TuDienVatTu.deleteMany({
+                  DM: DGDb,
+                  KV: KV
+              })
+              .exec((err, res) =>{
+                  cb(null)
+              })
+          },
+          (cb) => {
+              _tbDinhMuc = tbDinhMuc.map(e => {
+                  e.DM = DGDb
+                  e.KV = KV
+                  if (e.HPVT) e.HPVT = parseFloat(e.HPVT.replace(',', '.')) ? parseFloat(e.HPVT.replace(',', '.')) : 0
+                  return e
+              })
+              DinhMuc.insertMany(_tbDinhMuc, (err, docs) => {
+                  err ? cb(err) : cb(null, {tbDinhMuc: docs ? docs.length : 0})
+              })
+          },
+          (data, cb) => {
+              _tbDongia = tbDonGia.map(e => {
+                  e.DM = DGDb
+                  e.KV = KV
+                  if (e.VLC) e.VLC = e.VLC.replace(',', '.')
+                  if (e.VLP) e.VLP = e.VLP.replace(',', '.')
+                  if (e.NC) e.NC = e.NC.replace(',', '.')
+                  if (e.MTC) e.MTC = e.MTC.replace(',', '.')
+                  return e
+              })
+              DonGia.insertMany(_tbDongia, (err, docs) => {
+                  cb(err, {...data, ...{tbDonGia: docs ? docs.length : 0}})
+              })
+          },
+          (data, cb) => {
+              _tbGiaCaMay = tbGiaCaMay.map(e => {
+                  e.DM = DGDb
+                  e.KV = KV
+                  if (e.SC) e.SC = e.SC.replace(',', '.')
+                  if (e.DMKH) e.DMKH = e.DMKH.replace(',', '.')
+                  if (e.HSTH) e.HSTH = e.HSTH.replace(',', '.')
+                  if (e.DMSC) e.DMSC = e.DMSC.replace(',', '.')
+                  if (e.DMCP) e.DMCP = e.DMCP.replace(',', '.')
+                  // e.DMTH = e.DMTH.replace(',', '.')
+                  if (e.HSNL) e.HSNL = e.HSNL.replace(',', '.')
+                  if (e.CPKH) e.CPKH = e.CPKH.replace(',', '.')
+                  if (e.CPSC) e.CPSC = e.CPSC.replace(',', '.')
+                  if (e.CPK) e.CPK = e.CPK.replace(',', '.')
+                  if (e.CPNL) e.CPNL = e.CPNL.replace(',', '.')
+                  if (e.CPTL) e.CPTL = e.CPTL.replace(',', '.')
+                  // e.CPTL = e.CPTL.replace(',', '.')
+                  if (e.GCM) e.GCM = e.GCM.replace(',', '.')
+                  if (e.NGG) e.NGG = e.NGG.replace(',', '.')
+                  if (e.NGDC) e.NGDC = e.NGDC.replace(',', '.')
+                  return e
+              })
+              // console.log(_tbDongia);
+              
+              GiaCaMay.insertMany(_tbGiaCaMay, (err, docs) => {
+                  cb(err, {...data, ...{tbGiaCaMay: docs ? docs.length : 0}})
+              })
+          },
+          // (data, cb) => {
+          //     _tbPhuLucVua = tbPhuLucVua.map(e => {
+          //         e.DM = DGDb
+          //         e.KV = KV
+          //         e.HPXM = e.HPXM.replace(',', '.')
+          //         e.HPC = e.HPC.replace(',', '.')
+          //         e.HPD = e.HPD.replace(',', '.')
+          //         e.HPV = e.HPV.replace(',', '.')
+          //         e.HP1 = e.HP2.replace(',', '.')
+          //         e.HP2 = e.HP2.replace(',', '.')
+          //         e.HP3 = e.HP3.replace(',', '.')
+          //         e.HP4 = e.HP4.replace(',', '.')
+          //         return e
+          //     })
+          //     PhuLucVua.insertMany(_tbPhuLucVua, (err, docs) => {
+          //         console.log(err);
+                  
+          //         cb(err, {...data, ...{tbPhuLucVua: docs.length}})
+          //     })
+          // },
+          (data, cb) => {
+              _tbTuDienVatTu = tbTuDienVatTu.map(e => {
+                  e.DM = DGDb
+                  e.KV = KV
+                  if (e.GG) e.GG = e.GG.replace(',', '.')
+                  if (e.HSBH) e.HSBH = e.HSBH.replace(',', '.')
+                  if (e.TLG) e.TLG = e.TLG.replace(',', '.')
+                  return e
+              })
+              TuDienVatTu.insertMany(_tbTuDienVatTu, (err, docs) => {
+                  cb(err, {...data, ...{tbTuDienVatTu: docs ? docs.length : 0}})
+              })
+          }
+      ], (err, data) => {
+          if (!err) {
+              var obj = {
+                  source: source,
+                  res: data
+              }
+              res.json(obj)
+              
+          } else {
+              console.log(err);
+              
+              // res.send(err)
+          }
       })
-      DinhMuc.insertMany(_tbDinhMuc, (err, docs) => {
-        console.log(docs);
-        
-      })
-      
       // console.log(_tbDinhMuc);
   } catch (error) {
       console.log(error);
