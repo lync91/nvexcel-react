@@ -43,7 +43,7 @@ var adodb = require('database-js-adodb');
 app.get('/napdongia', (req, res) => {
     (async () => {
         let connection, tbDinhMuc;
-        const DGDb = 'HCM_DM_XD+LD+SC_TT10.2019_GCMKVI'
+        const DGDb = 'HoChiMinh2016_XD+LD+SC+2018BS'
         const KV = 'HoChiMinh';
         connection = adodb.open({
             Database: `./temp/${KV}/${DGDb}.mdb`
@@ -129,7 +129,7 @@ app.get('/napdongia', (req, res) => {
                         return e
                     })
                     DonGia.insertMany(_tbDongia, (err, docs) => {
-                        cb(null, {...data, ...{tbDonGia: docs ? docs.length : 0}})
+                        cb(err, {...data, ...{tbDonGia: docs ? docs.length : 0}})
                     })
                 },
                 (data, cb) => {
@@ -160,24 +160,26 @@ app.get('/napdongia', (req, res) => {
                         cb(err, {...data, ...{tbGiaCaMay: docs ? docs.length : 0}})
                     })
                 },
-                (data, cb) => {
-                    _tbPhuLucVua = tbPhuLucVua.map(e => {
-                        e.DM = DGDb
-                        e.KV = KV
-                        if (e.HPXM) e.HPXM = e.HPXM.replace(',', '.')
-                        if (e.HPC) e.HPC = e.HPC.replace(',', '.')
-                        if (e.HPD) e.HPD = e.HPD.replace(',', '.')
-                        if (e.HPV) e.HPV = e.HPV.replace(',', '.')
-                        if (e.HP1) e.HP1 = e.HP2.replace(',', '.')
-                        if (e.HP2) e.HP2 = e.HP2.replace(',', '.')
-                        if (e.HP3) e.HP3 = e.HP3.replace(',', '.')
-                        if (e.HP4) e.HP4 = e.HP4.replace(',', '.')
-                        return e
-                    })
-                    PhuLucVua.insertMany(_tbPhuLucVua, (err, docs) => {
-                        cb(err, {...data, ...{tbPhuLucVua: docs ? docs.length : 0}})
-                    })
-                },
+                // (data, cb) => {
+                //     _tbPhuLucVua = tbPhuLucVua.map(e => {
+                //         e.DM = DGDb
+                //         e.KV = KV
+                //         e.HPXM = e.HPXM.replace(',', '.')
+                //         e.HPC = e.HPC.replace(',', '.')
+                //         e.HPD = e.HPD.replace(',', '.')
+                //         e.HPV = e.HPV.replace(',', '.')
+                //         e.HP1 = e.HP2.replace(',', '.')
+                //         e.HP2 = e.HP2.replace(',', '.')
+                //         e.HP3 = e.HP3.replace(',', '.')
+                //         e.HP4 = e.HP4.replace(',', '.')
+                //         return e
+                //     })
+                //     PhuLucVua.insertMany(_tbPhuLucVua, (err, docs) => {
+                //         console.log(err);
+                        
+                //         cb(err, {...data, ...{tbPhuLucVua: docs.length}})
+                //     })
+                // },
                 (data, cb) => {
                     _tbTuDienVatTu = tbTuDienVatTu.map(e => {
                         e.DM = DGDb
