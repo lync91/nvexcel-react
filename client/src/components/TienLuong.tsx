@@ -24,7 +24,7 @@ import {
 } from "../constants/named";
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import socket from "../socket";
-import { values } from "office-ui-fabric-react";
+import { DAU_VAO_OBJECT } from "../constants/values";
 
 const formRef = React.createRef<FormInstance>();
 
@@ -149,7 +149,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 	_onFinish = async (values: any) => {
 		console.log('OK');
-
+		ws.sheetContents(DAU_VAO_OBJECT.contents)
 		// console.log(values);
 		// await ws?.getActive();
 		// const val = await ws?.getFomulas(`A7:J${ws?.lastRow.row}`);
@@ -268,7 +268,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 								<Input />
 							</Form.Item>
 							<Form.Item style={{ paddingTop: 4, paddingBottom: 4 }}>
-								<Button type="primary" htmlType="submit" onClick={this._onFinish}>
+								<Button type="primary" htmlType="submit">
 									Lưu
 								</Button>
 							</Form.Item>

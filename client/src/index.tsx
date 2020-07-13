@@ -14,14 +14,12 @@ import * as serviceWorker from './serviceWorker';
 
 // const Office = window.Office;
 Office.initialize = async () => {
-  await init();
+  await init().then(x => ReactDOM.render(<App />, document.getElementById('root')));
   ws.regEvents();
   // await ws?.regEvents();
   // console.log(ws);
-  ReactDOM.render(<App />, document.getElementById('root'));
+  // ReactDOM.render(<App />, document.getElementById('root'));
 };
-
-ReactDOM.render(<App />, document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

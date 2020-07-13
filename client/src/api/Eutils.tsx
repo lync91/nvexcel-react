@@ -6,7 +6,7 @@ import { HAO_PHI_VAT_TU_NAME, TIEN_LUONG_SHEET_NAME } from '../constants/named';
 import { sheetMap } from "../constants/map";
 import { sheetChanged } from "./wsEvents"
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
-
+import { toLetter, addrParser } from "./lib";
 export interface addressTypes {
 	text: string | null;
 	col: string | null;
@@ -252,7 +252,10 @@ export class wsObject extends AsyncConstructor {
 
 	}
 	async addSheet(name: string) {
-		this.context?.workbook.worksheets.add(name);
+		const sh = this.context?.workbook.worksheets.add(name);
+		sh.load('id')
+		await this.context.sync();
+		return sh.id;
 	}
 	async getSelectedValues() {
 		const rg = this.context?.workbook.getSelectedRange();
@@ -353,6 +356,32 @@ export class wsObject extends AsyncConstructor {
 			this.projectInfo = JSON.parse(customProperty.value)
 			console.log(this.projectInfo);
 			
+		}
+	}
+	async sheetContents(contents: any[]) {
+		contents.forEach(async (e: any) => {
+			console.log(e);
+			if(e.values) this.addValues(await addrParser(e.values.addr, e.values.values), e.values.values)
+			if(e.font) this.setFont(e.font, await addrParser(e.values.addr, e.values.values))
+		})
+	}
+	async colWidths(lst: number[]) {
+		lst.forEach((e: number, i: number) => {
+			this.colWidth(toLetter(i+1)!, e)
+		})
+	}
+	async newSheetfromObject(obj: any) {
+		if (obj.name) {
+			const shId = await this.addSheet(obj.name)
+			await this.currentWs(obj.name)
+			this.activate();
+			this.updateProjectInfo(obj.name, shId);
+			if (obj.contents) {
+				this.sheetContents(obj.contents)
+			}
+		}
+		if (obj.colwidth) {
+			this.colWidths(obj.colwidth)
 		}
 	}
 }
