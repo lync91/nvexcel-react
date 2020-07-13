@@ -96,7 +96,6 @@ export class wsObject extends AsyncConstructor {
 		ws?.sheetMap.navigate(name)
 	}
 	async onSelectionChanged(event: any) {
-		console.log(event);
 		const address = new addressObj(event.address)
 		if ((address.cell1.col === 'D' || address.cell1.col === 'C') && address.cell1.row! > 6) {
 			ee.emit(`${WORKSHEET_SELECTION_CHANGED}_${event.worksheetId}`, event.address);
