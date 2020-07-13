@@ -1,5 +1,4 @@
 import { AsyncConstructor } from 'async-constructor';
-import { EventEmitter } from "events";
 import { getPageType, getOrientationType } from "./mapIndex";
 import { ws, ee } from './nvExcel';
 import { HAO_PHI_VAT_TU_NAME, TIEN_LUONG_SHEET_NAME } from '../constants/named';
