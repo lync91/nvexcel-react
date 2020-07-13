@@ -31,12 +31,12 @@
     "typescript": "^3.7.5"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-scripts start host=0.0.0.0",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "dev-server": "HTTPS=true SSL_CRT_FILE=../cert/cert.pem SSL_KEY_FILE=../cert/privkey.pem npm start",
-    "dev-local": "set HTTPS=true&&set SSL_CRT_FILE=../cert/server.crt&&set SSL_KEY_FILE=../cert/server.key&&npm start"
+    "dev-local": "HTTPS=true SSL_CRT_FILE=../cert/server.crt SSL_KEY_FILE=../cert/server.key npm start"
   },
   "eslintConfig": {
     "extends": "react-app"
