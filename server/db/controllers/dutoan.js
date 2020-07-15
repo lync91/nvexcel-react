@@ -121,14 +121,13 @@ module.exports = {
         //     $text: { $search:  txt },
         // })
         // .project({MHDG:1, TCV: 1, DVT: 1, KV: 1, DM: 1})
+        .match({$text: { $search:  txt }})
         .match({
             $and: [
                 {DM: {$in: dm}},
                 
             ]
         })
-        .project({TCV: 1, _DM: "$DM"})
-        .match({$text: { $search:  txt }})
         .limit(50)
         .exec((err, res) => {
             console.log(err);

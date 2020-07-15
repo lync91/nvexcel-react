@@ -8,16 +8,17 @@ import {
 import history from './history';
 import 'antd/dist/antd.css';
 import './App.css';
-import { Layout, Menu, Button } from 'antd';
+import { Layout, Menu, Button, Empty } from 'antd';
 import {
   MenuUnfoldOutlined,
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined
 } from '@ant-design/icons';
-import { init, ws } from "./api/nvExcel";
 import { AppContext } from "./contexts/AppContext";
 import socket from "./socket";
+import { ws } from "./api/nvExcel";
+import { DAU_VAO_OBJECT } from "./constants/values";
 const CharConvert = React.lazy(() => import('./components/CharConvert'));
 const PageFormat = React.lazy(() => import('./components/PageFormat'));
 const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
@@ -33,6 +34,7 @@ export interface AppState {
   sideWith: string,
   openKeys: string[],
   selectedKeys: string[]
+  tlExits: boolean;
 }
 
 class App extends Component<{}, AppState> {
@@ -43,7 +45,7 @@ class App extends Component<{}, AppState> {
       selectedKey: history.location.toString(),
       dismissPanel: (item: any) => {
         console.log('this is context');
-        
+
         history.push(item.key)
         this.setState({ selectedKey: item.key })
         this.setState({ isOpen: false })
@@ -52,11 +54,17 @@ class App extends Component<{}, AppState> {
       collapsedWidth: 0,
       sideWith: '100%',
       openKeys: ['sub1'],
-      selectedKeys: ['']
+      selectedKeys: [''],
+      tlExits: false
     };
   };
   async componentDidMount() {
-    
+    await ws?.getProjectInfo();
+    if (ws?.projectInfo[DAU_VAO_OBJECT.name]) {
+      this.setState({tlExits: true})
+    } else {
+      this.setState({tlExits: false})
+    }
   }
   openPanel() { this.setState({ isOpen: true }) };
   dismissPanel() { this.setState({ isOpen: false }) };
@@ -66,8 +74,8 @@ class App extends Component<{}, AppState> {
     });
     // this.onOpenChange(this.state.selectedKeys)
   };
-  handleClick() {
-
+  async _khoiTaoDauVao() {
+    await ws.newSheetfromObject(DAU_VAO_OBJECT)
   }
   rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
   onOpenChange = (openKeys: string[]) => {
@@ -83,7 +91,7 @@ class App extends Component<{}, AppState> {
   };
   onSelect = (data: any) => {
     history.push(data.key);
-    this.setState({selectedKeys: data.selectedKeys})
+    this.setState({ selectedKeys: data.selectedKeys })
     this.setState({ collapsed: !this.state.collapsed })
   }
   render() {
@@ -93,7 +101,26 @@ class App extends Component<{}, AppState> {
     return (
       <AppContext.Provider value={this.state}>
         <div className="App">
-          <Layout>
+          <div hidden={!this.state.tlExits} style={{ margin: 'auto' }}>
+            <Empty
+              style={{
+                paddingTop: 60,
+                paddingBottom: 60
+              }}
+              image="assets/empty.svg"
+              imageStyle={{
+                height: 60,
+              }}
+              description={
+                <span>
+                  Hmm~! File dự toán chưa có bảng đầu vào. Hãy Khởi Tạo để bắt đầu lập dự toán
+                          </span>
+              }
+            >
+              <Button type="primary" onClick={this._khoiTaoDauVao}>Khởi tạo</Button>
+            </Empty>
+          </div>
+          <Layout hidden={!this.state.tlExits}>
             <Sider trigger={null} collapsible
               width={this.state.sideWith}
               collapsedWidth={this.state.collapsedWidth}
@@ -155,7 +182,8 @@ class App extends Component<{}, AppState> {
                   <Suspense fallback="Đang tải">
                     <section className="App-body">
                       <Switch>
-                        <Route exact path="/" component={Home} />
+                        <Route exact={true} path="/" component={Home} />
+                        <Route path="/?_host_Info:param" component={Home} />
                         <Route path="/charConvert" component={CharConvert} />
                         <Route path="/PageFormat" component={PageFormat} />
                         <Route path="/PageFormatG8" component={PageFormatG8} />
@@ -181,10 +209,5 @@ function Home() {
     </div>
   );
 }
-// function SpinnerLoadinng() {
-//   return (
-//     <Spinner size={SpinnerSize.small} />
-//   )
-// }
 
 export default App;

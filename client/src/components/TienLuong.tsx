@@ -25,6 +25,7 @@ import {
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import socket from "../socket";
 import { values } from "office-ui-fabric-react";
+import { addressObj } from "../api/Eutils";
 
 const formRef = React.createRef<FormInstance>();
 
@@ -55,6 +56,7 @@ export interface AppStates {
 	khuVuc: string;
 	donGia: any[];
 	congTac: any[];
+	currentAddress: addressObj
 }
 
 export interface orientationOptions {
@@ -86,7 +88,8 @@ export class TienLuong extends Component<AppProps, AppStates> {
 			lstDM: [],
 			khuVuc: 'HoChiMinh',
 			donGia: [],
-			congTac: []
+			congTac: [],
+			currentAddress: new addressObj('')
 		}
 
 	}
@@ -94,7 +97,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	async prepair() {
 		ee.removeAllListeners();
 		ee.on(`${WORKSHEET_SELECTION_CHANGED}_${ws?.projectInfo[TIEN_LUONG_SHEET_NAME]}`, async (address) => {
-			console.log(address);
+			this.setState({currentAddress: new addressObj(address)})
 			const value = await ws.getValues(address)
 			formRef.current?.setFieldsValue({ search: value })
 			socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, value[0][0], (data: any[])=> {
@@ -129,7 +132,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	_taoBangmau = async () => {
 		await ws?.addSheet(TIEN_LUONG_SHEET_NAME);
 		const id = await ws?.currentWs(TIEN_LUONG_SHEET_NAME);
-		ws.updateProjectInfo(TIEN_LUONG_SHEET_NAME, id);
+		await ws.updateProjectInfo(TIEN_LUONG_SHEET_NAME, id);
 		await ws?.activate();
 		initBangTienLuong();
 		this.setState({ wsExits: true })
@@ -167,8 +170,9 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 
 	_searchDonGia(text: string) {
-		socket.emit('dutoan/dongia/search', (data: any[]) => {
-
+		socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, text, (data: any[])=> {
+			console.log(data);
+			this.setState({congTac: data})
 		})
 	}
 
@@ -212,6 +216,10 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	_frmTraDinhMucChange(values: any) {
 		console.log(values);
 		if (values.donGia) ws.updateProjectInfo(DON_GIA_NAME, values.donGia);
+	}
+
+	_dmClick(value: string) {
+		ws.addValues(`C${this.state.currentAddress.cell1.row}`, [[value]])
 	}
 
 	render() {
@@ -342,10 +350,19 @@ export class TienLuong extends Component<AppProps, AppStates> {
 								</Select>
 							</Form.Item>
 							<Form.Item label='Tìm kiếm' name='search' >
-								<Search placeholder="Tìm kiếm mã hiệu, công tác" onSearch={value => console.log(value)} enterButton />
+								<Search placeholder="Tìm kiếm mã hiệu, công tác" onSearch={value => this._searchDonGia(value)} enterButton />
 							</Form.Item>
 						</Form>
-						<Table columns={columns} dataSource={this.state.congTac} />
+						<Table 
+							onRow={(record, rowIndex) => {
+								return {
+								  onClick: event => {
+									  this._dmClick(record.MHDM)
+								  }, // click row
+								};
+							  }}
+							columns={columns} 
+							dataSource={this.state.congTac} />
 					</TabPane>
 				</Tabs>
 			</section>

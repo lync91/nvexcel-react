@@ -1,12 +1,11 @@
 import { AsyncConstructor } from 'async-constructor';
-import { EventEmitter } from "events";
 import { getPageType, getOrientationType } from "./mapIndex";
 import { ws, ee } from './nvExcel';
 import { HAO_PHI_VAT_TU_NAME, TIEN_LUONG_SHEET_NAME } from '../constants/named';
 import { sheetMap } from "../constants/map";
 import { sheetChanged } from "./wsEvents"
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
-
+import { toLetter, addrParser, columnIndex } from "./lib";
 export interface addressTypes {
 	text: string | null;
 	col: string | null;
@@ -96,7 +95,6 @@ export class wsObject extends AsyncConstructor {
 		ws?.sheetMap.navigate(name)
 	}
 	async onSelectionChanged(event: any) {
-		console.log(event);
 		const address = new addressObj(event.address)
 		if ((address.cell1.col === 'D' || address.cell1.col === 'C') && address.cell1.row! > 6) {
 			ee.emit(`${WORKSHEET_SELECTION_CHANGED}_${event.worksheetId}`, event.address);
@@ -252,7 +250,10 @@ export class wsObject extends AsyncConstructor {
 
 	}
 	async addSheet(name: string) {
-		this.context?.workbook.worksheets.add(name);
+		const sh = this.context?.workbook.worksheets.add(name);
+		sh.load('id')
+		await this.context.sync();
+		return sh.id;
 	}
 	async getSelectedValues() {
 		const rg = this.context?.workbook.getSelectedRange();
@@ -353,6 +354,59 @@ export class wsObject extends AsyncConstructor {
 			this.projectInfo = JSON.parse(customProperty.value)
 			console.log(this.projectInfo);
 			
+		}
+	}
+	valuesParser(values: any[]) {
+		let res = values.map(e => {
+			if (!Array.isArray(e)) {
+				return e.values
+			} else {
+				return e
+			}
+		})
+		return res
+	}
+	valuesFormatter(addr: string, values: any[]) {
+		const addr1 = new addressObj(addr);
+		values.forEach(async (e, i) => {
+			if (!Array.isArray(e)) {
+				console.log(addr1.cell1.col);
+				
+				const endColNum = await columnIndex(addr1.cell1.col!) + e.values - 1;
+				console.log(endColNum);
+				const address = `${addr1.cell1.col}${addr1.cell1.row! + i}:${await toLetter(endColNum)}${addr1.cell1.row! + i}`;
+				console.log(address);
+				// if (e.bold) this.setBold(addr1.)
+			}
+		})
+	}
+	async sheetContents(contents: any[]) {
+		contents.forEach(async (e: any) => {
+			let res: any[][] = await this.valuesParser(e.values.values);
+			if(e.values) {
+				this.addValues(await addrParser(e.values.addr, res), res)
+				this.valuesFormatter(e.values.addr, e.values.values)
+			}
+			if(e.font) this.setFont(e.font, await addrParser(e.values.addr, res))
+		})
+	}
+	async colWidths(lst: number[]) {
+		lst.forEach((e: number, i: number) => {
+			this.colWidth(toLetter(i+1)!, e)
+		})
+	}
+	async newSheetfromObject(obj: any) {
+		if (obj.name) {
+			const shId = await this.addSheet(obj.name)
+			await this.currentWs(obj.name)
+			this.activate();
+			this.updateProjectInfo(obj.name, shId);
+			if (obj.contents) {
+				this.sheetContents(obj.contents)
+			}
+		}
+		if (obj.colwidth) {
+			this.colWidths(obj.colwidth)
 		}
 	}
 }
