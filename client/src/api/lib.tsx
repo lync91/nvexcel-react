@@ -22,14 +22,10 @@ export function columnIndex(str: string) {
 }
 
 export async function addrParser(addr: string, values: any[][]) {
-    console.log(columnIndex(addr));
-
     const startCol: number = await columnIndex(addr)
     const endColNum: number = startCol + values[0].length - 1;
     const str = addr.match(/([.0-9])*\d/g)
     const endRowNum: number = parseInt(str![0]) + values.length - 1
     const colLetter = toLetter(endColNum);
-    console.log(colLetter);
-
     return `${addr}:${toLetter(endColNum)}${endRowNum}`
 }

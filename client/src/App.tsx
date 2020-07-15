@@ -101,7 +101,7 @@ class App extends Component<{}, AppState> {
     return (
       <AppContext.Provider value={this.state}>
         <div className="App">
-          <div hidden={this.state.tlExits} style={{ margin: 'auto' }}>
+          <div hidden={!this.state.tlExits} style={{ margin: 'auto' }}>
             <Empty
               style={{
                 paddingTop: 60,

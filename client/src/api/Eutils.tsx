@@ -5,7 +5,7 @@ import { HAO_PHI_VAT_TU_NAME, TIEN_LUONG_SHEET_NAME } from '../constants/named';
 import { sheetMap } from "../constants/map";
 import { sheetChanged } from "./wsEvents"
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
-import { toLetter, addrParser } from "./lib";
+import { toLetter, addrParser, columnIndex } from "./lib";
 export interface addressTypes {
 	text: string | null;
 	col: string | null;
@@ -356,11 +356,38 @@ export class wsObject extends AsyncConstructor {
 			
 		}
 	}
+	valuesParser(values: any[]) {
+		let res = values.map(e => {
+			if (!Array.isArray(e)) {
+				return e.values
+			} else {
+				return e
+			}
+		})
+		return res
+	}
+	valuesFormatter(addr: string, values: any[]) {
+		const addr1 = new addressObj(addr);
+		values.forEach(async (e, i) => {
+			if (!Array.isArray(e)) {
+				console.log(addr1.cell1.col);
+				
+				const endColNum = await columnIndex(addr1.cell1.col!) + e.values - 1;
+				console.log(endColNum);
+				const address = `${addr1.cell1.col}${addr1.cell1.row! + i}:${await toLetter(endColNum)}${addr1.cell1.row! + i}`;
+				console.log(address);
+				// if (e.bold) this.setBold(addr1.)
+			}
+		})
+	}
 	async sheetContents(contents: any[]) {
 		contents.forEach(async (e: any) => {
-			console.log(e);
-			if(e.values) this.addValues(await addrParser(e.values.addr, e.values.values), e.values.values)
-			if(e.font) this.setFont(e.font, await addrParser(e.values.addr, e.values.values))
+			let res: any[][] = await this.valuesParser(e.values.values);
+			if(e.values) {
+				this.addValues(await addrParser(e.values.addr, res), res)
+				this.valuesFormatter(e.values.addr, e.values.values)
+			}
+			if(e.font) this.setFont(e.font, await addrParser(e.values.addr, res))
 		})
 	}
 	async colWidths(lst: number[]) {
