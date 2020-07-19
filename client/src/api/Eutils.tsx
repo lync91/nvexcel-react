@@ -1,11 +1,13 @@
 import { AsyncConstructor } from 'async-constructor';
+import { reduce, map } from "async";
 import { getPageType, getOrientationType } from "./mapIndex";
 import { ws, ee } from './nvExcel';
 import { HAO_PHI_VAT_TU_NAME, TIEN_LUONG_SHEET_NAME } from '../constants/named';
 import { sheetMap } from "../constants/map";
-import { sheetChanged } from "./wsEvents"
+import { sheetChanged, onActivate, onSelectionChanged } from "./wsEvents"
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import { toLetter, addrParser, columnIndex } from "./lib";
+import { isNumber } from 'util';
 export interface addressTypes {
 	text: string | null;
 	col: string | null;
@@ -84,31 +86,20 @@ export class wsObject extends AsyncConstructor {
 	}
 	async regEvents() {
 		let sheets = this.context?.workbook.worksheets;
-		sheets?.onActivated.add(this.onActivate);
-		sheets?.onSelectionChanged.add(this.onSelectionChanged)
-		sheets?.onChanged.add(this.onSheetChanged);
+		sheets?.onActivated.add(onActivate);
+		sheets?.onSelectionChanged.add(onSelectionChanged)
+		sheets?.onChanged.add(sheetChanged);
 		console.log("A handler has been registered for the OnActivate event.");
 	}
-	async onActivate(event: any) {
-		const name = await ws?.getActivedSheetName();
-		this.name = name;
-		ws?.sheetMap.navigate(name)
-	}
-	async onSelectionChanged(event: any) {
-		const address = new addressObj(event.address)
-		if ((address.cell1.col === 'D' || address.cell1.col === 'C') && address.cell1.row! > 6) {
-			ee.emit(`${WORKSHEET_SELECTION_CHANGED}_${event.worksheetId}`, event.address);
-		}
-		
-	}
-	async onSheetChanged(event: any) {
-		sheetChanged(event)
-	}
 	async currentWs(name: string) {
+		console.log('OK');
+		
 		this.name = name;
 		this.ws = this.context!.workbook.worksheets.getItemOrNullObject(name!)
 		this.ws.load('id');
 		await this.context.sync()
+		console.log('id', this.ws.id);
+		
 		return this.ws.id;
 	}
 	async getActive() {
@@ -161,7 +152,7 @@ export class wsObject extends AsyncConstructor {
 	async addValues(address: string, values: any[][]) {
 		const rg = this.ws?.getRange(address);
 		rg!.values = values;
-		await this.context.sync()
+		await this.context.sync();
 	}
 	setPrintAreabySelected() {
 		this.ws?.pageLayout.setPrintArea(this.selectedRange)
@@ -175,6 +166,9 @@ export class wsObject extends AsyncConstructor {
 	async setFont(fontName: string, address: string | undefined = undefined) {
 		const addr = address ? address : 'A:Z';
 		this.ws!.getRange(addr).format.font.name = fontName;
+	}
+	async setFill(address: string, color: string) {
+		this.ws!.getRange(address).format.fill.color = color;
 	}
 	setBlackAndWhite() {
 		this.ws!.pageLayout.blackAndWhite = true;
@@ -199,8 +193,9 @@ export class wsObject extends AsyncConstructor {
 		if (hoz !== 0) this.ws!.pageLayout.zoom = { horizontalFitToPages: 1 };
 		if (ver !== 0) this.ws!.pageLayout.zoom = { verticalFitToPages: 1 };
 	}
-	colWidth(col: string, w: number) {
+	async colWidth(col: string, w: number) {
 		this.ws!.getRange(`${col}1`).format.columnWidth = w;
+		return await this.context.sync();
 	}
 	autoColWidth(col: string) {
 		this.ws!.getRange(`${col}:${col}`).format.autofitColumns();
@@ -226,8 +221,34 @@ export class wsObject extends AsyncConstructor {
 	setWrapText(address: string) {
 		this.ws!.getRange(address)!.format.wrapText = true
 	}
+	setColor(address: string, color: string) {
+		this.ws!.getRange(address)!.format.font.color = color
+	}
 	unmergeCells(address: string) {
 		this.ws!.getRange(address).unmerge();
+	}
+	rangeValidation(address: string, data: any) {
+		const rg = this.ws?.getRange(address)
+		rg.dataValidation.clear();
+		if (data.list) {
+			const src = this.ws.getRange(data.list);
+			rg.dataValidation.rule = {
+				list: {
+					inCellDropDown: true,
+					source: src
+				}
+			}
+		}
+	}
+	async setBorder(address: string) {
+		const rg = this.ws.getRange(address);
+		rg.format.borders.getItem('InsideHorizontal').style = 'Continuous';
+		rg.format.borders.getItem('InsideVertical').style = 'Continuous';
+		rg.format.borders.getItem('EdgeBottom').style = 'Continuous';
+		rg.format.borders.getItem('EdgeLeft').style = 'Continuous';
+		rg.format.borders.getItem('EdgeRight').style = 'Continuous';
+		rg.format.borders.getItem('EdgeTop').style = 'Continuous';
+		await this.context.sync();
 	}
 	async moveRange(from: string, to: string) {
 		const rg = this.ws!.getRange(from);
@@ -331,7 +352,7 @@ export class wsObject extends AsyncConstructor {
 		var docProperties = this.context.workbook.properties.custom;
 		docProperties.add(TIEN_LUONG_SHEET_NAME, 'hello');
 		return this.context.sync();
-		
+
 	}
 	async getPropeties() {
 		var docProperties = this.context.workbook.properties.custom;
@@ -353,57 +374,132 @@ export class wsObject extends AsyncConstructor {
 		if (customProperty.value) {
 			this.projectInfo = JSON.parse(customProperty.value)
 			console.log(this.projectInfo);
-			
+
 		}
+	}
+	async getRangeName() {
+		console.log('OKE');
+		
+		const names = this.ws.names.load();
+		await this.context.sync();
+		console.log(names);
+		
+		return names;
+	}
+	async setRangeName(address: string, name: string) {
+		const rg = this.ws.getRange(address)
+		this.ws.names.add(name, rg)
+		return await this.context.sync()
 	}
 	valuesParser(values: any[]) {
 		let res = values.map(e => {
 			if (!Array.isArray(e)) {
-				return e.values
+				const collen = e.colSpan ? e.colSpan.reduce((a: number, b: number) => { return a + b }) : 0
+				return e.values.concat(Array(collen > e.values.length ? collen - e.values.length : 0))
 			} else {
 				return e
 			}
 		})
-		return res
+		const lmax = res.map(e => { return e.length }).reduce((a, b) => { return Math.max(a, b) })
+		console.log('lmax', lmax);
+		let _res = res.map((e: any[]) => { e.length < lmax ? e = e.concat(Array(lmax - e.length)) : e = e; return e })
+		return _res
 	}
 	valuesFormatter(addr: string, values: any[]) {
 		const addr1 = new addressObj(addr);
 		values.forEach(async (e, i) => {
 			if (!Array.isArray(e)) {
-				console.log(addr1.cell1.col);
-				
-				const endColNum = await columnIndex(addr1.cell1.col!) + e.values - 1;
-				console.log(endColNum);
+				const startColNum = columnIndex(addr1.cell1.text!)
+				const endColNum = startColNum + e.values.length - 1;
 				const address = `${addr1.cell1.col}${addr1.cell1.row! + i}:${await toLetter(endColNum)}${addr1.cell1.row! + i}`;
-				console.log(address);
-				// if (e.bold) this.setBold(addr1.)
+				if (e.bold) this.setBold(address);
+				if (e.height) this.rowsHeight(address, e.height);
+				if (e.hCenter) this.horCenter(address);
+				if (e.vCenter) this.verCenter(address);
+				if (e.colSpan) {
+					let pos = 0;
+					e.colSpan.forEach((e: number) => {
+						const colNum = startColNum + e + pos - 1
+						const curAddress = `${toLetter(startColNum + pos)}${addr1.cell1.row! + i}:${toLetter(colNum)}${addr1.cell1.row! + i}`
+						this.mergeCells(curAddress);
+						pos = pos + e;
+					});
+				}
+				if (e.fillColor) this.setFill(address, e.fillColor)
+				if (e.Validation) {
+					const addr = `${toLetter(startColNum + e.Validation.cell)}${addr1.cell1.row! + i}:${toLetter(startColNum + e.Validation.cell)}${addr1.cell1.row! + i}`
+					this.rangeValidation(addr, e.Validation)
+				}
+				if (e.names) {
+					console.log('OJK');
+					
+					e.names.forEach((e: any[]) => {
+						const addr = `${toLetter(startColNum + e[0])}${addr1.cell1.row! + i}:${toLetter(startColNum + e[0])}${addr1.cell1.row! + i}`
+						this.setRangeName(addr, e[1])
+					});
+				}
 			}
 		})
+	}
+	async rangeHAlign(addr: string, align: string[], arr: any[][]) {
+		const addr1 = new addressObj(addr);
+		const startColNum = columnIndex(addr1.cell1.text!)
+		align.forEach(async (e: string, i: number) => {
+			const endColNum = startColNum + i;
+			const address = `${await toLetter(endColNum)}${addr1.cell1.row!}:${await toLetter(endColNum)}${addr1.cell1.row! + arr.length - 1}`;
+			this.horCenter(address);
+
+		})
+	}
+	async addValuesObj(e: any, index: number) {
+		let colLetter = 'A';
+		let res: any[][] = await this.valuesParser(e.range);
+		if (e.range) {
+			const addr = e.addr ? await addrParser(e.addr, res) : await addrParser(`${colLetter}${index}`, res);
+			await this.addValues(addr, res)
+			await this.valuesFormatter(addr, e.range)
+			if (e.font) this.setFont(e.font, addr)
+			if (e.border) this.setBorder(addr)
+			if (e.hAlign) this.rangeHAlign(addr, e.hAlign, res)
+			if (e.color) this.setColor(addr, e.color)
+			if (e.colWidth) this.colWidths(e.colWidth, addr)
+		}
 	}
 	async sheetContents(contents: any[]) {
-		contents.forEach(async (e: any) => {
-			let res: any[][] = await this.valuesParser(e.values.values);
-			if(e.values) {
-				this.addValues(await addrParser(e.values.addr, res), res)
-				this.valuesFormatter(e.values.addr, e.values.values)
-			}
-			if(e.font) this.setFont(e.font, await addrParser(e.values.addr, res))
+		reduce(contents, 1, (d, e, cb) => {
+			console.log(e);
+			this.addValuesObj(e, d!)
+			cb(null, d! + e.range.length)
 		})
 	}
-	async colWidths(lst: number[]) {
-		lst.forEach((e: number, i: number) => {
-			this.colWidth(toLetter(i+1)!, e)
-		})
+	async colWidths(lst: number[], startAddr: string | null = null) {
+		console.log(startAddr);
+		
+		if (!startAddr) {
+			lst.forEach((e: number, i: number) => {
+				this.colWidth(toLetter(i + 1)!, e)
+			})
+		} else {
+			console.log('OK');
+			const addr1 = new addressObj(startAddr);
+			const startColNum = columnIndex(addr1.cell1.text!)
+			lst.map(async (e: number, i: number) => {
+				const colNum = startColNum + i
+				return await this.colWidth(toLetter(colNum), e);
+			});
+		}
 	}
 	async newSheetfromObject(obj: any) {
 		if (obj.name) {
 			const shId = await this.addSheet(obj.name)
-			await this.currentWs(obj.name)
+			await this.currentWs(obj.name).then(x => {
+				if (obj.contents) {
+					this.sheetContents(obj.contents)
+				}
+				if (obj.font) this.setFont(obj.font, obj.printArea ? obj.printArea : 'A:Z')
+			})
 			this.activate();
 			this.updateProjectInfo(obj.name, shId);
-			if (obj.contents) {
-				this.sheetContents(obj.contents)
-			}
 		}
 		if (obj.colwidth) {
 			this.colWidths(obj.colwidth)

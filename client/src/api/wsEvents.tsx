@@ -1,11 +1,15 @@
-import { ws } from './nvExcel';
+import { ws, ee } from './nvExcel';
 import { addressObj } from './Eutils'
 import { MAU_KHOI_LUONG_NAME, TIEN_LUONG_SHEET_NAME } from "../constants/named";
+import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import { isString } from 'util';
 import { AUTO_STT_FOMULA } from "../constants/values";
 import { evaluate, parse } from "mathjs";
 import { EventEmitter } from "events";
-export function sheetChanged (event: any) {
+
+export async function sheetChanged(event: any) {
+    console.log(event);
+
     switch (ws.name) {
         case MAU_KHOI_LUONG_NAME:
             mklChanged(event)
@@ -13,7 +17,7 @@ export function sheetChanged (event: any) {
         case TIEN_LUONG_SHEET_NAME:
             tlChanged(event)
             break;
-    
+
         default:
             break;
     }
@@ -41,5 +45,16 @@ const tlChanged = (e: any) => {
         if (res) {
             ws.addValues(`I${addr.cell1.row}`, [[res]])
         }
+    }
+}
+export async function onActivate(event: any) {
+    const id: string = event.worksheetId;
+    await ws?.currentWs(id).then(x => {ws?.getRangeName()});
+}
+
+export async function onSelectionChanged(event: any) {
+    const address = new addressObj(event.address)
+    if ((address.cell1.col === 'D' || address.cell1.col === 'C') && address.cell1.row! > 6) {
+        ee.emit(`${WORKSHEET_SELECTION_CHANGED}_${event.worksheetId}`, event.address);
     }
 }

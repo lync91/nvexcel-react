@@ -14,3 +14,10 @@ export const TIEN_LUONG_TABLE_NAME = 'TIEN_LUONG'
 // OTHER
 export const KHU_VUC_NAME = 'KHU_VUC'
 export const DON_GIA_NAME = 'DON_GIA'
+
+// OBJECT NAME
+export const PROJECT_INFO = 'projectInfo'
+
+// RANGE
+
+export const LOAI_CONG_TRINH_RANGE = 'LOAI_CONG_TRINH'

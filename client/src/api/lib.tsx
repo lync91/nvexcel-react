@@ -1,15 +1,14 @@
-export function toLetter(num: number) {
+export function toLetter(num: number): string {
     var s = '', t;
-
     while (num > 0) {
         t = (num - 1) % 26;
         s = String.fromCharCode(65 + t) + s;
         num = (num - t) / 26 | 0;
     }
-    return s || undefined;
+    return s;
 }
 
-export function columnIndex(str: string) {
+export function columnIndex(str: string): number {
     let index = 0;
     let name: any = str.toUpperCase().match((/[A-Z]/g))
 
