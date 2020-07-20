@@ -21,3 +21,7 @@ export const PROJECT_INFO = 'projectInfo'
 // RANGE
 
 export const LOAI_CONG_TRINH_RANGE = 'LOAI_CONG_TRINH'
+
+// COLOR
+
+export const TABLE_HEADER_COLOR = '#bdd6ff'

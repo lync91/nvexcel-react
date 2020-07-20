@@ -1,4 +1,4 @@
-import { PROJECT_INFO, LOAI_CONG_TRINH_RANGE } from "./named";
+import { PROJECT_INFO, LOAI_CONG_TRINH_RANGE, TABLE_HEADER_COLOR } from "./named";
 
 export const MAU_KHOI_LUONG = [['BẢNG MẪU KHỐI LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
 export const TIEN_LUONG_TITLE = [['BẢNG TIÊN LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
@@ -84,7 +84,18 @@ export const DAU_VAO_OBJECT = {
                         list: 'AB3:AB7'
                     }
                 },
-
+                {
+                    values: ['7', 'Quy mô thiết kế'], colSpan: [1, 1, 4], names: [[2, 'QUY_MO_THIET_KE']], Validation: {
+                        cell: 2,
+                        list: 'AD3:AD5'
+                    }
+                },
+                {
+                    values: ['8', 'Bước thiết kế'], colSpan: [1, 1, 4], names: [[2, 'BUOC_THIET_KE']], Validation: {
+                        cell: 2,
+                        list: 'AE3:AE6'
+                    }
+                },
             ],
             border: true,
             hAlign: ['Center'],
@@ -157,7 +168,8 @@ export const DAU_VAO_OBJECT = {
             ],
             border: true,
             hAlign: ['Center'],
-        }, {
+        },
+        {
             range: [
                 [''],
                 {
@@ -166,7 +178,8 @@ export const DAU_VAO_OBJECT = {
                 },
 
             ]
-        }, {
+        },
+        {
             range: [
                 {
                     values: ['STT', 'Tên', 'Đơn vị', 'Giá trước thuế', 'Giá sau thuế'],
@@ -182,7 +195,18 @@ export const DAU_VAO_OBJECT = {
             ],
             hAlign: ['Center', 'Left', 'Center'],
             border: true
-        }, {
+        },
+        {
+            range: [
+                [''],
+                {
+                    values: ['V.', 'HỆ SỐ CÁC KHOẢN MỤC CHI PHÍ'],
+                    bold: true
+                },
+
+            ]
+        },
+        {
             range: [['Công trình dân dụng'], ['Công trình công nghiệp'], ['Công trình giao thông'], ['Công trình nông nghiệp và phát triển nông thôn'], ['Công trình hạ tầng kỹ thuật']],
             colWidth: [0],
             addr: 'AA3',
@@ -197,10 +221,128 @@ export const DAU_VAO_OBJECT = {
             colWidth: [0],
             addr: 'AC3',
             color: 'BFBFBF'
-        }
+        }, {
+            range: [['Thiết kế 1 bước'], ['Thiết kế 2 bước'], ['Thiết kế 3 bước']],
+            colWidth: [0],
+            addr: 'AD3',
+            color: 'BFBFBF'
+        },
+        {
+            range: [['Lập báo cáo kinh tế kỹ thuật'], ['Lập báo cáo nghiên cứu tiền khả thi'], ['Lập báo cáo nghiên cứu khả thi'], ['Lập thiết kế bản vẽ thi công']],
+            colWidth: [0],
+            addr: 'AE3',
+            color: 'BFBFBF'
+        },
     ]
 }
 
 export const TONG_HOP_KHOI_LUONG_OBJECT = {
     title: ''
+}
+
+export const TONG_MUC_OBJECT = {
+    name: 'Tổng hợp',
+    colwidth: [30, 210, 80, 80, 80, 50, 140, 140],
+    font: 'Times New Roman',
+    printArea: 'A:H',
+    pageSize: 'A4',
+    contents: [
+        {
+            range: [
+                {
+                    values: ['TỔNG HỢP DỰ TOÁN XÂY DỰNG CÔNG TRÌNH'],
+                    bold: true,
+                    height: 24,
+                    hCenter: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+                {
+                    values: ['Tên dự án'],
+                    bold: true,
+                    hCenter: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+                {
+                    values: ['Địa điểm'],
+                    bold: true,
+                    hCenter: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+
+            ]
+
+        },
+        {
+            range: [
+                {
+                    values: ['STT', 'NỘI DUNG CHI PHÍ', 'GIÁ TRỊ TRƯỚC THUẾ', 'THUẾ GTGT', 'GIÁ TRỊ SAU THUẾ', 'KÝ HIỆU', 'CÁCH TÍNH', 'GHI CHÚ'],
+                    bold: true,
+                    // height: 24,
+                    hCenter: true,
+                    vCenter: true,
+                    wrapText: true,
+                    fillColor: TABLE_HEADER_COLOR
+                },
+                {
+                    values: ['[1]', '[2]', '[3]', '[4]', '[5]', '[6]', '[7]', '[8]'],
+                    bold: true,
+                    hCenter: true,
+                    vCenter: true,
+                    // colSpan: [6]
+                },
+            ],
+            border: true,
+
+        },
+        {
+            range: [
+                {
+                    values: ['1', 'Chi phí xây dựng', '', '', '', 'Gxd', '', ''],
+                    bold: true,
+                    vCenter: true,
+                    // colSpan: [6]
+                },
+                [''],
+                {
+                    values: ['2', 'Chi phí thiết bị', '', '', '', 'Gtb', '', ''],
+                    bold: true,
+                    vCenter: true,
+                    // colSpan: [6]
+                },
+                [''],
+                {
+                    values: ['3', 'Chi phí quản lý dự án', '', '', '', 'Gqlda', '', ''],
+                    bold: true,
+                    vCenter: true,
+                    // colSpan: [6]
+                },
+                {
+                    values: ['4', 'Chi tư vấn đầu tư xây dựng', '', '', '', 'Gtv', '', ''],
+                    bold: true,
+                    vCenter: true,
+                    // colSpan: [6]
+                },
+                [''],
+                {
+                    values: ['5', 'Chi phí khác', '', '', '', 'Gk', '', ''],
+                    bold: true,
+                    vCenter: true,
+                    // colSpan: [6]
+                },
+                [''],
+                {
+                    values: ['6', 'Chi phí dự phòng', '', '', '', 'Gk', '', ''],
+                    bold: true,
+                    vCenter: true,
+                    // colSpan: [6]
+                },
+                [''],
+            ],
+            border: true,
+            hAlign: ['Center', 'Left', 'Left', 'Left', 'Left', 'Center'],
+        }
+    ]
 }

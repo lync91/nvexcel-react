@@ -24,6 +24,7 @@ const PageFormat = React.lazy(() => import('./components/PageFormat'));
 const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
 const TaoMauKhoiLuong = React.lazy(() => import('./components/TaoMauKhoiLuong'));
 const TienLuong = React.lazy(() => import('./components/TienLuong'));
+const TongHopChiPhi = React.lazy(() => import('./components/TongHopChiPhi'));
 
 export interface AppState {
   isOpen: boolean;
@@ -75,7 +76,10 @@ class App extends Component<{}, AppState> {
     // this.onOpenChange(this.state.selectedKeys)
   };
   async _khoiTaoDauVao() {
-    await ws.newSheetfromObject(DAU_VAO_OBJECT)
+    await ws.delete(DAU_VAO_OBJECT.name).then(async(x: any) => {
+      await ws.newSheetfromObject(DAU_VAO_OBJECT)
+    this.setState({tlExits: true})
+    })
   }
   rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];
   onOpenChange = (openKeys: string[]) => {
@@ -158,7 +162,7 @@ class App extends Component<{}, AppState> {
                   </Menu.ItemGroup>
                 </SubMenu>
                 <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Dự toán">
-                  <Menu.Item key="10">Option 5</Menu.Item>
+                  <Menu.Item key="TongHopChiPhi">Tổng hợp chi phí</Menu.Item>
                   <Menu.Item key="11">Option 6</Menu.Item>
                   <SubMenu key="sub3" title="Submenu">
                     <Menu.Item key="12">Option 7</Menu.Item>
@@ -189,6 +193,7 @@ class App extends Component<{}, AppState> {
                         <Route path="/PageFormatG8" component={PageFormatG8} />
                         <Route path="/TaoMauKhoiLuong" component={TaoMauKhoiLuong} />
                         <Route path="/TienLuong" component={TienLuong} />
+                        <Route path="/TongHopChiPhi" component={TongHopChiPhi} />
                       </Switch>
                     </section>
                   </Suspense>

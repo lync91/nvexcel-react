@@ -22,6 +22,7 @@ import {
 	KHU_VUC_NAME,
 	DON_GIA_NAME
 } from "../constants/named";
+import { TONG_MUC_OBJECT } from "../constants/values";
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import socket from "../socket";
 import { addressObj } from "../api/Eutils";
@@ -63,7 +64,7 @@ export interface orientationOptions {
 	text: string,
 	value: Excel.PageOrientation
 }
-export class TienLuong extends Component<AppProps, AppStates> {
+export class TongHopChiPhi extends Component<AppProps, AppStates> {
 	constructor(props: any) {
 		super(props);
 		this.state = {
@@ -94,49 +95,15 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 
 	async prepair() {
-		ee.removeAllListeners();
-		ee.on(`${WORKSHEET_SELECTION_CHANGED}_${ws?.projectInfo[TIEN_LUONG_SHEET_NAME]}`, async (address) => {
-			this.setState({currentAddress: new addressObj(address)})
-			const value = await ws.getValues(address)
-			formRef.current?.setFieldsValue({ search: value })
-			socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, value[0][0], (data: any[])=> {
-				console.log(data);
-				this.setState({congTac: data})
-			})
-		})
-		const name = await ws?.checkWsExits(TIEN_LUONG_SHEET_NAME)
-		if (name) {
-			await ws?.currentWs(TIEN_LUONG_SHEET_NAME)
-			ws?.activate();
-			this.setState({ wsExits: true })
-		} else {
-			this.setState({ wsExits: false })
-		}
+		
 	}
 
 	componentDidMount() {
-		this.prepair()
-		socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }));
-		socket.emit('dutoan/dongia/getkv', (data: any) => this.setState({ lstKV: data }))
-		if (ws?.projectInfo[KHU_VUC_NAME]) {
-			this.getDonGiaKhuVuc(ws.projectInfo[KHU_VUC_NAME]);
-			this.setState({ khuVuc: ws.projectInfo[KHU_VUC_NAME] })
-		} else {
-			this.getDonGiaKhuVuc(this.state.khuVuc);
-		}
-		if (ws?.projectInfo[DON_GIA_NAME]) {
-			this.setState({ donGia: ws.projectInfo[DON_GIA_NAME] })
-		}
+		
 	}
-	_taoBangmau = async () => {
-		await ws?.addSheet(TIEN_LUONG_SHEET_NAME);
-		const id = await ws?.currentWs(TIEN_LUONG_SHEET_NAME);
-		await ws.updateProjectInfo(TIEN_LUONG_SHEET_NAME, id);
-		await ws?.activate();
-		initBangTienLuong();
-		this.setState({ wsExits: true })
-		ws?.addValues('A6', [['HM']])
-		ws?.addValues('A7', [['#']])
+	_taoBangTongHop = async () => {
+        await ws.newSheetfromObject(TONG_MUC_OBJECT)
+		
 	}
 	_selectLoaiCongTrinh(value: string) {
 		console.log(value);
@@ -151,20 +118,6 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 	_onFinish = async (values: any) => {
 		console.log('OK');
-
-		// console.log(values);
-		// await ws?.getActive();
-		// const val = await ws?.getFomulas(`A7:J${ws?.lastRow.row}`);
-		// const data = {
-		// 	tenBoPhan: values.tenBoPhan,
-		// 	data: JSON.stringify(val),
-		// 	loaiCongTrinh: values.loaiCongTrinh
-		// }
-		// socket.emit('khoiluong/mau/add', data, () => {
-		// 	formRef.current?.resetFields();
-		// 	message.success('Đã lưu mẫu khối lượng thành công');
-		// });
-		// await ws.setPropeties();
 		ws.getPropeties()
 	}
 
@@ -258,11 +211,11 @@ export class TienLuong extends Component<AppProps, AppStates> {
 						}}
 						description={
 							<span>
-								Chưa có Sheet Mẫu khối lượng
+								Chưa có Sheet Thổng hợp chi phí
 								</span>
 						}
 					>
-						<Button type="primary" onClick={this._taoBangmau}>Khởi tạo</Button>
+						<Button type="primary" onClick={this._taoBangTongHop}>Khởi tạo</Button>
 					</Empty>
 				</div>
 				<Tabs hidden={!this.state.wsExits} defaultActiveKey="1">
@@ -368,4 +321,4 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		);
 	}
 };
-export default TienLuong
+export default TongHopChiPhi

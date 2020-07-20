@@ -311,7 +311,7 @@ export class wsObject extends AsyncConstructor {
 	}
 	async delete(name: string) {
 		this.context?.workbook.worksheets.getItemOrNullObject(name).delete();
-		await this.context?.sync();
+		return await this.context?.sync();
 	}
 	async getLastRow() {
 		const rangeA = this.ws?.getRange('A:ZZ');
@@ -438,6 +438,7 @@ export class wsObject extends AsyncConstructor {
 						this.setRangeName(addr, e[1])
 					});
 				}
+				if (e.wrapText) this.setWrapText(address)
 			}
 		})
 	}
@@ -447,7 +448,7 @@ export class wsObject extends AsyncConstructor {
 		align.forEach(async (e: string, i: number) => {
 			const endColNum = startColNum + i;
 			const address = `${await toLetter(endColNum)}${addr1.cell1.row!}:${await toLetter(endColNum)}${addr1.cell1.row! + arr.length - 1}`;
-			this.horCenter(address);
+			if (e === 'Center') this.horCenter(address);
 
 		})
 	}
@@ -470,7 +471,7 @@ export class wsObject extends AsyncConstructor {
 			console.log(e);
 			this.addValuesObj(e, d!)
 			cb(null, d! + e.range.length)
-		})
+		});
 	}
 	async colWidths(lst: number[], startAddr: string | null = null) {
 		console.log(startAddr);
