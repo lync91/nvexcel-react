@@ -1,4 +1,21 @@
-import { PROJECT_INFO, LOAI_CONG_TRINH_RANGE, TABLE_HEADER_COLOR } from "./named";
+import { 
+    PROJECT_INFO, 
+    LOAI_CONG_TRINH_RANGE, 
+    TEN_CONG_TRINH_RANGE, 
+    DIA_DIEM_RANGE, 
+    TABLE_HEADER_COLOR,
+    CHU_DAU_TU_RANGE,
+    NHOM_DU_AN_RANGE,
+    CAP_CONG_TRINH_RANGE,
+    QUY_MO_THIET_KE_RANGE,
+    BUOC_THIET_KE_RANGE,
+    GK_RANGE,
+    GXD_RANGE,
+    GQLDA_RANGE,
+    GTB_RANGE,
+    GDP_RANGE,
+    GTV_RANGE,
+ } from "./named";
 
 export const MAU_KHOI_LUONG = [['BẢNG MẪU KHỐI LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
 export const TIEN_LUONG_TITLE = [['BẢNG TIÊN LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
@@ -16,6 +33,7 @@ export const DAU_VAO_OBJECT = {
     font: 'Times New Roman',
     printArea: 'A:F',
     pageSize: 'A4',
+    colFormat: [[5, '#.##0']],
     contents: [
         {
             range: [
@@ -52,11 +70,11 @@ export const DAU_VAO_OBJECT = {
         },
         {
             range: [
-                { values: ['1', 'Tên công trình'], colSpan: [1, 1, 4], names: [[2, 'TEN_CONG_TRINH']] },
-                { values: ['2', 'Địa điểm'], colSpan: [1, 1, 4], names: [[2, 'DIA_DIEM']] },
-                { values: ['3', 'Chủ đầu tư'], colSpan: [1, 1, 4], names: [[2, 'CHU_DAU_TU']] },
+                { values: ['1', 'Tên công trình'], colSpan: [1, 1, 4], names: [[2, TEN_CONG_TRINH_RANGE]] },
+                { values: ['2', 'Địa điểm'], colSpan: [1, 1, 4], names: [[2, DIA_DIEM_RANGE]] },
+                { values: ['3', 'Chủ đầu tư'], colSpan: [1, 1, 4], names: [[2, CHU_DAU_TU_RANGE]] },
                 {
-                    values: ['4', 'Nhóm dự án'], colSpan: [1, 1, 4], names: [[2, 'NHOM_DU_AN']], Validation: {
+                    values: ['4', 'Nhóm dự án'], colSpan: [1, 1, 4], names: [[2, NHOM_DU_AN_RANGE]], Validation: {
                         cell: 2,
                         list: 'AC3:AC5'
                     }
@@ -79,19 +97,19 @@ export const DAU_VAO_OBJECT = {
                     }
                 },
                 {
-                    values: ['6', 'Cấp công trình'], colSpan: [1, 1, 4], names: [[2, 'CAP_CONG_TRINH']], Validation: {
+                    values: ['6', 'Cấp công trình'], colSpan: [1, 1, 4], names: [[2, CAP_CONG_TRINH_RANGE]], Validation: {
                         cell: 2,
                         list: 'AB3:AB7'
                     }
                 },
                 {
-                    values: ['7', 'Quy mô thiết kế'], colSpan: [1, 1, 4], names: [[2, 'QUY_MO_THIET_KE']], Validation: {
+                    values: ['7', 'Quy mô thiết kế'], colSpan: [1, 1, 4], names: [[2, QUY_MO_THIET_KE_RANGE]], Validation: {
                         cell: 2,
                         list: 'AD3:AD5'
                     }
                 },
                 {
-                    values: ['8', 'Bước thiết kế'], colSpan: [1, 1, 4], names: [[2, 'BUOC_THIET_KE']], Validation: {
+                    values: ['8', 'Bước thiết kế'], colSpan: [1, 1, 4], names: [[2, BUOC_THIET_KE_RANGE]], Validation: {
                         cell: 2,
                         list: 'AE3:AE6'
                     }
@@ -258,14 +276,14 @@ export const TONG_MUC_OBJECT = {
                     colSpan: [8]
                 },
                 {
-                    values: ['Tên dự án'],
+                    values: [`="DỰ ÁN "&UPPER('${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE})`],
                     bold: true,
                     hCenter: true,
                     vCenter: true,
                     colSpan: [8]
                 },
                 {
-                    values: ['Địa điểm'],
+                    values: [`="Địa điểm "&'${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE}`],
                     bold: true,
                     hCenter: true,
                     vCenter: true,
@@ -291,7 +309,6 @@ export const TONG_MUC_OBJECT = {
                     bold: true,
                     hCenter: true,
                     vCenter: true,
-                    // colSpan: [6]
                 },
             ],
             border: true,
@@ -300,46 +317,65 @@ export const TONG_MUC_OBJECT = {
         {
             range: [
                 {
-                    values: ['1', 'Chi phí xây dựng', '', '', '', 'Gxd', '', ''],
+                    values: ['1', 'Chi phí xây dựng', '', '', '', GXD_RANGE, '', ''],
                     bold: true,
                     vCenter: true,
-                    // colSpan: [6]
+                    names: [[4, GXD_RANGE]]
+                },
+                {
+                    values: ['2', 'Chi phí thiết bị', '', '', '', GTB_RANGE, '', ''],
+                    bold: true,
+                    vCenter: true,
+                    names: [[4, GTB_RANGE]]
+                },
+                {
+                    values: ['3', 'Chi phí quản lý dự án', '', '', '', GQLDA_RANGE, '', ''],
+                    bold: true,
+                    vCenter: true,
+                    names: [[4, GQLDA_RANGE]]
+                },
+                {
+                    values: ['4', 'Chi tư vấn đầu tư xây dựng', '', '', '', GTV_RANGE, '', ''],
+                    bold: true,
+                    vCenter: true,
+                    names: [[4, GTV_RANGE]]
                 },
                 [''],
                 {
-                    values: ['2', 'Chi phí thiết bị', '', '', '', 'Gtb', '', ''],
+                    values: ['5', 'Chi phí khác', '', '', '', GK_RANGE, '', ''],
                     bold: true,
                     vCenter: true,
-                    // colSpan: [6]
+                    names: [[4, GK_RANGE]]
                 },
                 [''],
                 {
-                    values: ['3', 'Chi phí quản lý dự án', '', '', '', 'Gqlda', '', ''],
+                    values: ['6', 'Chi phí dự phòng', '', '', '', GDP_RANGE, '', ''],
                     bold: true,
                     vCenter: true,
-                    // colSpan: [6]
+                    names: [[4, GDP_RANGE]]
                 },
                 {
-                    values: ['4', 'Chi tư vấn đầu tư xây dựng', '', '', '', 'Gtv', '', ''],
-                    bold: true,
+                    values: ['\'6.1', 'Chi phí dự phòng cho yếu tố khối lượng công việc phát sinh', '', '', '', 'Gdp1', '', ''],
                     vCenter: true,
-                    // colSpan: [6]
+                    wrapText: true,
+                    names: [[4, 'Gdp1']]
                 },
-                [''],
                 {
-                    values: ['5', 'Chi phí khác', '', '', '', 'Gk', '', ''],
-                    bold: true,
+                    values: ['\'6.2', 'Chi phí dự phòng cho yếu tố khối lượng công việc phát sinh', '', '', '', 'Gdp2', '', ''],
                     vCenter: true,
-                    // colSpan: [6]
+                    wrapText: true,
+                    names: [[4, 'Gdp2']]
                 },
-                [''],
                 {
-                    values: ['6', 'Chi phí dự phòng', '', '', '', 'Gk', '', ''],
+                    values: ['7', 'Tổng dự toán', '', '', '', 'G', '', ''],
                     bold: true,
                     vCenter: true,
-                    // colSpan: [6]
                 },
-                [''],
+                {
+                    values: ['8', 'Làm tròn', '=ROUND(R[-1]C,-3)', '=ROUND(R[-1]C,-3)', '=ROUND(R[-1]C,-3)', '', '', ''],
+                    bold: true,
+                    vCenter: true,
+                },
             ],
             border: true,
             hAlign: ['Center', 'Left', 'Left', 'Left', 'Left', 'Center'],

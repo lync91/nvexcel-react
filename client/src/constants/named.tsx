@@ -17,10 +17,24 @@ export const DON_GIA_NAME = 'DON_GIA'
 
 // OBJECT NAME
 export const PROJECT_INFO = 'projectInfo'
-
-// RANGE
-
+/**************/
+/* RANGE      */
+/**************/
 export const LOAI_CONG_TRINH_RANGE = 'LOAI_CONG_TRINH'
+export const TEN_CONG_TRINH_RANGE = 'TEN_CONG_TRINH'
+export const DIA_DIEM_RANGE = 'DIA_DIEM'
+export const CHU_DAU_TU_RANGE = 'CHU_DAU_TU'
+export const NHOM_DU_AN_RANGE = 'NHOM_DU_AN'
+export const CAP_CONG_TRINH_RANGE = 'CAP_CONG_TRINH'
+export const QUY_MO_THIET_KE_RANGE = 'QUY_MO_THIET_KE'
+export const BUOC_THIET_KE_RANGE = 'BUOC_THIET_KE'
+export const BUOC_THIET_KE_KE_RANGE = 'BUOC_THIET_KE_KE'
+export const GXD_RANGE = 'Gxd'
+export const GTB_RANGE = 'Gtb'
+export const GQLDA_RANGE = 'Gqlda'
+export const GTV_RANGE = 'Gtv'
+export const GK_RANGE = 'Gk'
+export const GDP_RANGE = 'Gdp'
 
 // COLOR
 

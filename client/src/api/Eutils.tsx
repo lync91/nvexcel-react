@@ -452,6 +452,7 @@ export class wsObject extends AsyncConstructor {
 
 		})
 	}
+	
 	async addValuesObj(e: any, index: number) {
 		let colLetter = 'A';
 		let res: any[][] = await this.valuesParser(e.range);
