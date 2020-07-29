@@ -35,6 +35,8 @@ export const GQLDA_RANGE = 'Gqlda'
 export const GTV_RANGE = 'Gtv'
 export const GK_RANGE = 'Gk'
 export const GDP_RANGE = 'Gdp'
+export const GDPKLPS_RANGE = 'Gdpklps'
+export const GDPTG_RANGE = 'Gdptg'
 
 // COLOR
 

@@ -15,6 +15,8 @@ import {
     GTB_RANGE,
     GDP_RANGE,
     GTV_RANGE,
+    GDPKLPS_RANGE,
+    GDPTG_RANGE
  } from "./named";
 
 export const MAU_KHOI_LUONG = [['BẢNG MẪU KHỐI LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
@@ -355,16 +357,16 @@ export const TONG_MUC_OBJECT = {
                     names: [[4, GDP_RANGE]]
                 },
                 {
-                    values: ['\'6.1', 'Chi phí dự phòng cho yếu tố khối lượng công việc phát sinh', '', '', '', 'Gdp1', '', ''],
+                    values: ['\'6.1', 'Chi phí dự phòng cho yếu tố khối lượng công việc phát sinh', '', '', '', GDPKLPS_RANGE, '', ''],
                     vCenter: true,
                     wrapText: true,
-                    names: [[4, 'Gdp1']]
+                    names: [[4, GDPKLPS_RANGE]]
                 },
                 {
-                    values: ['\'6.2', 'Chi phí dự phòng cho yếu tố khối lượng công việc phát sinh', '', '', '', 'Gdp2', '', ''],
+                    values: ['\'6.2', 'Chi phí dự phòng cho yếu tố khối lượng công việc phát sinh', '', '', '', GDPTG_RANGE, '', ''],
                     vCenter: true,
                     wrapText: true,
-                    names: [[4, 'Gdp2']]
+                    names: [[4, GDPTG_RANGE]]
                 },
                 {
                     values: ['7', 'Tổng dự toán', '', '', '', 'G', '', ''],
@@ -380,5 +382,66 @@ export const TONG_MUC_OBJECT = {
             border: true,
             hAlign: ['Center', 'Left', 'Left', 'Left', 'Left', 'Center'],
         }
+    ]
+}
+export const MAU_BANG_TRA_OBJECT = {
+    name: 'Mẫu bảng tra',
+    colwidth: [30, 210, 80, 80, 80, 50, 140, 140],
+    font: 'Times New Roman',
+    printArea: 'A:H',
+    pageSize: 'A4',
+    contents: [
+        {
+            range: [
+                {
+                    values: ['TỔNG HỢP DỰ TOÁN XÂY DỰNG CÔNG TRÌNH'],
+                    bold: true,
+                    height: 24,
+                    hCenter: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+                {
+                    values: [`="DỰ ÁN "&UPPER('${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE})`],
+                    bold: true,
+                    hCenter: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+                {
+                    values: [`="Địa điểm "&'${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE}`],
+                    bold: true,
+                    hCenter: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+
+            ]
+
+        },
+        {
+            range: [
+                {
+                    values: ['Tên loại chi phí:'],
+                    bold: true
+                },
+                ['']
+            ]
+        },
+        {
+            range: [
+                {
+                    values: ['STT', 'LOẠI CÔNG TRÌNH', 'CẤP CÔNG TRÌNH', 'THUẾ GTGT', 'GIÁ TRỊ SAU THUẾ', 'KÝ HIỆU', 'CÁCH TÍNH', 'GHI CHÚ'],
+                    bold: true,
+                    // height: 24,
+                    hCenter: true,
+                    vCenter: true,
+                    wrapText: true,
+                    fillColor: TABLE_HEADER_COLOR
+                },
+            ],
+            border: true,
+
+        },
     ]
 }

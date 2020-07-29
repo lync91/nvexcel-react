@@ -304,15 +304,18 @@ export class wsObject extends AsyncConstructor {
 		}
 
 	}
+	
 	async createTable(address: string, name: string, values: string[][] | null) {
 		const expensesTable = this.ws!.tables.add(address, true /*hasHeaders*/);
 		expensesTable.name = name;
 		if (values) expensesTable.rows.add(undefined, values)
 	}
+
 	async delete(name: string) {
 		this.context?.workbook.worksheets.getItemOrNullObject(name).delete();
 		return await this.context?.sync();
 	}
+
 	async getLastRow() {
 		const rangeA = this.ws?.getRange('A:ZZ');
 		const lastRow = rangeA?.find("*", {
@@ -324,6 +327,7 @@ export class wsObject extends AsyncConstructor {
 		await this.context?.sync();
 		return new addressObj(lastRow?.address);
 	}
+
 	async getLastCol() {
 		const rangeA = this.ws?.getRange('A1:ZZ4');
 		const lastCol = rangeA?.find("*", {
@@ -335,6 +339,7 @@ export class wsObject extends AsyncConstructor {
 		await this.context?.sync();
 		return new addressObj(lastCol?.address);
 	}
+
 	async clearValues(address: string) {
 		try {
 			this.ws?.getRange(address).clear('Contents');
@@ -343,29 +348,34 @@ export class wsObject extends AsyncConstructor {
 
 		}
 	}
+
 	async insertRange(address: string) {
 		const rg = this.ws?.getRange(address)
 		rg.insert(Excel.InsertShiftDirection.down);
 		await this.context.sync();
 	}
+
 	async setPropeties() {
 		var docProperties = this.context.workbook.properties.custom;
 		docProperties.add(TIEN_LUONG_SHEET_NAME, 'hello');
 		return this.context.sync();
 
 	}
+
 	async getPropeties() {
 		var docProperties = this.context.workbook.properties.custom;
 		const customProperty = docProperties.getItemOrNullObject(TIEN_LUONG_SHEET_NAME)
 		customProperty.load("key, value")
 		await this.context.sync();
 	}
+
 	async updateProjectInfo(key: string, value: any) {
 		this.projectInfo[key] = value;
 		var docProperties = this.context.workbook.properties.custom;
 		docProperties.add('ProjectInfo', JSON.stringify(this.projectInfo));
 		return this.context.sync();
 	}
+
 	async getProjectInfo() {
 		var docProperties = this.context.workbook.properties.custom;
 		const customProperty = docProperties.getItemOrNullObject('ProjectInfo')
@@ -377,6 +387,7 @@ export class wsObject extends AsyncConstructor {
 
 		}
 	}
+
 	async getRangeName() {
 		console.log('OKE');
 		
@@ -386,11 +397,13 @@ export class wsObject extends AsyncConstructor {
 		
 		return names;
 	}
+
 	async setRangeName(address: string, name: string) {
 		const rg = this.ws.getRange(address)
 		this.ws.names.add(name, rg)
 		return await this.context.sync()
 	}
+
 	valuesParser(values: any[]) {
 		let res = values.map(e => {
 			if (!Array.isArray(e)) {
@@ -405,6 +418,7 @@ export class wsObject extends AsyncConstructor {
 		let _res = res.map((e: any[]) => { e.length < lmax ? e = e.concat(Array(lmax - e.length)) : e = e; return e })
 		return _res
 	}
+
 	valuesFormatter(addr: string, values: any[]) {
 		const addr1 = new addressObj(addr);
 		values.forEach(async (e, i) => {
@@ -439,9 +453,13 @@ export class wsObject extends AsyncConstructor {
 					});
 				}
 				if (e.wrapText) this.setWrapText(address)
+				if (e.subScript) {
+					this.ws.getRange(address).getCell(0, 0)
+				}
 			}
 		})
 	}
+
 	async rangeHAlign(addr: string, align: string[], arr: any[][]) {
 		const addr1 = new addressObj(addr);
 		const startColNum = columnIndex(addr1.cell1.text!)

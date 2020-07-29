@@ -25,6 +25,7 @@ const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
 const TaoMauKhoiLuong = React.lazy(() => import('./components/TaoMauKhoiLuong'));
 const TienLuong = React.lazy(() => import('./components/TienLuong'));
 const TongHopChiPhi = React.lazy(() => import('./components/TongHopChiPhi'));
+const MauBangTra = React.lazy(() => import('./components/MauBangTra'));
 
 export interface AppState {
   isOpen: boolean;
@@ -124,7 +125,7 @@ class App extends Component<{}, AppState> {
               <Button type="primary" onClick={this._khoiTaoDauVao}>Khởi tạo</Button>
             </Empty>
           </div>
-          <Layout hidden={!this.state.tlExits}>
+          <Layout hidden={this.state.tlExits}>
             <Sider trigger={null} collapsible
               width={this.state.sideWith}
               collapsedWidth={this.state.collapsedWidth}
@@ -163,6 +164,7 @@ class App extends Component<{}, AppState> {
                 </SubMenu>
                 <SubMenu key="sub2" icon={<AppstoreOutlined />} title="Dự toán">
                   <Menu.Item key="TongHopChiPhi">Tổng hợp chi phí</Menu.Item>
+                  <Menu.Item key="MauBangTra">Mẫu bảng tra</Menu.Item>
                   <Menu.Item key="11">Option 6</Menu.Item>
                   <SubMenu key="sub3" title="Submenu">
                     <Menu.Item key="12">Option 7</Menu.Item>
@@ -194,6 +196,7 @@ class App extends Component<{}, AppState> {
                         <Route path="/TaoMauKhoiLuong" component={TaoMauKhoiLuong} />
                         <Route path="/TienLuong" component={TienLuong} />
                         <Route path="/TongHopChiPhi" component={TongHopChiPhi} />
+                        <Route path="/MauBangTra" component={MauBangTra} />
                       </Switch>
                     </section>
                   </Suspense>
