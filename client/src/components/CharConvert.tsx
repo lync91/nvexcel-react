@@ -1,10 +1,14 @@
 import React, { Component } from "react";
-import { Dropdown, IDropdownOption, IDropdownStyles } from 'office-ui-fabric-react/lib/Dropdown';
-import { PrimaryButton } from 'office-ui-fabric-react';
-import { Separator } from 'office-ui-fabric-react/lib/Separator';
+import { Form, Button, Select } from "antd";
+import { FormInstance } from 'antd/lib/form';
+import { ws } from "../api/nvExcel";
+import { addressTypes } from "../api/types";
+import { addressObj } from "../api/Eutils";
 // import { connect } from "react-redux";
 // import { CHANGE_SRC_KEY, CHANGE_DESC_KEY } from "../constants/actions";
-// import * as conV from "./vietuni";
+import {convertTo} from "../api/vietuni_vn";
+
+const formRef = React.createRef<FormInstance>();
 
 export interface HeaderProps {
 	title: string;
@@ -20,20 +24,16 @@ export interface AppStates {
 	descKey: string;
 }
 
-const dropdownStyles: Partial<IDropdownStyles> = {
-	dropdown: { width: 300 }
-};
-
-const options: IDropdownOption[] = [
-	{ key: "UNICODE", text: "UNICODE" },
-	{ key: "Unicode to hop", text: "Unicode to hop" },
-	{ key: "UTF-8", text: "UTF-8" },
-	{ key: "&#Unicode;", text: "&#Unicode;" },
-	{ key: "VNI-WIN", text: "VNI-WIN" },
-	{ key: "TCVN-3", text: "TCVN-3" },
-	{ key: "VISCII", text: "VISCII" },
-	{ key: "VPS-Win", text: "VPS-Win" },
-	{ key: "VIQR", text: "VIQR" }
+const options: any[] = [
+	{ value: "UNICODE", label: "UNICODE" },
+	{ value: "Unicode to hop", label: "Unicode to hop" },
+	{ value: "UTF-8", label: "UTF-8" },
+	{ value: "&#Unicode;", label: "&#Unicode;" },
+	{ value: "VNI-WIN", label: "VNI-WIN" },
+	{ value: "TCVN-3", label: "TCVN-3" },
+	{ value: "VISCII", label: "VISCII" },
+	{ value: "VPS-Win", label: "VPS-Win" },
+	{ value: "VIQR", label: "VIQR" }
 ];
 
 export class CharConvert extends Component<AppProps, AppStates> {
@@ -47,43 +47,62 @@ export class CharConvert extends Component<AppProps, AppStates> {
 	componentWillMount() {
 	}
 	_convertTo = async () => {
-		try {
-			await Excel.run(async context => {
-				/**
-				 * Insert your Excel code here
-				 */
-				const range = context.workbook.getSelectedRange();
-
-				// Read the range address
-				range.load("address");
-				range.load("values");
-
-				await context.sync();
-				console.log(`The range address was ${range.address}.`);
-				console.log(range.values);
-				// const newValues = window['convertTo'](JSON.stringify(range.values), this.props.srcKey, this.props.descKey);
-				
-				// range.values = JSON.parse(newValues);
+		await ws.getActive().then(async x => {
+			const lastRow = await ws.getLastRow();
+			const lastCol = await ws.getLastRow();
+			const addr = `A1:AZ${lastRow.cell1.row}`;
+			const values: any[][] = await ws.getFomulas(addr);
+			const text: string = convertTo(JSON.stringify(values), this.state.srcKey, this.state.descKey);
+			console.log(text);
+			
+			const res: any[][] = JSON.parse(text)
+			// await ws.addValues(addr, res);
+			// this._convertAndAdd(values, addr)
+			const src = this.state.srcKey;
+			const desc = this.state.descKey;
+			formRef.current?.setFieldsValue({
+				srcKey: desc,
+				descKey: src
 			});
-		} catch (error) {
-			console.error(error);
-		}
+			this.setState({
+				srcKey: desc,
+				descKey: src
+			})
+		});
+	}
+	_convertSelectedTo = async () => {
+		await ws.getActive().then(async x => {
+			const addr = await ws.getSelectedAddress();
+			const lastRow = await ws.getLastRow(addr.text);
+			const _addr = `${addr.cell1.text}${addr.cell1.row ? addr.cell1.row: 1}:${addr.cell1.col}${lastRow.cell1.row}`;
+			const values: any[][] = await ws.getFomulas(_addr);
+			// const text: string = convertTo(JSON.stringify(values), this.state.srcKey, this.state.descKey);
+			// const res: any[][] = JSON.parse(text);
+			// this._convertAndAdd(values, _addr)
 
+		});
 	}
-	_srcChanged = (option: IDropdownOption, _index?: number) => {
-		// this.props.dispatch({ type: CHANGE_SRC_KEY, srcKey: option.key })
-	}
-	_descChanged = (option: IDropdownOption, _index?: number) => {
-		// this.props.dispatch({ type: CHANGE_DESC_KEY, descKey: option.key })
+	_convertAndAdd = async (values: string[][], addr: string) => {
+		const res: string[][] = values.map(e => {
+			return e.map((e2: string) => {
+				const str: string = e2.toString()
+				const m = str? str.match(/=('\w*|\w*)/g) : null
+				return m? str : convertTo(str, this.state.srcKey, this.state.descKey)
+			})
+		})
+		await ws.addValues(addr, res);
 	}
 	render() {
 		// const { title, logo, message } = this.props;
+		const {Item} = Form
 		return (
-			<section className="ms-Grid">
-				<Dropdown placeholder="Chọn mã đang dùng" label="Mã đang dùng" selectedKey={this.state.srcKey} options={options} styles={dropdownStyles} onChanged={this._srcChanged} />
-				<Dropdown placeholder="Chọn mã muốn chuyển" label="Mã chuyển sang" selectedKey={this.state.descKey} options={options} styles={dropdownStyles} onChanged={this._descChanged} />
-				<Separator />
-				<PrimaryButton text="Chuyển mã" onClick={this._convertTo} allowDisabledFocus />
+			<section>
+				<Form ref={formRef}>
+					<Item label="Mã đang dùng" name="srcKey"><Select placeholder="Chọn mã đang dùng" options={options} defaultValue={this.state.srcKey} onSelect={(value: string) => this.setState({srcKey: value})}></Select></Item>
+					<Item label="Mã chuyển sang" name="descKey"><Select placeholder="Chọn mã muốn chuyển" options={options} defaultValue={this.state.descKey} onSelect={(value: string) => this.setState({descKey: value})}></Select></Item>
+				</Form>
+				<Button onClick={this._convertSelectedTo} type="primary" className="m-b-5" >Chuyển mã vùng đã chọn</Button>
+				<Button onClick={this._convertTo} type="primary" className="m-b-5">Chuyển mã toàn bộ</Button>
 			</section>
 		);
 	}

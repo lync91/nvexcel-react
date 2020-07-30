@@ -1,14 +1,15 @@
 import React, { Component } from "react";
-import { Separator } from 'office-ui-fabric-react/lib/Separator';
-import { Stack } from 'office-ui-fabric-react/lib/Stack';
-import { Toggle } from 'office-ui-fabric-react/lib/Toggle';
+import { Select, Form, Button, Checkbox } from 'antd';
+import { addressTypes } from "../api/types";
 import { ws } from "../api/nvExcel";
-import { NvDefButton } from "./nvButton";
-import { 
+import {
 	BANG_CONG_TRINH,
 	BANG_TONG_HOP_VAT_TU,
 	BANG_HAO_PHI_VAT_TU,
-	HAO_PHI_VAT_TU_NAME
+	HAO_PHI_VAT_TU_NAME,
+	GIA_THANG_G8,
+	CHIET_TINH_G8,
+	DU_THAU_G8
 } from "../constants/named";
 
 export interface AppProps {
@@ -41,13 +42,15 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		console.log(ws);
 		await ws?.currentWs(BANG_CONG_TRINH)
 		console.log(ws);
-		
-		
+
+
 	}
 	async _formatCongTrinh() {
-		await ws?.currentWs(BANG_CONG_TRINH)
-		await ws?.setFont('Times New Roman', `A1:Z${ws.lastRow.row}`);
-		const vals = await ws?.getValues(`D1:D${ws.lastRow.row}`);
+		await ws?.currentWs(BANG_CONG_TRINH).then(async x => {
+			await ws?.setFont('Times New Roman');
+		})
+
+		// const vals = await ws?.getValues(`D1:D${ws.lastRow.row}`);
 		// vals?.forEach((e, i) => {
 		// 	if (e[0] === 'T*') {
 		// 		ws!.ws!.getRange(`D${i+1}`).format.rowHeight = 0;
@@ -58,7 +61,7 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		ws?.mergeCells('A3:Z3');
 		ws?.rowsHeight('A3', 0);
 		await ws?.getValues('A1:A2');
-		ws?.setPrintArea('A:W');
+		ws?.setPrintArea('A:X');
 		ws?.setBlackAndWhite();
 		ws?.setPaperType('a4');
 		ws?.setOrientation('landscape');
@@ -67,26 +70,30 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		ws?.setCenter(true);
 	}
 	async _formatTongHopVatTu() {
-		await ws?.currentWs(BANG_TONG_HOP_VAT_TU)
-		// ws?.setPrintArea('A:P');
-		// ws?.setFont('Times New Roman');
-		// ws?.setBlackAndWhite();
-		// ws?.setPaperType('a4');
-		// ws?.setOrientation('portrait');
-		// ws?.setPageZoom(1);
-		// ws?.setPageMargin(49, 40, 50, 40);
-		// ws?.setCenter(true);
-		// ws?.colWidth('B', 0);
-		// ws?.colWidth('J', 0);
-		// ws?.colWidth('E', 86);
-		// ws?.colWidth('O', 86);
-		// ws?.colWidth('P', 86);
-		// ws?.rowsHeight(`A1:A3`, 18);
+		await ws?.currentWs(BANG_TONG_HOP_VAT_TU).then(async x => {
+			await ws?.setFont('Times New Roman');
+			await ws?.setPrintArea('A:P');
+			await ws?.setBlackAndWhite();
+			await ws?.setPaperType('a4');
+			await ws?.setOrientation('portrait');
+			await ws?.setPageZoom(1);
+			await ws?.setPageMargin(49, 40, 50, 40);
+			await ws?.setCenter(true);
+			await ws?.colWidth('B', 0);
+			await ws?.colWidth('J', 0);
+			await ws?.colWidth('E', 76);
+			await ws?.colWidth('O', 76);
+			await ws?.colWidth('P', 76);
+			await ws?.rowsHeight(`A1:A3`, 18);
+			const lastRow = await ws.getLastRow();
+			console.log(lastRow);
+		})
+
 		// ws?.autoRowsHeight(`A5:A${ws.lastRow.row}`);
 		// ws?.verCenter(`A4:P${ws.lastRow.row}`);
 		// ws?.unmergeCells('A3:R3');
-		const vals = await ws?.getValues(`A1:P${ws.lastRow.row}`);
-		await ws?.sheetSlice(vals, HAO_PHI_VAT_TU_NAME)
+		// const vals = await ws?.getValues(`A1:P${ws.lastRow.row}`);
+		// await ws?.sheetSlice(vals, HAO_PHI_VAT_TU_NAME)
 		// await ws?.moveRange('A3', 'U3');
 		// await ws?.moveRange('A4:R4', 'A3:R3');
 	}
@@ -108,28 +115,77 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		ws?.rowsHeight(`A1:A${ws.lastRow.row}`, 18)
 		ws?.verCenter(`A4:P${ws.lastRow.row}`)
 	}
+	async _formatGiaThang() {
+		await ws?.currentWs(GIA_THANG_G8).then(async x => {
+			await ws?.setFont('Times New Roman');
+			await ws?.setPrintArea('A:K');
+			await ws?.setBlackAndWhite();
+			await ws?.setPaperType('a4');
+			await ws?.setOrientation('portrait');
+			await ws?.setPageZoom(1);
+			await ws?.setPageMargin(49, 40, 50, 40);
+			await ws.setWrapText('A:K')
+			await ws.autoRowsHeight('A:K')
+			await ws?.setCenter(true);
+			await ws?.colWidth('C', 176);
+			await ws?.colWidth('E', 0);
+			await ws?.colWidth('G', 0);
+			await ws?.colWidth('H', 0);
+			await ws?.colWidth('I', 0);
+			await ws?.colWidth('J', 0);
+			await ws?.rowsHeight(`A1:A3`, 18);
+			const lastRow = await ws.getLastRow();
+			console.log(lastRow);
+		})
+	}
+	async _formatChietTinh() {
+		await ws?.currentWs(CHIET_TINH_G8).then(async x => {
+			await ws?.setFont('Times New Roman');
+			await ws?.setPrintArea('A:H');
+			await ws?.setBlackAndWhite();
+			await ws?.setPaperType('a4');
+			await ws?.setOrientation('portrait');
+			await ws?.setPageZoom(1);
+			await ws?.setPageMargin(49, 40, 50, 40);
+			await ws.setWrapText('A:H')
+			await ws.autoRowsHeight('A:H')
+			await ws?.setCenter(true);
+			const lastRow = await ws.getLastRow();
+			console.log(lastRow);
+		})
+	}
+	async _formatDuThau() {
+		await ws?.currentWs(DU_THAU_G8).then(async x => {
+			await ws?.setFont('Times New Roman');
+			await ws?.setPrintArea('A:J');
+			await ws?.setBlackAndWhite();
+			await ws?.setPaperType('a4');
+			await ws?.setOrientation('portrait');
+			await ws?.setPageZoom(1);
+			await ws?.setPageMargin(49, 40, 50, 40);
+			await ws.setWrapText('A:J')
+			// await ws.autoRowsHeight('A:J')
+			await ws?.setCenter(true);
+			const lastRow = await ws.getLastRow();
+			console.log(lastRow);
+		})
+	}
 	render() {
+		const { Item } = Form
 		return (
-			<section className="ms-Grid">
-				<Separator>Định dạng trạng in G8</Separator>
-				<div className="ms-Grid-row">
-					<div className="ms-Grid-col ms-sm12 ms-lg12 mt-8">
-						<Stack className="btn-container" horizontal>
-							<NvDefButton text="Bảng dự toán hạng mục công trình" onClick={this._formatPage} isLoading={false} />
-							<NvDefButton text="Bảng công trình" onClick={this._formatCongTrinh} isLoading={false} />
-							<NvDefButton text="Bảng tổng hợp vật tư" onClick={this._formatTongHopVatTu} isLoading={false} />
-							<NvDefButton text="Bảng hao phí vật tư" onClick={this._formatHaoPhiVatTu} isLoading={false} />
-							<NvDefButton text="Bảng giá tháng" onClick={this._formatPage} isLoading={false} />
-							<NvDefButton text="Bảng chiết tính" onClick={this._formatPage} isLoading={false} />
-							<NvDefButton text="Bảng dự thầu" onClick={this._formatPage} isLoading={false} />
-							<Toggle className="mt-8" 
-								defaultChecked={this.state.isSetFont} 
-								onText="Ẩn cột vật tư trong bảng công trình" 
-								offText="Ẩn cột vật tư trong bảng công trình" 
-								onChange={(_e, checked) => this.setState({isSetFont: checked || false})} />
-						</Stack>
-					</div>
-				</div>
+			<section>
+				<Form
+					layout="horizontal"
+				>
+					<Item><Button onClick={this._formatPage} type="primary" >Bảng dự toán hạng mục công trình</Button></Item>
+					<Item><Button onClick={this._formatCongTrinh} type="primary" >Bảng công trình</Button></Item>
+					<Item><Button onClick={this._formatTongHopVatTu} type="primary" >Bảng tổng hợp vật tư</Button></Item>
+					<Item><Button onClick={this._formatHaoPhiVatTu} type="primary" >Bảng hao phí vật tư</Button></Item>
+					<Item><Button onClick={this._formatGiaThang} type="primary" >Bảng giá tháng</Button></Item>
+					<Item><Button onClick={this._formatChietTinh} type="primary" >Bảng chiết tính</Button></Item>
+					<Item><Button onClick={this._formatDuThau} type="primary" >Bảng dự thầu</Button></Item>
+					<Item><Checkbox checked={this.state.isSetFont} onChange={() => this.setState({ isSetFont: !this.state.isSetFont })} >Ẩn cột vật tư trong bảng công trình</Checkbox></Item>
+				</Form>
 			</section>
 		);
 	}

@@ -102,37 +102,30 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 		
 	}
 	_taoTaoMauBangTra = async () => {
-        await ws.newSheetfromObject(MAU_BANG_TRA_OBJECT)
-		
+        await ws.newSheetfromObject(MAU_BANG_TRA_OBJECT);
 	}
 	_selectLoaiCongTrinh(value: string) {
-		console.log(value);
 		this.getMauKhoiLuong(value);
 	}
 	getMauKhoiLuong(kv: string) {
 		socket.emit('khoiluong/mau/getlistMauKhoiLuong', kv, (data: any) => {
 			if (data) {
-				this.setState({ lstMauKhoiLuong: data, initLoading: false })
+				this.setState({ lstMauKhoiLuong: data, initLoading: false });
 			}
 		})
 	}
 	_onFinish = async (values: any) => {
-		console.log('OK');
-		ws.getPropeties()
+		ws.getPropeties();
 	}
 
 	_searchDonGia(text: string) {
 		socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, text, (data: any[])=> {
-			console.log(data);
-			this.setState({congTac: data})
+			this.setState({congTac: data});
 		})
 	}
 
 	async _mcvClick(value: any) {
-		console.log(value);
-		// ws.insertRange('A7:A10')
-		const addr1 = await ws.getSelectedAddress()
-		console.log(addr1);
+		const addr1 = await ws.getSelectedAddress();
 		if (addr1.cell1.row! > 7) {
 			socket.emit('khoiluong/mau/get', value, async (mkl: any) => {
 				if (mkl) {
@@ -148,7 +141,7 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 	async _selectKhuvuc(value: any) {
 		await ws.updateProjectInfo(KHU_VUC_NAME, value)
 		ws.getProjectInfo();
-		this.getDonGiaKhuVuc(value)
+		this.getDonGiaKhuVuc(value);
 	}
 
 	getDonGiaKhuVuc(kv: string) {
@@ -161,12 +154,9 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 	async _selectDinhMuc(value: any) {
 		const values: any = formRef.current?.getFieldsValue();
 		ws.updateProjectInfo(DON_GIA_NAME, values.donGia);
-		console.log('OK');
-
 	}
 
 	_frmTraDinhMucChange(values: any) {
-		console.log(values);
 		if (values.donGia) ws.updateProjectInfo(DON_GIA_NAME, values.donGia);
 	}
 

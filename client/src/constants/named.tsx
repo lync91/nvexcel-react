@@ -2,6 +2,9 @@
 export const BANG_CONG_TRINH = 'Công trình'
 export const BANG_TONG_HOP_VAT_TU = 'Tổng hợp VT'
 export const BANG_HAO_PHI_VAT_TU = 'HaoPhiVatTu'
+export const GIA_THANG_G8 = 'Giá tháng'
+export const CHIET_TINH_G8 = 'Chiết tính'
+export const DU_THAU_G8 = 'Dự thầu'
 export const HAO_PHI_VAT_TU_NAME = 'BẢNG TỔNG HỢP VẬT TƯ VÀ CHÊNH LỆCH GIÁ'
 // KHỐI LƯỢNG
 export const MAU_KHOI_LUONG_NAME = 'Mẫu khối lượng'

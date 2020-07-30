@@ -7,12 +7,8 @@ import { sheetMap } from "../constants/map";
 import { sheetChanged, onActivate, onSelectionChanged } from "./wsEvents"
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import { toLetter, addrParser, columnIndex } from "./lib";
+import { addressTypes } from "./types";
 import { isNumber } from 'util';
-export interface addressTypes {
-	text: string | null;
-	col: string | null;
-	row: number | null
-}
 
 export class addressObj {
 	sheet!: string;
@@ -92,20 +88,16 @@ export class wsObject extends AsyncConstructor {
 		console.log("A handler has been registered for the OnActivate event.");
 	}
 	async currentWs(name: string) {
-		console.log('OK');
-		
 		this.name = name;
 		this.ws = this.context!.workbook.worksheets.getItemOrNullObject(name!)
-		this.ws.load('id');
-		await this.context.sync()
-		console.log('id', this.ws.id);
-		
+		this.ws.load('id, name');
+		await this.context.sync();
 		return this.ws.id;
 	}
 	async getActive() {
-		this.ws = this.context!.workbook.worksheets.getActiveWorksheet();
-		const name = await ws?.getActivedSheetName();
-		this.name = name;
+		this.ws = await this.context!.workbook.worksheets.getActiveWorksheet();
+		this.ws?.load('name');
+		return await this.context!.sync();
 	}
 
 	async checkWsExits(name: string) {
@@ -117,7 +109,7 @@ export class wsObject extends AsyncConstructor {
 
 	async getActivedSheetName() {
 		const ws = this.context!.workbook.worksheets.getActiveWorksheet()
-		ws.load('name')
+		ws!.load('name')
 		await this.context?.sync();
 		return ws.name
 	}
@@ -154,8 +146,11 @@ export class wsObject extends AsyncConstructor {
 		rg!.values = values;
 		await this.context.sync();
 	}
-	setPrintAreabySelected() {
-		this.ws?.pageLayout.setPrintArea(this.selectedRange)
+	async setPrintAreabySelected() {
+		const rg = this.context.workbook.getSelectedRange();
+		rg.load('address')
+		await this.context.sync();
+		this.ws?.pageLayout.setPrintArea(rg.address)
 	}
 	autoSetPrintArea() {
 		this.ws?.pageLayout.setPrintArea("A:" + this.lastCol.col)
@@ -179,8 +174,9 @@ export class wsObject extends AsyncConstructor {
 		this.ws!.pageLayout.leftMargin = left;
 		this.ws!.pageLayout.rightMargin = right;
 	}
-	setPaperType(paperType: string) {
-		this.ws!.pageLayout.paperSize = getPageType(paperType)
+	async setPaperType(paperType: any) {
+		this.ws!.pageLayout.paperSize = getPageType(paperType);
+		return await this.context.sync();	
 	}
 	setOrientation(ori: string) {
 		this.ws!.pageLayout.orientation = getOrientationType(ori)
@@ -282,6 +278,12 @@ export class wsObject extends AsyncConstructor {
 		await this.context?.sync();
 		return rg?.values;
 	}
+	async getSelectedFormulas() {
+		const rg = this.context?.workbook.getSelectedRange();
+		rg?.load('formulas');
+		await this.context?.sync();
+		return rg?.formulas;
+	}
 	async getSelectedAddress() {
 		const rg = this.context?.workbook.getSelectedRange();
 		rg?.load('address');
@@ -316,8 +318,9 @@ export class wsObject extends AsyncConstructor {
 		return await this.context?.sync();
 	}
 
-	async getLastRow() {
-		const rangeA = this.ws?.getRange('A:ZZ');
+	async getLastRow(addr: string | null = null) {
+		const _addr = addr? addr : 'A:ZZ'
+		const rangeA = this.ws?.getRange(_addr);
 		const lastRow = rangeA?.find("*", {
 			completeMatch: true, // find will match the whole cell value
 			matchCase: false, // find will not match case
@@ -329,7 +332,7 @@ export class wsObject extends AsyncConstructor {
 	}
 
 	async getLastCol() {
-		const rangeA = this.ws?.getRange('A1:ZZ4');
+		const rangeA = this.ws?.getRange('A1:ZZ100');
 		const lastCol = rangeA?.find("*", {
 			completeMatch: true, // find will match the whole cell value
 			matchCase: false, // find will not match case

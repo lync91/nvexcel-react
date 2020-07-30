@@ -63,9 +63,9 @@ class App extends Component<{}, AppState> {
   async componentDidMount() {
     await ws?.getProjectInfo();
     if (ws?.projectInfo[DAU_VAO_OBJECT.name]) {
-      this.setState({tlExits: true})
+      this.setState({ tlExits: true })
     } else {
-      this.setState({tlExits: false})
+      this.setState({ tlExits: false })
     }
   }
   openPanel() { this.setState({ isOpen: true }) };
@@ -74,12 +74,11 @@ class App extends Component<{}, AppState> {
     this.setState({
       collapsed: !this.state.collapsed,
     });
-    // this.onOpenChange(this.state.selectedKeys)
   };
   async _khoiTaoDauVao() {
-    await ws.delete(DAU_VAO_OBJECT.name).then(async(x: any) => {
+    await ws.delete(DAU_VAO_OBJECT.name).then(async (x: any) => {
       await ws.newSheetfromObject(DAU_VAO_OBJECT)
-    this.setState({tlExits: true})
+      this.setState({ tlExits: true })
     })
   }
   rootSubmenuKeys = ['sub1', 'sub2', 'sub4'];

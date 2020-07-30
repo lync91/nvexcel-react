@@ -30,15 +30,15 @@ export class PageFormat extends Component<AppProps, AppStates> {
 		}
 	}
 	_formatPage = async () => {
-		await ws?.getActive();
-		ws?.setPrintAreabySelected();
-		ws?.setPaperType(this.state.pageSize);
-		ws?.setOrientation(this.state.orientation);
-		ws?.setPageZoom(1)
-		this.state.autoInit ? ws!.autoSetPrintArea() : ws!.setPrintAreabySelected()
-		this.state.orientation === "portrait" ? ws!.setPageMargin(40, 40, 50, 40) : ws!.setPageMargin(50, 40, 40, 40)
-		if (this.state.isSetFont) ws?.setFont('Times New Roman');
-		if (this.state.blackAndWhite) ws?.setBlackAndWhite();
+		await ws?.getActive().then(async x => {
+			await ws?.setPaperType(this.state.pageSize);
+			await ws?.setPrintAreabySelected();
+			await ws?.setOrientation(this.state.orientation);
+			ws?.setPageZoom(1);
+			this.state.autoInit ? ws!.autoSetPrintArea() : ws!.setPrintAreabySelected();
+			if (this.state.isSetFont) ws?.setFont('Times New Roman');
+			if (this.state.blackAndWhite) ws?.setBlackAndWhite();
+		})
 	}
 	_changePageSize = (value: string) => {
 		this.setState({ pageSize: value })

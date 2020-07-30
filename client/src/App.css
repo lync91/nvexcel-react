@@ -38,6 +38,9 @@
 .p-b-5 {
   padding-bottom: 5px;
 }
+.m-b-5 {
+  margin-bottom: 5px;
+}
 
 #components-layout-demo-custom-trigger .trigger {
   font-size: 18px;
