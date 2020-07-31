@@ -386,7 +386,7 @@ export const TONG_MUC_OBJECT = {
 }
 export const MAU_BANG_TRA_OBJECT = {
     name: 'Mẫu bảng tra',
-    colwidth: [30, 210, 80, 80, 80, 50, 140, 140],
+    colwidth: [30, 210, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40],
     font: 'Times New Roman',
     printArea: 'A:H',
     pageSize: 'A4',
@@ -394,23 +394,9 @@ export const MAU_BANG_TRA_OBJECT = {
         {
             range: [
                 {
-                    values: ['TỔNG HỢP DỰ TOÁN XÂY DỰNG CÔNG TRÌNH'],
+                    values: ['MẪU BẢNG TRA CHI PHÍ TƯ VẤN'],
                     bold: true,
                     height: 24,
-                    hCenter: true,
-                    vCenter: true,
-                    colSpan: [8]
-                },
-                {
-                    values: [`="DỰ ÁN "&UPPER('${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE})`],
-                    bold: true,
-                    hCenter: true,
-                    vCenter: true,
-                    colSpan: [8]
-                },
-                {
-                    values: [`="Địa điểm "&'${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE}`],
-                    bold: true,
                     hCenter: true,
                     vCenter: true,
                     colSpan: [8]
@@ -427,21 +413,6 @@ export const MAU_BANG_TRA_OBJECT = {
                 },
                 ['']
             ]
-        },
-        {
-            range: [
-                {
-                    values: ['STT', 'LOẠI CÔNG TRÌNH', 'CẤP CÔNG TRÌNH', 'THUẾ GTGT', 'GIÁ TRỊ SAU THUẾ', 'KÝ HIỆU', 'CÁCH TÍNH', 'GHI CHÚ'],
-                    bold: true,
-                    // height: 24,
-                    hCenter: true,
-                    vCenter: true,
-                    wrapText: true,
-                    fillColor: TABLE_HEADER_COLOR
-                },
-            ],
-            border: true,
-
-        },
+        }
     ]
 }

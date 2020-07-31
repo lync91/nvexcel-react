@@ -42,8 +42,6 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 		console.log(ws);
 		await ws?.currentWs(BANG_CONG_TRINH)
 		console.log(ws);
-
-
 	}
 	async _formatCongTrinh() {
 		await ws?.currentWs(BANG_CONG_TRINH).then(async x => {
