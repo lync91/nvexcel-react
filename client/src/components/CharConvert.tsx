@@ -53,10 +53,8 @@ export class CharConvert extends Component<AppProps, AppStates> {
 			const addr = `A1:AZ${lastRow.cell1.row}`;
 			const values: any[][] = await ws.getFomulas(addr);
 			const text: string = convertTo(JSON.stringify(values), this.state.srcKey, this.state.descKey);
-			console.log(text);
-			
 			const res: any[][] = JSON.parse(text)
-			// await ws.addValues(addr, res);
+			await ws.addValues(addr, res);
 			// this._convertAndAdd(values, addr)
 			const src = this.state.srcKey;
 			const desc = this.state.descKey;
@@ -74,12 +72,11 @@ export class CharConvert extends Component<AppProps, AppStates> {
 		await ws.getActive().then(async x => {
 			const addr = await ws.getSelectedAddress();
 			const lastRow = await ws.getLastRow(addr.text);
-			const _addr = `${addr.cell1.text}${addr.cell1.row ? addr.cell1.row: 1}:${addr.cell1.col}${lastRow.cell1.row}`;
+			const _addr = `${addr.cell1.col}${addr.cell1.row ? addr.cell1.row: 1}:${addr.cell2.col}${ addr.cell2.row? addr.cell2.row : lastRow.cell1.row}`;
 			const values: any[][] = await ws.getFomulas(_addr);
-			// const text: string = convertTo(JSON.stringify(values), this.state.srcKey, this.state.descKey);
-			// const res: any[][] = JSON.parse(text);
-			// this._convertAndAdd(values, _addr)
-
+			const text: string = convertTo(JSON.stringify(values), this.state.srcKey, this.state.descKey);
+			const res: any[][] = JSON.parse(text);
+			await ws.addValues(_addr, res);
 		});
 	}
 	_convertAndAdd = async (values: string[][], addr: string) => {
@@ -93,7 +90,6 @@ export class CharConvert extends Component<AppProps, AppStates> {
 		await ws.addValues(addr, res);
 	}
 	render() {
-		// const { title, logo, message } = this.props;
 		const {Item} = Form
 		return (
 			<section>

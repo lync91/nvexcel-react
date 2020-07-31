@@ -385,7 +385,14 @@ CVietCharMap.prototype.regExpAt = function (i) {
   return c? new RegExp(c,'g') : 0;
 }
 CVietCharMap.prototype.convertTxtTo = function (txt, newmap) {
+  // console.log('txt', txt);
   var i, c, regexp, res;
+  const m = txt.match(/\"=(.*?)\"/g)
+  // if (m) {
+  //   m.forEach((e, i) => {
+  //     txt = txt.replace(e, `"=(${i})"`)
+  //   });
+  // }
   if (newmap.isVIQR) txt= txt.replace(/([\.\?]+\s)/g, "\\$1");
   for (i= this.length-1; i>0; i--) {
     regexp= this.regExpAt(i);
@@ -396,7 +403,13 @@ CVietCharMap.prototype.convertTxtTo = function (txt, newmap) {
     if (!c) c= newmap.lowerCaseOf(0,i);
     txt= txt.replace(new RegExp("::"+i+"::",'g'), c);
   }
+  // if (m) {
+  //   m.forEach((e, i) => {
+  //     txt = txt.replace(`"=(${i})"`, e)
+  //   });
+  // }
   return txt;
+  
 }
 function CVietMultibyteMap(superior) { 
 var map= superior? superior: new CVietCharMap();
@@ -534,6 +547,7 @@ map.regExpAt = function(ind) {
   return new RegExp(c,'g');
 }
 map.convertTxtTo = function (txt, newmap) {
+  // console.log('tct', txt);
   var i, c, regexp, res, tmp;
   txt= txt.replace(/(\.\.+|\?\?+)/g, ";;;$1");
   while ((res=/(\.[\w\@\-\.\/\\][\w\@\-\.\/\\][\w\@\-\.\/\\]+\s*)/g.exec(txt))) {

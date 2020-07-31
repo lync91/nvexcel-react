@@ -29,7 +29,9 @@ import { addressObj } from "../api/Eutils";
 
 const formRef = React.createRef<FormInstance>();
 
-
+const listCP = [
+	""
+]
 
 export interface AppProps {
 	formRef: any
@@ -189,7 +191,7 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 		]
 		return (
 			<section>
-				<div hidden={this.state.wsExits} style={{ margin: 'auto' }}>
+				<div hidden={!this.state.wsExits} style={{ margin: 'auto' }}>
 					<Empty
 						style={{
 							paddingTop: 60,
@@ -208,7 +210,7 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 						<Button type="primary" onClick={this._taoTaoMauBangTra}>Khởi tạo</Button>
 					</Empty>
 				</div>
-				<Tabs hidden={!this.state.wsExits} defaultActiveKey="1">
+				<Tabs hidden={this.state.wsExits} defaultActiveKey="1">
 					<TabPane tab="Menu" key="1">
 						<Form ref={formRef} onFinish={this._onFinish}>
 							<Form.Item label='Loại công trình' name='loaiCongTrinh'>
