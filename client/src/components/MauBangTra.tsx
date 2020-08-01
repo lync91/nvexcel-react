@@ -103,7 +103,7 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 	}
 
 	async _selectLoaiCP(value: any, item: any) {
-		const contents = this.state.sheetHeader.concat(item.template);
+		const contents = this.state.sheetHeader.concat([{range: [{values: [item.label], bold: true}]}]).concat(item.template);
 		await ws.getActive().then(async x => {
 			await ws.clearValues('A1:Z50');
 			console.log('contents:', contents);

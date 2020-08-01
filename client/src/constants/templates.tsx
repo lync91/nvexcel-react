@@ -2,19 +2,27 @@ export const BANGTRA1 = [
 	{
 		range: [
 			{
-				values: ['STT', 'Loại công trình', '10', '20', '50', '100', '200', '500', '1000', '2000', '5000', '10000', '20000', '30000'],
+				values: ['STT', 'Loại công trình','Cấp công trình', '10', '20', '50', '100', '200', '500', '1000', '2000', '5000', '10000', '20000', '30000'],
 				bold: true,
+				height: 28,
+                hCenter: true,
+				vCenter: true,
+				wrapText: true,
 			},
-		]
+		],
+		border: true,
 	},
 	{
 		range: [
-			['1', 'Công trình dân dụng'],
+			['1', 'Công trình dân dụng', '', '', '', '', '', '', '', '', '', '', '', '', ''],
 			['2', 'Công trình công nghiệp'],
 			['3', 'Công trình giao thông'],
 			['4', 'Công trình nông nghiệp và phát triển nông thôn'],
 			['5', 'Công trình hạ tầng kỹ thuật'],
-		]
+		],
+		hAlign: ['Center'],
+		wrapText: true,
+		border: true,
 	}
 ]
 

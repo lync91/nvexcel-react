@@ -386,9 +386,9 @@ export const TONG_MUC_OBJECT = {
 }
 export const MAU_BANG_TRA_OBJECT = {
     name: 'Mẫu bảng tra',
-    colwidth: [30, 210, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40],
+    colwidth: [30, 210, 60, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40],
     font: 'Times New Roman',
-    printArea: 'A:H',
+    printArea: 'A:AZ',
     pageSize: 'A4',
     contents: [
         {
@@ -396,22 +396,17 @@ export const MAU_BANG_TRA_OBJECT = {
                 {
                     values: ['MẪU BẢNG TRA CHI PHÍ TƯ VẤN'],
                     bold: true,
-                    height: 24,
+                    height: 28,
                     hCenter: true,
                     vCenter: true,
                     colSpan: [8]
                 },
 
             ]
-
         },
         {
             range: [
-                {
-                    values: ['Tên loại chi phí:'],
-                    bold: true
-                },
-                ['']
+                [''],
             ]
         }
     ]
