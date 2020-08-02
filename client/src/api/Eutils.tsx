@@ -314,7 +314,9 @@ export class wsObject extends AsyncConstructor {
 	}
 
 	async delete(name: string) {
-		this.context?.workbook.worksheets.getItemOrNullObject(name).delete();
+		const sh = this.context?.workbook.worksheets.getItemOrNullObject(name);
+		sh.load('name')
+		sh.delete();
 		return await this.context?.sync();
 	}
 
@@ -331,8 +333,8 @@ export class wsObject extends AsyncConstructor {
 		return new addressObj(lastRow?.address);
 	}
 
-	async getLastCol() {
-		const rangeA = this.ws?.getRange('A1:ZZ100');
+	async getLastCol(address: string | null = null) {
+		const rangeA = this.ws?.getRange(address? address : 'A1:ZZ100');
 		const lastCol = rangeA?.find("*", {
 			completeMatch: true, // find will match the whole cell value
 			matchCase: false, // find will not match case
@@ -346,6 +348,26 @@ export class wsObject extends AsyncConstructor {
 	async clearValues(address: string) {
 		try {
 			this.ws?.getRange(address).clear('Contents');
+		} catch (error) {
+			console.log(error);
+
+		}
+	}
+
+	async clearAll(address: string) {
+		try {
+			this.ws?.getRange(address).clear('All');
+			return this.context.sync();
+		} catch (error) {
+			console.log(error);
+
+		}
+	}
+
+	async clearFormats(address: string) {
+		try {
+			this.ws?.getRange(address).clear('Formats');
+			return this.context.sync();
 		} catch (error) {
 			console.log(error);
 

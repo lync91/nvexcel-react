@@ -124,7 +124,7 @@ class App extends Component<{}, AppState> {
               <Button type="primary" onClick={this._khoiTaoDauVao}>Khởi tạo</Button>
             </Empty>
           </div>
-          <Layout hidden={this.state.tlExits}>
+          <Layout hidden={!this.state.tlExits}>
             <Sider trigger={null} collapsible
               width={this.state.sideWith}
               collapsedWidth={this.state.collapsedWidth}

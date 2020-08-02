@@ -44,3 +44,28 @@ export const GDPTG_RANGE = 'Gdptg'
 // COLOR
 
 export const TABLE_HEADER_COLOR = '#bdd6ff'
+
+export const CONG_TRINH_DAN_DUNG_NAME = 'Công trình dân dụng'
+export const CONG_TRINH_CONG_NGHIEP_NAME = 'Công trình công nghiệp'
+export const CONG_TRINH_GIAO_THONG_NAME = 'Công trình giao thông'
+export const CONG_TRINH_NONG_NGHIEP_NAME = 'Công trình nông nghiệp và phát triển nông thôn'
+export const CONG_TRINH_HA_TANG_NAME = 'Công trình hạ tầng kỹ thuật'
+
+export const CAP_DAC_BIET_NAME = 'Đặc biệt'
+export const CAP_I_NAME = 'Cấp I'
+export const CAP_II_NAME = 'Cấp II'
+export const CAP_III_NAME = 'Cấp III'
+export const CAP_IV_NAME = 'Cấp IV'
+
+export const NHOM_A_NAME = 'Nhóm A'
+export const NHOM_B_NAME = 'Nhóm B'
+export const NHOM_C_NAME = 'Nhóm C'
+
+export const THIET_KE_MOT_BUOC_NAME = 'Thiết kế 1 bước'
+export const THIET_KE_HAI_BUOC_NAME = 'Thiết kế 2 bước'
+export const THIET_KE_BA_BUOC_NAME = 'Thiết kế 3 bước'
+
+export const BUOC_LAP_BCKTKT_NAME = 'Lập báo cáo kinh tế kỹ thuật'
+export const BUOC_LAP_BCNGTKT_NAME = 'Lập báo cáo nghiên cứu tiền khả thi'
+export const BUOC_LAP_BCNCKT_NAME = 'Lập báo cáo nghiên cứu khả thi'
+export const BUOC_LAP_TKBVTC_NAME = 'Lập thiết kế bản vẽ thi công'

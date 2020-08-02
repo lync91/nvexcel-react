@@ -35,7 +35,6 @@ const mklChanged = (e: any) => {
     }
 }
 const tlChanged = (e: any) => {
-    console.log(e);
     const addr = new addressObj(e.address);
     if (addr.cell1.col === 'A' && addr.cell1.row! > 6 && !isString(addr.cell2.col)) {
         ws.addValues(`B${addr.cell1.row}`, [[AUTO_STT_FOMULA]])
@@ -48,8 +47,10 @@ const tlChanged = (e: any) => {
     }
 }
 export async function onActivate(event: any) {
-    const id: string = event.worksheetId;
-    await ws?.currentWs(id).then(x => {ws?.getRangeName()});
+    const id: string = event.worksheetId? event.worksheetId : null;
+    await ws.ws.context.sync();
+    if (id) await ws?.currentWs(id).then(x => {ws?.getRangeName()});
+    await ws.ws.context.sync();
 }
 
 export async function onSelectionChanged(event: any) {

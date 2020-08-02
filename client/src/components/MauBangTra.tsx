@@ -27,6 +27,7 @@ import { listCP } from "../constants/templates"
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import socket from "../socket";
 import { addressObj } from "../api/Eutils";
+import { waterfall } from "async";
 
 const formRef = React.createRef<FormInstance>();
 
@@ -62,7 +63,6 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 			listCP: [],
 			sheetHeader: []
 		}
-
 	}
 
 	async prepair() {
@@ -70,47 +70,50 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 	}
 
 	componentDidMount() {
-		this.setState({listCP: listCP.map((e: any) => {
-			e.value = e.key;
-			e.label = e.tencp;
-			return e
-		})})
-		formRef.current?.setFieldsValue({vanBanCanCu: 'TT 09/2019/TT-BXD'})
-
+		this.setState({
+			listCP: listCP.map((e: any) => {
+				e.value = e.key;
+				e.label = e.tencp;
+				return e
+			})
+		})
+		formRef.current?.setFieldsValue({ vanBanCanCu: 'TT 09/2019/TT-BXD' });
+		this.setState({ sheetHeader: MAU_BANG_TRA_OBJECT.contents });
 	}
 	_taoTaoMauBangTra = async () => {
 		await ws.newSheetfromObject(MAU_BANG_TRA_OBJECT);
-		this.setState({wsExits: true});
-		this.setState({sheetHeader: MAU_BANG_TRA_OBJECT.contents})
-	}
-	_onFinish = async (values: any) => {
-		ws.getPropeties();
+		this.setState({ wsExits: true });
+		this.setState({ sheetHeader: MAU_BANG_TRA_OBJECT.contents });
 	}
 
-	async _mcvClick(value: any) {
-		const addr1 = await ws.getSelectedAddress();
-		if (addr1.cell1.row! > 7) {
-			socket.emit('khoiluong/mau/get', value, async (mkl: any) => {
-				if (mkl) {
-					const data: any[][] = JSON.parse(mkl.data)
-					var addr = `A${addr1.cell1.row}:J${data.length + addr1.cell1.row! - 1}`;
-					await ws.insertRange(addr);
-					ws?.addValues(addr, data);
-				}
-			})
-		}
+	async _onFinish(values: any) {
+		await ws.currentWs(MAU_BANG_TRA_OBJECT.name);
+		const lastRow = await ws.getLastRow('B:B');
+		const lastCol = await ws.getLastCol('A4:AZ4');
+		console.log('lastRow', lastRow);
+		console.log('lastCol', lastCol);
+		
+	}
 
+	_daoNguocBangTra = async () => {
+		await ws.getActive();
+		const addr = await ws.getSelectedAddress();
+		const values = await ws.getSelectedFormulas();
+		let newValues = values.reverse();
+		console.log(newValues);
+		newValues.forEach(e => {
+			console.log(e);
+			
+		})
+		await ws.addValues(addr.text, newValues);
+		
 	}
 
 	async _selectLoaiCP(value: any, item: any) {
-		const contents = this.state.sheetHeader.concat([{range: [{values: [item.label], bold: true}]}]).concat(item.template);
-		await ws.getActive().then(async x => {
-			await ws.clearValues('A1:Z50');
-			console.log('contents:', contents);
-			
-			await ws.sheetContents(contents);
-		})
-		
+		const contents = await this.state.sheetHeader.concat([{ range: [{ values: [item.label], bold: true, height: 22, vCenter: true, }] }]).concat(item.template);
+		MAU_BANG_TRA_OBJECT.contents = contents;
+		await ws.delete(MAU_BANG_TRA_OBJECT.name)
+		.then(async x => await ws.newSheetfromObject(MAU_BANG_TRA_OBJECT));
 	}
 
 	_frmTraDinhMucChange(values: any) {
@@ -121,7 +124,7 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 		const { TabPane } = Tabs;
 		return (
 			<section>
-				<div hidden={this.state.wsExits} style={{ margin: 'auto' }}>
+				<div hidden={!this.state.wsExits} style={{ margin: 'auto' }}>
 					<Empty
 						style={{
 							paddingTop: 60,
@@ -140,7 +143,7 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 						<Button type="primary" onClick={this._taoTaoMauBangTra}>Khởi tạo</Button>
 					</Empty>
 				</div>
-				<Tabs hidden={!this.state.wsExits} defaultActiveKey="1">
+				<Tabs hidden={this.state.wsExits} defaultActiveKey="1">
 					<TabPane tab="Menu" key="1">
 						<Form ref={formRef} onFinish={this._onFinish}>
 							<Form.Item label='Văn bản căn cứ' name='vanBanCanCu'>
@@ -160,17 +163,22 @@ export class MauBangTra extends Component<AppProps, AppStates> {
 								</Select>
 							</Form.Item>
 							<Form.Item style={{ paddingTop: 4, paddingBottom: 4 }}>
-								<Button type="primary" htmlType="submit" onClick={this._onFinish}>
+								<Button type="primary" onClick={this._onFinish}>
 									Lưu
+								</Button>
+							</Form.Item>
+							<Form.Item style={{ paddingTop: 4, paddingBottom: 4 }}>
+								<Button type="primary" onClick={this._daoNguocBangTra}>
+									Đảo ngược bảng tra
 								</Button>
 							</Form.Item>
 						</Form>
 					</TabPane>
 					<TabPane tab="Thư viện" key="2">
-						
+
 					</TabPane>
 					<TabPane tab="Tra định mức" key="3">
-						
+
 					</TabPane>
 				</Tabs>
 			</section>

@@ -16,7 +16,27 @@ import {
     GDP_RANGE,
     GTV_RANGE,
     GDPKLPS_RANGE,
-    GDPTG_RANGE
+    GDPTG_RANGE,
+    CAP_DAC_BIET_NAME,
+    CAP_I_NAME,
+    CAP_II_NAME,
+    CAP_III_NAME,
+    CAP_IV_NAME,
+    NHOM_A_NAME,
+    NHOM_B_NAME,
+    NHOM_C_NAME,
+    THIET_KE_MOT_BUOC_NAME,
+    THIET_KE_HAI_BUOC_NAME,
+    THIET_KE_BA_BUOC_NAME,
+    BUOC_LAP_BCKTKT_NAME,
+    BUOC_LAP_BCNCKT_NAME,
+    BUOC_LAP_BCNGTKT_NAME,
+    BUOC_LAP_TKBVTC_NAME,
+    CONG_TRINH_DAN_DUNG_NAME,
+    CONG_TRINH_CONG_NGHIEP_NAME,
+    CONG_TRINH_GIAO_THONG_NAME,
+    CONG_TRINH_NONG_NGHIEP_NAME,
+    CONG_TRINH_HA_TANG_NAME
  } from "./named";
 
 export const MAU_KHOI_LUONG = [['BẢNG MẪU KHỐI LƯỢNG CÔNG TRÌNH'], ['Công trình: '], ['Địa điểm: ']]
@@ -31,7 +51,7 @@ export const KHOI_LUONG_DEFAULT_VALUES = [['HM', `${AUTO_STT_FOMULA}`,
 
 export const DAU_VAO_OBJECT = {
     name: 'Đầu vào',
-    colwidth: [30, 80, 80, 80, 80, 80],
+    colwidth: [30, 180, 60],
     font: 'Times New Roman',
     printArea: 'A:F',
     pageSize: 'A4',
@@ -227,28 +247,28 @@ export const DAU_VAO_OBJECT = {
             ]
         },
         {
-            range: [['Công trình dân dụng'], ['Công trình công nghiệp'], ['Công trình giao thông'], ['Công trình nông nghiệp và phát triển nông thôn'], ['Công trình hạ tầng kỹ thuật']],
+            range: [[CONG_TRINH_DAN_DUNG_NAME], [CONG_TRINH_CONG_NGHIEP_NAME], [CONG_TRINH_GIAO_THONG_NAME], [CONG_TRINH_NONG_NGHIEP_NAME], [CONG_TRINH_HA_TANG_NAME]],
             colWidth: [0],
             addr: 'AA3',
             color: 'BFBFBF'
         }, {
-            range: [['Đặc biệt'], ['Cấp I'], ['Cấp II'], ['Cấp III'], ['Cấp IV']],
+            range: [[CAP_DAC_BIET_NAME], [CAP_I_NAME], [CAP_II_NAME], [CAP_III_NAME], [CAP_IV_NAME]],
             colWidth: [0],
             addr: 'AB3',
             color: 'BFBFBF'
         }, {
-            range: [['Nhóm A'], ['Nhóm B'], ['Nhóm C']],
+            range: [[NHOM_A_NAME], [NHOM_B_NAME], [NHOM_C_NAME]],
             colWidth: [0],
             addr: 'AC3',
             color: 'BFBFBF'
         }, {
-            range: [['Thiết kế 1 bước'], ['Thiết kế 2 bước'], ['Thiết kế 3 bước']],
+            range: [[THIET_KE_MOT_BUOC_NAME], [THIET_KE_HAI_BUOC_NAME], [THIET_KE_BA_BUOC_NAME]],
             colWidth: [0],
             addr: 'AD3',
             color: 'BFBFBF'
         },
         {
-            range: [['Lập báo cáo kinh tế kỹ thuật'], ['Lập báo cáo nghiên cứu tiền khả thi'], ['Lập báo cáo nghiên cứu khả thi'], ['Lập thiết kế bản vẽ thi công']],
+            range: [[BUOC_LAP_BCKTKT_NAME], [BUOC_LAP_BCNGTKT_NAME], [BUOC_LAP_BCNCKT_NAME], [BUOC_LAP_TKBVTC_NAME]],
             colWidth: [0],
             addr: 'AE3',
             color: 'BFBFBF'
@@ -401,13 +421,14 @@ export const MAU_BANG_TRA_OBJECT = {
                     vCenter: true,
                     colSpan: [8]
                 },
-
-            ]
+            ],
+            font: 'Times New Roman',
         },
         {
             range: [
                 [''],
-            ]
+            ],
+            font: 'Times New Roman',
         }
     ]
 }
