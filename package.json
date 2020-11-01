@@ -1,0 +1,8 @@
+{
+  "name": "nvexcel",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/lync91/nvexcel-react.git",
+  "author": "lync91 <mr.lync91@gmail.com>",
+  "license": "MIT"
+}

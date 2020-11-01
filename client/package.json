@@ -1,0 +1,65 @@
+{
+  "name": "nvexcel",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^4.2.1",
+    "@apollo/client": "^3.2.5",
+    "@microsoft/office-js": "^1.1.38",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.5.0",
+    "@testing-library/user-event": "^7.2.1",
+    "@types/async": "^3.2.3",
+    "@types/events": "^3.0.0",
+    "@types/jest": "^24.9.1",
+    "@types/mathjs": "^6.0.5",
+    "@types/node": "^12.12.31",
+    "@types/office-js": "^1.0.91",
+    "@types/react": "^16.9.25",
+    "@types/react-dom": "^16.9.5",
+    "@types/socket.io-client": "^1.4.33",
+    "antd": "^4.3.5",
+    "async": "^3.2.0",
+    "async-constructor": "^0.3.0",
+    "eventemitter3": "^4.0.4",
+    "graphql": "^15.4.0",
+    "mathjs": "^7.0.2",
+    "office-ui-fabric-react": "^7.105.4",
+    "react": "^16.13.1",
+    "react-async": "^10.0.1",
+    "react-dom": "^16.13.1",
+    "react-redux": "^7.2.0",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1",
+    "redux": "^4.0.5",
+    "socket.io-client": "^2.3.0",
+    "typescript": "^3.7.5"
+  },
+  "scripts": {
+    "start": "react-scripts start host=0.0.0.0",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "dev-server": "HTTPS=true SSL_CRT_FILE=../cert/cert.pem SSL_KEY_FILE=../cert/privkey.pem npm start",
+    "dev-local": "HTTPS=true SSL_CRT_FILE=../cert/server.crt SSL_KEY_FILE=../cert/server.key npm start"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/react-redux": "^7.1.7",
+    "@types/react-router-dom": "^5.1.3"
+  }
+}
