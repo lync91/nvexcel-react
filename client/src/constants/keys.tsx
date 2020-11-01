@@ -1,1 +1,0 @@
-export const LOAI_CONG_TRINH = 'LOAI_CONG_TRINH'
