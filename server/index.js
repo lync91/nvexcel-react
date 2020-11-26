@@ -8,7 +8,7 @@ var certificate = fs.readFileSync('../cert/server.crt', 'utf8');
 var credentials = { key: privateKey, cert: certificate };
 
 var https = require('https').createServer(credentials, app);
-var io = require('socket.io')(https);
+// var io = require('socket.io')(https);
 
 // var { graphqlHTTPs } = require('express-graphql');
 // var { buildSchema } = require('graphql');
@@ -17,13 +17,18 @@ const { ApolloServer, gql } = require('apollo-server-express');
 
 const typeDefs = gql`
   type Query {
-    hello: String
+    hello(test1: String!): String,
+    test: String,
+    rollDice(numDice: Int!, numSides: Int): [Int]
   }
 `;
 
 const resolvers = {
     Query: {
-      hello: () => 'Hello world!',
+      hello: (parent, args, context, info) => {
+          return args
+      },
+      test: () => 'ds'
     },
   };
    
@@ -42,7 +47,7 @@ fs.readdirSync(__dirname + '/db/models').forEach(function (filename) {
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/thietke', { useNewUrlParser: true, useUnifiedTopology: true });
 
-var nvsocket = require('./socket');
+// var nvsocket = require('./socket');
 
 app.get('/', (req, res) => {
     res.send('<h1>Hello world</h1>');
@@ -83,17 +88,17 @@ app.get('/search', (req, res) => {
     })
 })
 
-io.on('connection', (socket) => {
-    console.log('a user connected');
-    socket.on('hello', (fn) => {
-        console.log('Hello');
-        fn('hello')
-    })
-    socket.on('elog', (data) => {
-        io.emit('elog', data)
-    })
-    nvsocket(socket);
-});
+// io.on('connection', (socket) => {
+//     console.log('a user connected');
+//     socket.on('hello', (fn) => {
+//         console.log('Hello');
+//         fn('hello')
+//     })
+//     socket.on('elog', (data) => {
+//         io.emit('elog', data)
+//     })
+//     nvsocket(socket);
+// });
 
 
 // var schema = buildSchema(`

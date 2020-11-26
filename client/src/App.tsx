@@ -16,13 +16,23 @@ import {
   SettingOutlined
 } from '@ant-design/icons';
 import { AppContext } from "./contexts/AppContext";
-import socket from "./socket";
+// import socket from "./socket";
 import { ws } from "./api/nvExcel";
 import { DAU_VAO_OBJECT } from "./constants/values";
 
-import { gql } from '@apollo/client';
-import client from "./apollo";
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 
+
+
+// import { ApolloProvider } from 'react-apollo';
+// import { gql } from '@apollo/client';
+// import client from "./apollo";
+
+
+const client = new ApolloClient({
+  uri: 'https://localhost:8080/graphql',
+  cache: new InMemoryCache()
+});
 const CharConvert = React.lazy(() => import('./components/CharConvert'));
 const PageFormat = React.lazy(() => import('./components/PageFormat'));
 const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
@@ -30,18 +40,19 @@ const TaoMauKhoiLuong = React.lazy(() => import('./components/TaoMauKhoiLuong'))
 const TienLuong = React.lazy(() => import('./components/TienLuong'));
 const TongHopChiPhi = React.lazy(() => import('./components/TongHopChiPhi'));
 const MauBangTra = React.lazy(() => import('./components/MauBangTra'));
+const otherTools = React.lazy(() => import('./components/otherTools'));
 
 
 
-client
-  .query({
-    query: gql`
-      query {
-        hello
-      }
-    `
-  })
-  .then(result => console.log(result));
+// client
+//   .query({
+//     query: gql`
+//       query {
+//         hello
+//       }
+//     `
+//   })
+//   .then(result => console.log(result));
 
 export interface AppState {
   isOpen: boolean;
@@ -115,10 +126,11 @@ class App extends Component<{}, AppState> {
     this.setState({ collapsed: !this.state.collapsed })
   }
   render() {
-    socket.on('elog', (data: any) => console.log(data));
+    // socket.on('elog', (data: any) => console.log(data));
     const { Header, Sider, Content } = Layout;
     const { SubMenu } = Menu;
     return (
+      <ApolloProvider client={client}>
       <AppContext.Provider value={this.state}>
         <div className="App">
           <div hidden={!this.state.tlExits} style={{ margin: 'auto' }}>
@@ -212,6 +224,7 @@ class App extends Component<{}, AppState> {
                         <Route path="/TienLuong" component={TienLuong} />
                         <Route path="/TongHopChiPhi" component={TongHopChiPhi} />
                         <Route path="/MauBangTra" component={MauBangTra} />
+                        <Route path="/otherTools" component={otherTools} />
                       </Switch>
                     </section>
                   </Suspense>
@@ -221,6 +234,7 @@ class App extends Component<{}, AppState> {
           </Layout>
         </div>
       </AppContext.Provider>
+      </ApolloProvider>
     );
   }
 }

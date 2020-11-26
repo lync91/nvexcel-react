@@ -15,6 +15,9 @@ import {
 } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
 import { FormInstance } from 'antd/lib/form';
+
+import client from "../apollo";
+import { useQuery, gql } from "@apollo/client";
 import { ws, ee } from "../api/nvExcel";
 import { initBangTienLuong } from "../api/libKhoiLuong";
 import {
@@ -23,7 +26,7 @@ import {
 	DON_GIA_NAME
 } from "../constants/named";
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
-import socket from "../socket";
+// import socket from "../socket";
 import { addressObj } from "../api/Eutils";
 
 const formRef = React.createRef<FormInstance>();
@@ -96,13 +99,13 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	async prepair() {
 		ee.removeAllListeners();
 		ee.on(`${WORKSHEET_SELECTION_CHANGED}_${ws?.projectInfo[TIEN_LUONG_SHEET_NAME]}`, async (address) => {
-			this.setState({currentAddress: new addressObj(address)})
+			this.setState({ currentAddress: new addressObj(address) })
 			const value = await ws.getValues(address)
 			formRef.current?.setFieldsValue({ search: value })
-			socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, value[0][0], (data: any[])=> {
-				console.log(data);
-				this.setState({congTac: data})
-			})
+			// socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, value[0][0], (data: any[]) => {
+			// 	console.log(data);
+			// 	this.setState({ congTac: data })
+			// })
 		})
 		const name = await ws?.checkWsExits(TIEN_LUONG_SHEET_NAME)
 		if (name) {
@@ -116,8 +119,19 @@ export class TienLuong extends Component<AppProps, AppStates> {
 
 	componentDidMount() {
 		this.prepair()
-		socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }));
-		socket.emit('dutoan/dongia/getkv', (data: any) => this.setState({ lstKV: data }))
+		// socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }));
+		// socket.emit('dutoan/dongia/getkv', (data: any) => this.setState({ lstKV: data }))
+
+		client
+			.query({
+				query: gql`
+					query {
+						hello
+					}
+					`
+			})
+			.then(result => console.log(result));
+
 		if (ws?.projectInfo[KHU_VUC_NAME]) {
 			this.getDonGiaKhuVuc(ws.projectInfo[KHU_VUC_NAME]);
 			this.setState({ khuVuc: ws.projectInfo[KHU_VUC_NAME] })
@@ -143,11 +157,11 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		this.getMauKhoiLuong(value);
 	}
 	getMauKhoiLuong(kv: string) {
-		socket.emit('khoiluong/mau/getlistMauKhoiLuong', kv, (data: any) => {
-			if (data) {
-				this.setState({ lstMauKhoiLuong: data, initLoading: false })
-			}
-		})
+		// socket.emit('khoiluong/mau/getlistMauKhoiLuong', kv, (data: any) => {
+		// 	if (data) {
+		// 		this.setState({ lstMauKhoiLuong: data, initLoading: false })
+		// 	}
+		// })
 	}
 	_onFinish = async (values: any) => {
 		console.log('OK');
@@ -169,10 +183,10 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 
 	_searchDonGia(text: string) {
-		socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, text, (data: any[])=> {
-			console.log(data);
-			this.setState({congTac: data})
-		})
+		// socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, text, (data: any[]) => {
+		// 	console.log(data);
+		// 	this.setState({ congTac: data })
+		// })
 	}
 
 	async _mcvClick(value: any) {
@@ -181,14 +195,14 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		const addr1 = await ws.getSelectedAddress()
 		console.log(addr1);
 		if (addr1.cell1.row! > 7) {
-			socket.emit('khoiluong/mau/get', value, async (mkl: any) => {
-				if (mkl) {
-					const data: any[][] = JSON.parse(mkl.data)
-					var addr = `A${addr1.cell1.row}:J${data.length + addr1.cell1.row! - 1}`;
-					await ws.insertRange(addr);
-					ws?.addValues(addr, data);
-				}
-			})
+			// socket.emit('khoiluong/mau/get', value, async (mkl: any) => {
+			// 	if (mkl) {
+			// 		const data: any[][] = JSON.parse(mkl.data)
+			// 		var addr = `A${addr1.cell1.row}:J${data.length + addr1.cell1.row! - 1}`;
+			// 		await ws.insertRange(addr);
+			// 		ws?.addValues(addr, data);
+			// 	}
+			// })
 		}
 
 	}
@@ -199,10 +213,10 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 
 	getDonGiaKhuVuc(kv: string) {
-		socket.emit('dutoan/dongia/getdm', kv, async (data: any) => {
-			this.setState({ lstDM: data });
-			formRef.current?.setFieldsValue({ khuVuc: ws?.projectInfo[DON_GIA_NAME] ? ws?.projectInfo[DON_GIA_NAME] : this.state.donGia })
-		})
+		// socket.emit('dutoan/dongia/getdm', kv, async (data: any) => {
+		// 	this.setState({ lstDM: data });
+		// 	formRef.current?.setFieldsValue({ khuVuc: ws?.projectInfo[DON_GIA_NAME] ? ws?.projectInfo[DON_GIA_NAME] : this.state.donGia })
+		// })
 	}
 
 	async _selectDinhMuc(value: any) {
@@ -230,19 +244,19 @@ export class TienLuong extends Component<AppProps, AppStates> {
 				dataIndex: 'MHDG',
 				key: 'MHDG',
 				render: (text: any) => <a>{text}</a>,
-			  },
-			  {
+			},
+			{
 				title: 'Tên công tác',
 				dataIndex: 'TCV',
 				key: 'TCV',
 				render: (text: any) => <a>{text}</a>,
-			  },
-			  {
+			},
+			{
 				title: 'Đơn vị',
 				dataIndex: 'DVT',
 				key: 'DVT',
 				render: (text: any) => <a>{text}</a>,
-			  },
+			},
 		]
 		return (
 			<section>
@@ -267,6 +281,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 				</div>
 				<Tabs hidden={!this.state.wsExits} defaultActiveKey="1">
 					<TabPane tab="Menu" key="1">
+						<Home/>
 						<Form ref={formRef} onFinish={this._onFinish}>
 							<Form.Item label='Loại công trình' name='loaiCongTrinh'>
 								<AutoComplete />
@@ -352,15 +367,15 @@ export class TienLuong extends Component<AppProps, AppStates> {
 								<Search placeholder="Tìm kiếm mã hiệu, công tác" onSearch={value => this._searchDonGia(value)} enterButton />
 							</Form.Item>
 						</Form>
-						<Table 
+						<Table
 							onRow={(record, rowIndex) => {
 								return {
-								  onClick: event => {
-									  this._dmClick(record.MHDM)
-								  }, // click row
+									onClick: event => {
+										this._dmClick(record.MHDM)
+									}, // click row
 								};
-							  }}
-							columns={columns} 
+							}}
+							columns={columns}
 							dataSource={this.state.congTac} />
 					</TabPane>
 				</Tabs>
@@ -368,4 +383,19 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		);
 	}
 };
+
+const EXCHANGE_RATES = gql`
+      query {
+        hello (test: String)
+      }
+`;
+
+function Home() {
+	const { loading, error, data } = useQuery(EXCHANGE_RATES, {variables: {test: 'hel!!!'}});
+	return (
+	  <div>
+		<h2>{JSON.stringify(data)}</h2>
+	  </div>
+	);
+  }
 export default TienLuong

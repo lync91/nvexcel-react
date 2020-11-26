@@ -8,7 +8,6 @@ import { sheetChanged, onActivate, onSelectionChanged } from "./wsEvents"
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 import { toLetter, addrParser, columnIndex } from "./lib";
 import { addressTypes } from "./types";
-import { isNumber } from 'util';
 
 export class addressObj {
 	sheet!: string;
@@ -518,8 +517,6 @@ export class wsObject extends AsyncConstructor {
 		});
 	}
 	async colWidths(lst: number[], startAddr: string | null = null) {
-		console.log(startAddr);
-		
 		if (!startAddr) {
 			lst.forEach((e: number, i: number) => {
 				this.colWidth(toLetter(i + 1)!, e)

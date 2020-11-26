@@ -24,7 +24,7 @@ import {
 } from "../constants/named";
 import { TONG_MUC_OBJECT } from "../constants/values";
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
-import socket from "../socket";
+// import socket from "../socket";
 import { addressObj } from "../api/Eutils";
 
 const formRef = React.createRef<FormInstance>();
@@ -110,11 +110,11 @@ export class TongHopChiPhi extends Component<AppProps, AppStates> {
 		this.getMauKhoiLuong(value);
 	}
 	getMauKhoiLuong(kv: string) {
-		socket.emit('khoiluong/mau/getlistMauKhoiLuong', kv, (data: any) => {
-			if (data) {
-				this.setState({ lstMauKhoiLuong: data, initLoading: false })
-			}
-		})
+		// socket.emit('khoiluong/mau/getlistMauKhoiLuong', kv, (data: any) => {
+		// 	if (data) {
+		// 		this.setState({ lstMauKhoiLuong: data, initLoading: false })
+		// 	}
+		// })
 	}
 	_onFinish = async (values: any) => {
 		console.log('OK');
@@ -122,10 +122,10 @@ export class TongHopChiPhi extends Component<AppProps, AppStates> {
 	}
 
 	_searchDonGia(text: string) {
-		socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, text, (data: any[])=> {
-			console.log(data);
-			this.setState({congTac: data})
-		})
+		// socket.emit('dutoan/dongia/search', this.state.khuVuc, this.state.donGia, text, (data: any[])=> {
+		// 	console.log(data);
+		// 	this.setState({congTac: data})
+		// })
 	}
 
 	async _mcvClick(value: any) {
@@ -134,14 +134,14 @@ export class TongHopChiPhi extends Component<AppProps, AppStates> {
 		const addr1 = await ws.getSelectedAddress()
 		console.log(addr1);
 		if (addr1.cell1.row! > 7) {
-			socket.emit('khoiluong/mau/get', value, async (mkl: any) => {
-				if (mkl) {
-					const data: any[][] = JSON.parse(mkl.data)
-					var addr = `A${addr1.cell1.row}:J${data.length + addr1.cell1.row! - 1}`;
-					await ws.insertRange(addr);
-					ws?.addValues(addr, data);
-				}
-			})
+			// socket.emit('khoiluong/mau/get', value, async (mkl: any) => {
+			// 	if (mkl) {
+			// 		const data: any[][] = JSON.parse(mkl.data)
+			// 		var addr = `A${addr1.cell1.row}:J${data.length + addr1.cell1.row! - 1}`;
+			// 		await ws.insertRange(addr);
+			// 		ws?.addValues(addr, data);
+			// 	}
+			// })
 		}
 
 	}
@@ -152,10 +152,10 @@ export class TongHopChiPhi extends Component<AppProps, AppStates> {
 	}
 
 	getDonGiaKhuVuc(kv: string) {
-		socket.emit('dutoan/dongia/getdm', kv, async (data: any) => {
-			this.setState({ lstDM: data });
-			formRef.current?.setFieldsValue({ khuVuc: ws?.projectInfo[DON_GIA_NAME] ? ws?.projectInfo[DON_GIA_NAME] : this.state.donGia })
-		})
+		// socket.emit('dutoan/dongia/getdm', kv, async (data: any) => {
+		// 	this.setState({ lstDM: data });
+		// 	formRef.current?.setFieldsValue({ khuVuc: ws?.projectInfo[DON_GIA_NAME] ? ws?.projectInfo[DON_GIA_NAME] : this.state.donGia })
+		// })
 	}
 
 	async _selectDinhMuc(value: any) {

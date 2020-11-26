@@ -7,7 +7,7 @@ import {
 	MAU_KHOI_LUONG_NAME,
 } from "../constants/named";
 // import { MAU_KHOI_LUONG, TONG_HOP_KHOI_LUONG_HEADER, KHOI_LUONG_DEFAULT_VALUES } from "../constants/values";
-import socket from "../socket";
+// import socket from "../socket";
 import MauKhoiLuongContext from "../contexts/MauKhoiLuongContext";
 
 export interface AppProps {
@@ -74,7 +74,7 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 
 	componentDidMount() {
 		this.prepair()
-		socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }))
+		// socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }))
 	}
 	_taoBangmau = async () => {
 		await ws?.addSheet(MAU_KHOI_LUONG_NAME);
@@ -96,43 +96,43 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 			id: ''
 		}
 		if (this.state.selectedTabKey === 'create') {
-			socket.emit('khoiluong/mau/add', data, () => {
-				this.formRef.current?.resetFields();
-				message.success('Đã lưu mẫu khối lượng thành công');
-				ws.clearValues(`A7:J${lastRow.cell1.row}`)
-			});
+			// socket.emit('khoiluong/mau/add', data, () => {
+			// 	this.formRef.current?.resetFields();
+			// 	message.success('Đã lưu mẫu khối lượng thành công');
+			// 	ws.clearValues(`A7:J${lastRow.cell1.row}`)
+			// });
 		} else {
 			data.id = values.id
-			socket.emit('khoiluong/mau/update', data, () => {
-				this.formRef.current?.resetFields();
-				message.success('Đã lưu mẫu khối lượng thành công');
-				ws.clearValues(`A7:J${lastRow.cell1.row}`)
-			});
+			// socket.emit('khoiluong/mau/update', data, () => {
+			// 	this.formRef.current?.resetFields();
+			// 	message.success('Đã lưu mẫu khối lượng thành công');
+			// 	ws.clearValues(`A7:J${lastRow.cell1.row}`)
+			// });
 		}
 	}
 	_selectLoaiCongTrinh(value: string) {
-		socket.emit('khoiluong/mau/getlistMauKhoiLuong', value, (data: any) => {
-			if (data) {
-				console.log(data);
-				this.setState({ lstMauKhoiLuong: data })
-			}
-		})
+		// socket.emit('khoiluong/mau/getlistMauKhoiLuong', value, (data: any) => {
+		// 	if (data) {
+		// 		console.log(data);
+		// 		this.setState({ lstMauKhoiLuong: data })
+		// 	}
+		// })
 	}
 	async _selectMauKhoiLuong(value: string) {
 		// await ws?.currentWs(MAU_KHOI_LUONG_NAME);
 		const lastRow = await ws.getLastRow();
 		ws.clearValues(`A6:J${lastRow.cell1.row}`);
-		socket.emit('khoiluong/mau/get', value, (mkl: any) => {
-			if (mkl) {
-				const data: any[][] = JSON.parse(mkl.data)
-				var addr = `A7:J${data.length + 6}`;
-				ws?.addValues('A6', [['HM']])
-				ws?.addValues('A7', [['#']])
-				ws?.addValues(addr, data)
-				this.setState({tenBophan: mkl.tenBoPhan})
-				this.formRef.current?.setFieldsValue({ tenBoPhan: mkl.tenBoPhan })
-			}
-		})
+		// socket.emit('khoiluong/mau/get', value, (mkl: any) => {
+		// 	if (mkl) {
+		// 		const data: any[][] = JSON.parse(mkl.data)
+		// 		var addr = `A7:J${data.length + 6}`;
+		// 		ws?.addValues('A6', [['HM']])
+		// 		ws?.addValues('A7', [['#']])
+		// 		ws?.addValues(addr, data)
+		// 		this.setState({tenBophan: mkl.tenBoPhan})
+		// 		this.formRef.current?.setFieldsValue({ tenBoPhan: mkl.tenBoPhan })
+		// 	}
+		// })
 	}
 
 	render() {
