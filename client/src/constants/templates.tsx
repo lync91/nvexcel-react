@@ -8,8 +8,13 @@ import {
 	CAP_I_NAME,
 	CAP_II_NAME,
 	CAP_III_NAME,
-	CAP_IV_NAME
+	CAP_IV_NAME,
+	TIEN_LUONG_SHEET_NAME,
+	TEN_CONG_TRINH_RANGE,
+	TABLE_HEADER_COLOR
  } from "./named";
+
+ import { DAU_VAO_OBJECT } from "./values";
 
 export const BANGTRA1 = [
 	{
@@ -400,3 +405,111 @@ export const listCP = [
 	},
 	
 ]
+
+
+export const tbBANGTONGHOPKHOILUONG = {
+	name: TIEN_LUONG_SHEET_NAME,
+    colwidth: [30, 30, 70, 180	, 50, 200, 70, 100],
+    font: 'Times New Roman',
+    printArea: 'B:H',
+	pageSize: 'a4',
+	orientation: 'portrait',
+	defaultConditionalFormat: [
+		// {
+		// 	address: 'A:H',
+		// 	color: null,
+		// 	bold: true,
+		// 	italic: false,
+		// 	border:  true,
+		// 	formula: '=IF(OR(INDIRECT("RC[0]",0)="Ký hiệu", INDIRECT("RC[-1]",0)="Ký hiệu", INDIRECT("RC[-2]",0)="Ký hiệu", INDIRECT("RC[-3]",0)="Ký hiệu", INDIRECT("RC[-4]",0)="Ký hiệu", INDIRECT("RC[-5]",0)="Ký hiệu", INDIRECT("RC[-6]",0)="Ký hiệu", INDIRECT("RC[-7]",0)="Ký hiệu", INDIRECT("RC[-8]",0)="Ký hiệu", INDIRECT("RC[-9]",0)="Ký hiệu"),TRUE)'
+		// },
+		{
+			address: 'A:H',
+			color: null,
+			bold: true,
+			italic: false,
+			border:  true,
+			formula: '=IF(OR(INDIRECT("RC[0]",0)="HM", INDIRECT("RC[-1]",0)="HM", INDIRECT("RC[-2]",0)="HM", INDIRECT("RC[-3]",0)="HM", INDIRECT("RC[-4]",0)="HM", INDIRECT("RC[-5]",0)="HM", INDIRECT("RC[-6]",0)="HM", INDIRECT("RC[-7]",0)="HM", INDIRECT("RC[-8]",0)="HM", INDIRECT("RC[-9]",0)="HM"),TRUE)'
+		},
+		{
+			address: 'A:H',
+			color: null,
+			bold: true,
+			italic: false,
+			border:  true,
+			formula: '=IF(OR(INDIRECT("RC[0]",0)="#", INDIRECT("RC[-1]",0)="#", INDIRECT("RC[-2]",0)="#", INDIRECT("RC[-3]",0)="#", INDIRECT("RC[-4]",0)="#", INDIRECT("RC[-5]",0)="#", INDIRECT("RC[-6]",0)="#", INDIRECT("RC[-7]",0)="#", INDIRECT("RC[-8]",0)="#", INDIRECT("RC[-9]",0)="#"),TRUE)'
+		},
+		{
+			address: 'A:H',
+			color: null,
+			bold: false,
+			italic: false,
+			border:  true,
+			formula: '=IF(OR(INDIRECT("RC[0]",0)="+", INDIRECT("RC[-1]",0)="+", INDIRECT("RC[-2]",0)="+", INDIRECT("RC[-3]",0)="+", INDIRECT("RC[-4]",0)="+", INDIRECT("RC[-5]",0)="+", INDIRECT("RC[-6]",0)="+", INDIRECT("RC[-7]",0)="+", INDIRECT("RC[-8]",0)="+", INDIRECT("RC[-9]",0)="+"),TRUE)'
+		},
+		{
+			address: 'A:H',
+			color: 'blue',
+			bold: false,
+			italic: false,
+			border:  true,
+			formula: '=IF(OR(INDIRECT("RC[0]",0)="-", INDIRECT("RC[-1]",0)="-", INDIRECT("RC[-2]",0)="-", INDIRECT("RC[-3]",0)="-", INDIRECT("RC[-4]",0)="-", INDIRECT("RC[-5]",0)="-", INDIRECT("RC[-6]",0)="-", INDIRECT("RC[-7]",0)="-", INDIRECT("RC[-8]",0)="-", INDIRECT("RC[-9]",0)="-"),TRUE)'
+		},
+	],
+	contents: [
+		{
+            range: [
+                {
+                    values: ['BẢNG TỔNG HỢP KHỐI LƯỢNG CÔNG TÁC XÂY DỰNG'],
+                    bold: true,
+                    height: 24,
+                    hCenter: true,
+                    vCenter: true,
+                    colSpan: [8]
+				},
+				{
+                    values: [`="Tên dự án: "&UPPER('${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE})`],
+                    bold: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+                {
+                    values: [`="Tên công trình: "&'${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE}`],
+                    bold: true,
+                    vCenter: true,
+                    colSpan: [8]
+                },
+                {
+                    values: [`="Hạng mục công trình: "&'${DAU_VAO_OBJECT.name}'!${TEN_CONG_TRINH_RANGE}`],
+                    bold: true,
+                    vCenter: true,
+					colSpan: [8],
+                },
+
+            ]
+
+		},
+		{
+            range: [
+                {
+                    values: ['Mã', 'STT', 'MÃ HIỆU CÔNG TÁC', 'DANH MỤC CÔNG TÁC', 'ĐƠN VỊ TÍNH', 'CÁCH XÁC ĐỊNG', 'KHỐI LƯỢNG', 'GHI CHÚ'],
+                    bold: true,
+                    // height: 24,
+                    hCenter: true,
+                    vCenter: true,
+                    wrapText: true,
+                    fillColor: TABLE_HEADER_COLOR
+                },
+                {
+                    values: [``, `'(1)`, `'(2)`, `'(3)`, `'(4)`, `'(5)`, `'(6)`, `'(7)`],
+                    bold: true,
+                    hCenter: true,
+                    vCenter: true,
+                    wrapText: true,
+                },
+            ],
+            border: true,
+
+        },
+	]
+}

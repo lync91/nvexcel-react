@@ -25,6 +25,7 @@ import {
 	KHU_VUC_NAME,
 	DON_GIA_NAME
 } from "../constants/named";
+import { tbBANGTONGHOPKHOILUONG } from "../constants/templates";
 import { WORKSHEET_SELECTION_CHANGED } from "../constants/eventName";
 // import socket from "../socket";
 import { addressObj } from "../api/Eutils";
@@ -143,11 +144,11 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		}
 	}
 	_taoBangmau = async () => {
-		await ws?.addSheet(TIEN_LUONG_SHEET_NAME);
+		await ws?.newSheetfromObject(tbBANGTONGHOPKHOILUONG);
 		const id = await ws?.currentWs(TIEN_LUONG_SHEET_NAME);
 		await ws.updateProjectInfo(TIEN_LUONG_SHEET_NAME, id);
 		await ws?.activate();
-		initBangTienLuong();
+		// initBangTienLuong();
 		this.setState({ wsExits: true })
 		ws?.addValues('A6', [['HM']])
 		ws?.addValues('A7', [['#']])

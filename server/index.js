@@ -21,14 +21,25 @@ const typeDefs = gql`
     test: String,
     rollDice(numDice: Int!, numSides: Int): [Int]
   }
+  type Mutation  {
+    hello(test1: String!): String,
+  }
 `;
 
 const resolvers = {
     Query: {
-      hello: (parent, args, context, info) => {
-          return args
+      hello: (_, {test1}) => {
+          console.log(test1);
+          return test1
       },
-      test: () => 'ds'
+      test: () => 'ds',
+      rollDice: ({numDice, numSides}) => {
+        var output = [];
+        for (var i = 0; i < numDice; i++) {
+          output.push(1 + Math.floor(Math.random() * (numSides || 6)));
+        }
+        return output;
+      }
     },
   };
    
@@ -116,6 +127,6 @@ app.get('/search', (req, res) => {
 // }));
 
 
-https.listen(8080, () => {
-    console.log('listening on *:8080');
+https.listen(8083, () => {
+    console.log('listening on *:8083');
 });

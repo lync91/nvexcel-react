@@ -9,7 +9,9 @@ import {
 	HAO_PHI_VAT_TU_NAME,
 	GIA_THANG_G8,
 	CHIET_TINH_G8,
-	DU_THAU_G8
+	DU_THAU_G8,
+	GIA_TONG_HOP_G8,
+	GIA_CHI_TIET_G8
 } from "../constants/named";
 
 export interface AppProps {
@@ -168,6 +170,22 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 			console.log(lastRow);
 		})
 	}
+	async _formatGiaTongHop() {
+		await ws.currentWs(GIA_TONG_HOP_G8);
+		await ws?.setFont('Times New Roman');
+		await ws?.setPrintArea('A:K');
+		await ws?.setPaperType('a4');
+		ws?.setOrientation('landscape');
+		ws?.setPageZoom(1);
+		ws?.setPageMargin(50, 40, 40, 40);
+		ws.colWidth('F', 76);
+		ws.colWidth('G', 76);
+		ws.colWidth('H', 76);
+		ws.colWidth('I', 76);
+		ws.colWidth('J', 76);
+		ws.colWidth('K', 76);
+		await ws?.setCenter(true);
+	}
 	render() {
 		const { Item } = Form
 		return (
@@ -177,6 +195,9 @@ export class PageFormatG8 extends Component<AppProps, AppStates> {
 				>
 					<Item><Button onClick={this._formatPage} type="primary" >Bảng dự toán hạng mục công trình</Button></Item>
 					<Item><Button onClick={this._formatCongTrinh} type="primary" >Bảng công trình</Button></Item>
+					<Item><Button onClick={this._formatGiaTongHop} type="primary" >Bảng giá tổng hợp</Button></Item>
+					<Item><Button onClick={this._formatCongTrinh} type="primary" >Bảng đơn giá chi tiết</Button></Item>
+					<Item><Button onClick={this._formatCongTrinh} type="primary" >Bảng hao phí vật tư</Button></Item>
 					<Item><Button onClick={this._formatTongHopVatTu} type="primary" >Bảng tổng hợp vật tư</Button></Item>
 					<Item><Button onClick={this._formatHaoPhiVatTu} type="primary" >Bảng hao phí vật tư</Button></Item>
 					<Item><Button onClick={this._formatGiaThang} type="primary" >Bảng giá tháng</Button></Item>

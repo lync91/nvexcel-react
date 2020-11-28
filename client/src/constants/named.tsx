@@ -5,6 +5,8 @@ export const BANG_HAO_PHI_VAT_TU = 'HaoPhiVatTu'
 export const GIA_THANG_G8 = 'Giá tháng'
 export const CHIET_TINH_G8 = 'Chiết tính'
 export const DU_THAU_G8 = 'Dự thầu'
+export const GIA_TONG_HOP_G8 = 'Giá tổng hợp'
+export const GIA_CHI_TIET_G8 = 'Đơn giá chi tiết'
 export const HAO_PHI_VAT_TU_NAME = 'BẢNG TỔNG HỢP VẬT TƯ VÀ CHÊNH LỆCH GIÁ'
 // KHỐI LƯỢNG
 export const MAU_KHOI_LUONG_NAME = 'Mẫu khối lượng'
@@ -69,3 +71,7 @@ export const BUOC_LAP_BCKTKT_NAME = 'Lập báo cáo kinh tế kỹ thuật'
 export const BUOC_LAP_BCNGTKT_NAME = 'Lập báo cáo nghiên cứu tiền khả thi'
 export const BUOC_LAP_BCNCKT_NAME = 'Lập báo cáo nghiên cứu khả thi'
 export const BUOC_LAP_TKBVTC_NAME = 'Lập thiết kế bản vẽ thi công'
+
+//TABLE NAME
+
+export const BANG_TONG_HOP_KHOI_LUONG = 'BẢNG TỔNG HỢP KHỐI LƯỢNG CÔNG TÁC XÂY DỰNG'

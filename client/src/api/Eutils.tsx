@@ -531,6 +531,9 @@ export class wsObject extends AsyncConstructor {
 			});
 		}
 	}
+	async setConditionalFormats (conds: any[]) {
+		conds.map((e, i) => this.setCustomConditionalFormat(e.address, e.formula, e.color, e.bold, e.italic, e.border));
+	}
 	async newSheetfromObject(obj: any) {
 		if (obj.name) {
 			const shId = await this.addSheet(obj.name)
@@ -538,7 +541,11 @@ export class wsObject extends AsyncConstructor {
 				if (obj.contents) {
 					this.sheetContents(obj.contents)
 				}
-				if (obj.font) this.setFont(obj.font, obj.printArea ? obj.printArea : 'A:Z')
+				if (obj.font) this.setFont(obj.font, obj.printArea ? obj.printArea : 'A:Z');
+				if (obj.printArea) this.setPrintArea(obj.printArea)
+				if (obj.pageSize) this.setPaperType(obj.pageSize)
+				if (obj.orientation) this.setOrientation(obj.orientation)
+				if (obj.defaultConditionalFormat) this.setConditionalFormats(obj.defaultConditionalFormat)
 			})
 			this.activate();
 			this.updateProjectInfo(obj.name, shId);
