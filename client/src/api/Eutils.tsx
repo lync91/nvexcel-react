@@ -126,7 +126,7 @@ export class wsObject extends AsyncConstructor {
 	}
 	async activate() {
 		this.ws?.activate();
-		await this.context.sync()
+		return await this.context.sync();
 	}
 	async getValues(address: string) {
 		const rg = this.ws?.getRange(address);

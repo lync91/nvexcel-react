@@ -23,7 +23,7 @@ import { AppContext } from "./contexts/AppContext";
 import { ws } from "./api/nvExcel";
 import { DAU_VAO_OBJECT } from "./constants/values";
 
-import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider, ApolloClient, InMemoryCache,gql } from '@apollo/client';
 
 
 
@@ -33,29 +33,21 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client';
 
 
 const client = new ApolloClient({
-  uri: 'https://localhost:8080/graphql',
+  uri: 'https://localhost:8083/graphql',
   cache: new InMemoryCache()
 });
-const CharConvert = React.lazy(() => import('./components/CharConvert'));
-const PageFormat = React.lazy(() => import('./components/PageFormat'));
-const PageFormatG8 = React.lazy(() => import('./components/PageFormatG8'));
-const TaoMauKhoiLuong = React.lazy(() => import('./components/TaoMauKhoiLuong'));
-const TienLuong = React.lazy(() => import('./components/TienLuong'));
-const TongHopChiPhi = React.lazy(() => import('./components/TongHopChiPhi'));
-const MauBangTra = React.lazy(() => import('./components/MauBangTra'));
-const otherTools = React.lazy(() => import('./components/otherTools'));
+const CharConvert = React.lazy(() => import('./containers/CharConvert'));
+const PageFormat = React.lazy(() => import('./containers/PageFormat'));
+const PageFormatG8 = React.lazy(() => import('./containers/PageFormatG8'));
+const TaoMauKhoiLuong = React.lazy(() => import('./containers/TaoMauKhoiLuong'));
+const TienLuong = React.lazy(() => import('./containers/TienLuong'));
+const TongHopChiPhi = React.lazy(() => import('./containers/TongHopChiPhi'));
+const MauBangTra = React.lazy(() => import('./containers/MauBangTra'));
+const otherTools = React.lazy(() => import('./containers/otherTools'));
 
 
 
-// client
-//   .query({
-//     query: gql`
-//       query {
-//         hello
-//       }
-//     `
-//   })
-//   .then(result => console.log(result));
+
 
 export interface AppState {
   isOpen: boolean;
@@ -98,7 +90,15 @@ class App extends Component<{}, AppState> {
     Hook(window.console, log => {
       this.setState(({ logs }) => ({ logs: [...logs, Decode(log)] }))
     })
-
+    client
+  .query({
+    query: gql`
+      query {
+        hello
+      }
+    `
+  })
+  .then(result => console.log(result));
     await ws?.getProjectInfo();
     if (ws?.projectInfo[DAU_VAO_OBJECT.name]) {
       this.setState({ tlExits: true })

@@ -15,9 +15,7 @@ import {
 } from 'antd';
 import { PlusOutlined } from "@ant-design/icons";
 import { FormInstance } from 'antd/lib/form';
-
-import client from "../apollo";
-import { useQuery, gql } from "@apollo/client";
+import { useQuery, gql, ApolloConsumer } from "@apollo/client";
 import { ws, ee } from "../api/nvExcel";
 import { initBangTienLuong } from "../api/libKhoiLuong";
 import {
@@ -32,6 +30,14 @@ import { addressObj } from "../api/Eutils";
 
 const formRef = React.createRef<FormInstance>();
 
+// const EXCHANGE_RATES = gql`
+//   query GetExchangeRates {
+//     rates(currency: "USD") {
+//       currency
+//       rate
+//     }
+//   }
+// `;
 
 
 export interface AppProps {
@@ -123,15 +129,15 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		// socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }));
 		// socket.emit('dutoan/dongia/getkv', (data: any) => this.setState({ lstKV: data }))
 
-		client
-			.query({
-				query: gql`
-					query {
-						hello
-					}
-					`
-			})
-			.then(result => console.log(result));
+		// client
+		// 	.query({
+		// 		query: gql`
+		// 			query {
+		// 				hello
+		// 			}
+		// 			`
+		// 	})
+		// 	.then(result => console.log(result));
 
 		if (ws?.projectInfo[KHU_VUC_NAME]) {
 			this.getDonGiaKhuVuc(ws.projectInfo[KHU_VUC_NAME]);
@@ -166,20 +172,6 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 	_onFinish = async (values: any) => {
 		console.log('OK');
-
-		// console.log(values);
-		// await ws?.getActive();
-		// const val = await ws?.getFomulas(`A7:J${ws?.lastRow.row}`);
-		// const data = {
-		// 	tenBoPhan: values.tenBoPhan,
-		// 	data: JSON.stringify(val),
-		// 	loaiCongTrinh: values.loaiCongTrinh
-		// }
-		// socket.emit('khoiluong/mau/add', data, () => {
-		// 	formRef.current?.resetFields();
-		// 	message.success('Đã lưu mẫu khối lượng thành công');
-		// });
-		// await ws.setPropeties();
 		ws.getPropeties()
 	}
 
@@ -237,6 +229,8 @@ export class TienLuong extends Component<AppProps, AppStates> {
 	}
 
 	render() {
+		// const { loading, error, data } = useQuery(EXCHANGE_RATES);
+		// console.log(data);
 		const { TabPane } = Tabs;
 		const { Search } = Input
 		const columns: any[] = [
@@ -282,7 +276,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 				</div>
 				<Tabs hidden={!this.state.wsExits} defaultActiveKey="1">
 					<TabPane tab="Menu" key="1">
-						<Home/>
+						<Home />
 						<Form ref={formRef} onFinish={this._onFinish}>
 							<Form.Item label='Loại công trình' name='loaiCongTrinh'>
 								<AutoComplete />
@@ -298,24 +292,7 @@ export class TienLuong extends Component<AppProps, AppStates> {
 						</Form>
 					</TabPane>
 					<TabPane tab="Thư viện" key="2">
-						<Form ref={formRef} onFinish={this._onFinish}>
-							<Form.Item label='Loại công trình' name='loaiCongTrinh'>
-								<Select
-									showSearch
-									options={this.state.lstLoaiCongTrinh}
-									placeholder="Chọn loại công trình"
-									optionFilterProp="children"
-									onSelect={(val: string) => this._selectLoaiCongTrinh(val)}
-									filterOption={(input, option) =>
-										option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-									}
-								>
-								</Select>
-							</Form.Item>
-							{/* <Form.Item label='Tên bộ phận' name='tenBoPhan' >
-								<Input />
-							</Form.Item> */}
-						</Form>
+						<FormThuVien onFinish={() => this._onFinish('')}/>
 						<List
 							className="demo-loadmore-list"
 							size="small"
@@ -392,11 +369,34 @@ const EXCHANGE_RATES = gql`
 `;
 
 function Home() {
-	const { loading, error, data } = useQuery(EXCHANGE_RATES, {variables: {test: 'hel!!!'}});
+	const { loading, error, data } = useQuery(EXCHANGE_RATES, { variables: { test: 'hel!!!' } });
 	return (
-	  <div>
-		<h2>{JSON.stringify(data)}</h2>
-	  </div>
+		<div>
+			<h2>{JSON.stringify(data)}</h2>
+		</div>
 	);
-  }
+}
+function FormThuVien({onFinish}: any) {
+	return (
+		<Form ref={formRef} onFinish={() => onFinish()}>
+			<Form.Item label='Loại công trình' name='loaiCongTrinh'>
+				<Select
+					showSearch
+					// options={this.state.lstLoaiCongTrinh}
+					placeholder="Chọn loại công trình"
+					optionFilterProp="children"
+					// onSelect={(val: string) => this._selectLoaiCongTrinh(val)}
+					filterOption={(input, option) =>
+						option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+					}
+				>
+				</Select>
+			</Form.Item>
+			{/* <Form.Item label='Tên bộ phận' name='tenBoPhan' >
+		<Input />
+	</Form.Item> */}
+		</Form>
+	)
+
+}
 export default TienLuong
