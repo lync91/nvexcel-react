@@ -5,3 +5,8 @@ export interface Cat extends Document {
   readonly age: number;
   readonly breed: string;
 }
+export interface mauKhoiLuong extends Document {
+  readonly loaiCongTrinh: String,
+  readonly tenBoPhan: String,
+  readonly data: String
+}

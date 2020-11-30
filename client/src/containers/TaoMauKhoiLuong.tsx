@@ -105,12 +105,6 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 		}
 	}
 	_selectLoaiCongTrinh(value: string) {
-		// socket.emit('khoiluong/mau/getlistMauKhoiLuong', value, (data: any) => {
-		// 	if (data) {
-		// 		console.log(data);
-		// 		this.setState({ lstMauKhoiLuong: data })
-		// 	}
-		// })
 	}
 	async _selectMauKhoiLuong(value: string) {
 		// await ws?.currentWs(MAU_KHOI_LUONG_NAME);

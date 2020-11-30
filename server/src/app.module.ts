@@ -4,12 +4,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
-import { CatsModule1 } from './khoiluong/khoiluong.module';
+import { khoiLuongModule } from './khoiluong/khoiluong.module';
 
 @Module({
   imports: [
     CatsModule,
-    CatsModule1,
+    khoiLuongModule,
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
     }),

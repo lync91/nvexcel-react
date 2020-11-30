@@ -29,9 +29,16 @@ type CatType1 {
   breed: String!
 }
 
+input mauKhoiLuong {
+  loaiCongTrinh: String!
+  tenBoPhan: String!
+  data: String!
+}
+
 type Mutation {
   createCat(input: CatInput!): CatType!
   createCat1(input: CatInput1!): CatType1!
+  addTodo(type: String!): String!
 }
 
 type Query {
