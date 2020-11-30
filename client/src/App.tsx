@@ -89,22 +89,7 @@ class App extends Component<{}, AppState> {
   async componentDidMount() {
     Hook(window.console, log => {
       this.setState(({ logs }) => ({ logs: [...logs, Decode(log)] }))
-    })
-    client
-  .query({
-    query: gql`
-      query {
-        hello
-      }
-    `
-  })
-  .then(result => console.log(result));
-    await ws?.getProjectInfo();
-    if (ws?.projectInfo[DAU_VAO_OBJECT.name]) {
-      this.setState({ tlExits: true })
-    } else {
-      this.setState({ tlExits: false })
-    }
+    });
   }
   openPanel() { this.setState({ isOpen: true }) };
   dismissPanel() { this.setState({ isOpen: false }) };

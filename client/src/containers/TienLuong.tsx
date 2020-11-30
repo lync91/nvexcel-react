@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { Component, useCallback } from "react";
 import {
 	Select,
 	Form,
@@ -124,21 +124,13 @@ export class TienLuong extends Component<AppProps, AppStates> {
 		}
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
+		const { loading, error, data } = await useQuery(EXCHANGE_RATES, {
+			pollInterval: 0,
+		});
+		console.log(data);
+		
 		this.prepair()
-		// socket.emit('khoiluong/mau/getLoaiCongTrinh', (data: any) => this.setState({ lstLoaiCongTrinh: data }));
-		// socket.emit('dutoan/dongia/getkv', (data: any) => this.setState({ lstKV: data }))
-
-		// client
-		// 	.query({
-		// 		query: gql`
-		// 			query {
-		// 				hello
-		// 			}
-		// 			`
-		// 	})
-		// 	.then(result => console.log(result));
-
 		if (ws?.projectInfo[KHU_VUC_NAME]) {
 			this.getDonGiaKhuVuc(ws.projectInfo[KHU_VUC_NAME]);
 			this.setState({ khuVuc: ws.projectInfo[KHU_VUC_NAME] })
@@ -364,17 +356,23 @@ export class TienLuong extends Component<AppProps, AppStates> {
 
 const EXCHANGE_RATES = gql`
       query {
-        hello (test: String)
+        hello
       }
 `;
 
 function Home() {
-	const { loading, error, data } = useQuery(EXCHANGE_RATES, { variables: { test: 'hel!!!' } });
-	return (
-		<div>
-			<h2>{JSON.stringify(data)}</h2>
-		</div>
-	);
+	// const { loading, error, data } = useQuery(EXCHANGE_RATES, {
+	// 	pollInterval: 0,
+	// });
+	
+	// return (
+	// 	<div>
+	// 		<h2>{JSON.stringify('data')}</h2>
+	// 	</div>
+	// );
+	const { loading, error, data } = useQuery(EXCHANGE_RATES);
+	  if (loading) return <p>Loading ...</p>;
+	  return <h1>Hello!</h1>;
 }
 function FormThuVien({onFinish}: any) {
 	return (

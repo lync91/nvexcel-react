@@ -1,8 +1,8 @@
 import { Button, Empty } from "antd";
 import React from "react";
-const NoSheet = ({wsExits, onClick, mesenger}: any) => {
+const NoSheet = ({onClick, mesenger}: any) => {
     return (
-        <div hidden={wsExits} style={{ margin: 'auto' }}>
+        <div style={{ margin: 'auto' }}>
 					<Empty
 						style={{
 							paddingTop: 60,

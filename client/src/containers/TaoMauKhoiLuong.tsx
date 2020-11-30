@@ -1,18 +1,19 @@
 import React, { Component } from "react";
-import { Select, Form, Input, Button, Tabs, AutoComplete, message, Empty, Checkbox } from 'antd';
+import { Select, Form, Input, Button, Tabs, Checkbox } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { ws } from "../api/nvExcel";
 import NoSheet from "../components/NoSheet";
-import { initBangKhoiLuong } from "../api/libKhoiLuong";
+import FormTaoMau from "../components/FormTaoMau";
+// import { initBangKhoiLuong } from "../api/libKhoiLuong";
 import {
 	MAU_KHOI_LUONG_NAME
 } from "../constants/named";
 import { tbBANGTONGHOPKHOILUONG } from "../constants/templates";
 // import { MAU_KHOI_LUONG, TONG_HOP_KHOI_LUONG_HEADER, KHOI_LUONG_DEFAULT_VALUES } from "../constants/values";
 // import socket from "../socket";
-import MauKhoiLuongContext from "../contexts/MauKhoiLuongContext";
+// import MauKhoiLuongContext from "../contexts/MauKhoiLuongContext";
 
-const formRef = React.createRef<FormInstance>();
+// const formRef = React.createRef<FormInstance>();
 
 export interface AppProps {
 	formRef: any
@@ -131,9 +132,11 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 	render() {
 		const { TabPane } = Tabs;
 		const { wsExits } = this.state;
+		if (!wsExits) {
+			return <NoSheet message="Chưa có Sheet Mẫu khối lượng" onClick={() => this._taoBangmau()} />
+		}
 		return (
 			<section>
-				<NoSheet wsExits={wsExits} message="Chưa có Sheet Mẫu khối lượng" onClick={() => this._taoBangmau()} />
 				<Tabs
 					hidden={!this.state.wsExits}
 					defaultActiveKey={this.state.selectedTabKey}
@@ -187,23 +190,5 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 		);
 	}
 };
-
-function FormTaoMau({ onFinish }: any) {
-	return (
-		<Form ref={formRef} onFinish={(values: any) => onFinish(values)}>
-			<Form.Item label='Loại công trình' name='loaiCongTrinh'>
-				<AutoComplete />
-			</Form.Item>
-			<Form.Item label='Tên bộ phận' name='tenBoPhan' >
-				<Input />
-			</Form.Item>
-			<Form.Item style={{ paddingTop: 4, paddingBottom: 4 }}>
-				<Button type="primary" htmlType="submit">
-					Lưu
-			</Button>
-			</Form.Item>
-		</Form>
-	)
-}
 
 export default TaoMauKhoiLuong
