@@ -11,7 +11,7 @@ export class CatInput1 {
 }
 
 @InputType()
-export class mauKhoiLuong {
+export class MauKhoiLuongInPut {
   @Field()
   readonly loaiCongTrinh: String;
   @Field()

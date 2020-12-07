@@ -11,3 +11,14 @@ export class CatType1 {
   @Field()
   readonly breed: string;
 }
+@ObjectType()
+export class MauKhoiLuongType {
+  @Field(() => ID)
+  id: string;
+  @Field()
+  readonly loaiCongTrinh: string;
+  @Field()
+  readonly tenBoPhan: string;
+  @Field()
+  readonly data: string;
+}

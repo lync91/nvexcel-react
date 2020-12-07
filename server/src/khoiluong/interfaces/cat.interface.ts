@@ -10,3 +10,8 @@ export interface mauKhoiLuong extends Document {
   readonly tenBoPhan: String,
   readonly data: String
 }
+// export interface loaiCongTrinh extends Document {
+//   readonly loaiCongTrinh: String,
+//   readonly tenBoPhan: String,
+//   readonly data: String
+// }

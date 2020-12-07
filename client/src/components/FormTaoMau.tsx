@@ -1,36 +1,39 @@
-import { Form, AutoComplete, Input, Button } from "antd";
+import { Form, AutoComplete, Input, Button, message } from "antd";
 import React from "react"
 import { FormInstance } from 'antd/lib/form';
 import { useQuery, useMutation, gql, ApolloConsumer } from "@apollo/client";
 import { ws } from "../api/nvExcel";
 
-const EXCHANGE_RATES = gql`
-query  {
-        hello
-      }
+const CREATE_MKL = gql`
+mutation CreateMauKhoiLuong($loaiCongTrinh: String!, $tenBoPhan: String!, $data: String!) {
+  createMauKhoiLuong(input: {loaiCongTrinh: $loaiCongTrinh, tenBoPhan: $tenBoPhan, data: $data}) {
+    id
+  }
+}
 `;
 
 const formRef = React.createRef<FormInstance>();
 
 const _getValues = async () => {
-  console.log('ds');
   await ws?.getActive();
   const lastRow = await ws.getLastRow();
   const val = await ws?.getFomulas(`A7:J${lastRow.cell1.row}`);
   return JSON.stringify(val);
 }
+const _onCompleted = () => {
+  message.success('Tạo mẫu khối lượng');
+}
 
 
 const FormTaoMau = ({ onFinish }: any) => {
-  const { loading, error, data } = useQuery(EXCHANGE_RATES, {
-    pollInterval: 0
-  });
-  if (loading) return <p>Loading ...</p>;
+  const [createMauKhoiLuong, {data, loading, called}] = useMutation(CREATE_MKL, {onCompleted: _onCompleted});
   return (
     <Form ref={formRef} onFinish={async (values: any) => {
-      console.log(values);
+      const res = await _getValues();
+      values.data = res;
+      createMauKhoiLuong({ variables: values});
       
-      const res = await _getValues()
+      // createMauKhoiLuong({ variables: { type: input.value } })
     }}>
       <Form.Item label='Loại công trình' name='loaiCongTrinh'>
         <AutoComplete />

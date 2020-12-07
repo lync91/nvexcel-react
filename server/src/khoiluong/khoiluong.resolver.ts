@@ -1,7 +1,7 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
 import { KhoiLuongService } from './khoiluong.service';
-import { CatType1 } from './dto/create-cat.dto';
-import { CatInput1 } from './inputs/cat.input';
+import { CatType1 } from './dto/khoiluong.dto';
+import { CatInput1 } from './inputs/khoiluong.input';
 
 @Resolver()
 export class CatsResolver {
@@ -20,7 +20,6 @@ export class CatsResolver {
   @Mutation(() => CatType1)
   async createCat1(@Args('input') input: CatInput1) {
     console.log(14);
-
     return this.khoiLuongService.create(input);
   }
   @Mutation(() => String)

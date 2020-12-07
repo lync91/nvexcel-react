@@ -5,6 +5,7 @@ import { ws } from "../api/nvExcel";
 import NoSheet from "../components/NoSheet";
 import FormTaoMau from "../components/FormTaoMau";
 // import { initBangKhoiLuong } from "../api/libKhoiLuong";
+import FormLoaiCongTrinh from "../components/KhoiLuong/FormLoaiCongTrinh";
 import {
 	MAU_KHOI_LUONG_NAME
 } from "../constants/named";
@@ -107,20 +108,8 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 	_selectLoaiCongTrinh(value: string) {
 	}
 	async _selectMauKhoiLuong(value: string) {
-		// await ws?.currentWs(MAU_KHOI_LUONG_NAME);
 		const lastRow = await ws.getLastRow();
 		ws.clearValues(`A6:J${lastRow.cell1.row}`);
-		// socket.emit('khoiluong/mau/get', value, (mkl: any) => {
-		// 	if (mkl) {
-		// 		const data: any[][] = JSON.parse(mkl.data)
-		// 		var addr = `A7:J${data.length + 6}`;
-		// 		ws?.addValues('A6', [['HM']])
-		// 		ws?.addValues('A7', [['#']])
-		// 		ws?.addValues(addr, data)
-		// 		this.setState({tenBophan: mkl.tenBoPhan})
-		// 		this.formRef.current?.setFieldsValue({ tenBoPhan: mkl.tenBoPhan })
-		// 	}
-		// })
 	}
 
 	render() {
@@ -139,45 +128,7 @@ export class TaoMauKhoiLuong extends Component<AppProps, AppStates> {
 						<FormTaoMau onFinish={(values: any) => this._onFinish(values)} />
 					</TabPane>
 					<TabPane tab="Sửa mẫu" key="edit">
-						<Form ref={this.formRef} onFinish={this._onFinish}>
-							<Form.Item label='Loại công trình' name='loaiCongTrinh'>
-								<Select
-									showSearch
-									options={this.state.lstLoaiCongTrinh}
-									placeholder="Chọn loại công trình"
-									optionFilterProp="children"
-									onSelect={(val: string) => this._selectLoaiCongTrinh(val)}
-									filterOption={(input, option) =>
-										option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-									}
-								>
-								</Select>
-							</Form.Item>
-							<Form.Item label='Tên bộ phận' name='id' >
-								<Select
-									showSearch
-									options={this.state.lstMauKhoiLuong}
-									placeholder="Chọn mẫu khối lượng"
-									optionFilterProp="children"
-									onSelect={(val: string, ops) => this._selectMauKhoiLuong(val)}
-									filterOption={(input, option) =>
-										option?.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-									}
-								>
-								</Select>
-							</Form.Item>
-							<Form.Item name="isRename">
-								<Checkbox onChange={(e) => this.setState({ isRename: e.target.checked })}>Sửa tên mẫu khối lượng</Checkbox>
-							</Form.Item>
-							<Form.Item name="tenBoPhan">
-								<Input disabled={!this.state.isRename} placeholder="Tên bộ phận" checked={this.state.isRename} />
-							</Form.Item>
-							<Form.Item style={{ paddingTop: 4, paddingBottom: 4 }}>
-								<Button type="primary" htmlType="submit">
-									Lưu
-										</Button>
-							</Form.Item>
-						</Form>
+						<FormLoaiCongTrinh />
 					</TabPane>
 				</Tabs>
 			</section>
