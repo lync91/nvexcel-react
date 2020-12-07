@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql';
+import { Resolver, ResolveProperty, Query, Mutation, Args } from '@nestjs/graphql';
 import { mauKhoiLuongService } from './maukhoiluong.service';
 import { CatType1, MauKhoiLuongType } from './dto/khoiluong.dto';
 import { MauKhoiLuongInPut } from './inputs/khoiluong.input';

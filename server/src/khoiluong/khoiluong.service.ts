@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { mauKhoiLuong } from './interfaces/cat.interface';
+import { mauKhoiLuong } from './interfaces/khoiluong.interface';
 import { CatInput1 } from './inputs/khoiluong.input';
 
 @Injectable()

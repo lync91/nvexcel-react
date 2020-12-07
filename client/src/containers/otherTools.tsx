@@ -1,10 +1,8 @@
 import React, { Component } from "react";
-import { Separator } from 'office-ui-fabric-react/lib/Separator';
 import { Input, Button, Form, Select } from 'antd';
 import { FormInstance } from 'antd/lib/form';
 import { ws } from "../api/nvExcel";
 import { columnIndex, toLetter } from "../api/lib";
-import { NvDefButton } from "./nvButton";
 import {
 	BANG_CONG_TRINH,
 	BANG_TONG_HOP_VAT_TU,
